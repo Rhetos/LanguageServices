@@ -1,12 +1,18 @@
 ﻿using System;
+using System.Globalization;
 using System.IO;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using NLog;
 using NLog.Extensions.Logging;
+using OmniSharp.Extensions.LanguageServer.Protocol;
+using OmniSharp.Extensions.LanguageServer.Protocol.Models;
 using OmniSharp.Extensions.LanguageServer.Protocol.Server.Capabilities;
 using OmniSharp.Extensions.LanguageServer.Server;
 using Rhetos.LanguageServices.Server.Handlers;
+using Rhetos.LanguageServices.Server.Services;
 using Rhetos.LanguageServices.Server.Tools;
 using LogLevel = Microsoft.Extensions.Logging.LogLevel;
 
@@ -30,8 +36,13 @@ namespace Rhetos.LanguageServices.Server
                 await Task.Delay(100);
             }*/
 
-            var server = await BuildLanguageServer(Console.OpenStandardInput(), Console.OpenStandardOutput());
-            
+            var server = await BuildLanguageServer(Console.OpenStandardInput(), Console.OpenStandardOutput(),
+                builder => builder
+                    .AddNLog()
+                    .AddLanguageServer(LogLevel.Information)
+                    .SetMinimumLevel(LogLevel.Debug)
+            );
+
             server.Shutdown.Subscribe(next =>
             {
                 programLogger.Info($"SHUTDOWN SUBSCRIBE {next}");
@@ -49,22 +60,24 @@ namespace Rhetos.LanguageServices.Server
             LogManager.Flush();
         }
 
-        public static async Task<ILanguageServer> BuildLanguageServer(Stream inputStream, Stream outputStream)
+        public static async Task<ILanguageServer> BuildLanguageServer(Stream inputStream, Stream outputStream, Action<ILoggingBuilder> logBuilderAction)
         {
             var server = await LanguageServer.From(options =>
                 options
                     .WithInput(inputStream)
                     .WithOutput(outputStream)
-                    .ConfigureLogging(x => x
-                        .AddNLog()
-                        .AddLanguageServer()
-                        .SetMinimumLevel(LogLevel.Trace))
+                    .ConfigureLogging(logBuilderAction)
                     .WithHandler<TextDocumentHandler>()
-                    .WithReciever(new DebugReceiver())
+                    //.WithHandler<RhetosHoverHandler>()
+                    //.WithReciever(new DebugReceiver())
                     .WithHandler<RhetosCompletionHandler>()
                     //.WithHandler<DidChangeWatchedFilesHandler>()
                     .WithServices(services =>
-                    {/*
+                    {
+                        services.AddTransient<ServerEventHandler>();
+                        services.AddSingleton<TrackedDocuments>();
+                        services.AddSingleton<RhetosAppContext>();
+                        /*
                         services.AddSingleton<Foo>(provider => 
                         {
                             var loggerFactory = provider.GetService<ILoggerFactory>();
@@ -84,10 +97,11 @@ namespace Rhetos.LanguageServices.Server
                     })
                     .OnInitialize((s, request) =>
                     {
+                        //LogManager.GetLogger("Init").Info(JsonConvert.SerializeObject(request, Formatting.Indented));
                         return Task.CompletedTask;
                     })
             );
-            
+
             return server;
         }
     }

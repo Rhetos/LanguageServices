@@ -46,11 +46,20 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ConceptInfoTypeTests.cs" />
+    <Compile Include="ConceptQueriesTests.cs" />
+    <Compile Include="RheDocumentAnalysisTests.cs" />
+    <Compile Include="DslParserTests.cs" />
     <Compile Include="HostTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RheDocumentTests.cs" />
+    <Compile Include="TextDocumentTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Logging">
+      <Version>3.1.1</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Extensions.Logging.Console">
       <Version>3.1.1</Version>
     </PackageReference>
     <PackageReference Include="MSTest.TestAdapter">
@@ -68,12 +77,20 @@
     <PackageReference Include="OmniSharp.Extensions.LanguageClient">
       <Version>0.14.1</Version>
     </PackageReference>
+    <PackageReference Include="Rhetos.CommonConcepts">
+      <Version>4.0.0-dev2001291905b545cb</Version>
+    </PackageReference>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\src\Rhetos.LanguageServices.Server\Rhetos.LanguageServices.Server.csproj">
       <Project>{8cce80e5-e935-4016-8918-ee72ff190025}</Project>
       <Name>Rhetos.LanguageServices.Server</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="NLog.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

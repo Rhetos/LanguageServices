@@ -8,6 +8,7 @@ using OmniSharp.Extensions.LanguageServer.Client;
 using OmniSharp.Extensions.LanguageServer.Client.Processes;
 using OmniSharp.Extensions.LanguageServer.Protocol;
 using OmniSharp.Extensions.LanguageServer.Protocol.Models;
+using OmniSharp.Extensions.LanguageServer.Server;
 
 namespace Rhetos.LanguageServices.Server.Test
 {
@@ -17,12 +18,12 @@ namespace Rhetos.LanguageServices.Server.Test
         [TestMethod]
         public async Task Test1()
         {
-            var loggerFactory = LoggerFactory.Create(a => a.AddNLog());
+            var loggerFactory = LoggerFactory.Create(a => a.AddNLog().SetMinimumLevel(LogLevel.Trace));
             var serverProcess = new NamedPipeServerProcess("test", loggerFactory);
             var languageClient = new LanguageClient(loggerFactory, serverProcess);
             var clientInit = languageClient.Initialize("/");
 
-            var serverInit = Program.BuildLanguageServer(serverProcess.ClientOutputStream, serverProcess.ClientInputStream);
+            var serverInit = Program.BuildLanguageServer(serverProcess.ClientOutputStream, serverProcess.ClientInputStream, builder => builder.AddNLog().AddLanguageServer().AddConsole());
 
             Task.WaitAll(clientInit, serverInit);
 
@@ -30,15 +31,16 @@ namespace Rhetos.LanguageServices.Server.Test
 
             var textDocument = new TextDocumentItem()
             {
-                Text = "ble ble ble\nblelle",
+                Text = @"// <rhetosRootPath=""<rootPath>"" />\nble ble ble\nblelle",
                 Uri = new Uri("file://ble.rhe")
             };
 
             var opened = await languageClient.SendRequest<object>(DocumentNames.DidOpen, new DidOpenTextDocumentParams() {TextDocument = textDocument});
 
-            var result = await languageClient.SendRequest<object>(DocumentNames.Completion, new CompletionParams() { TextDocument = new TextDocumentIdentifier(textDocument.Uri), Position = new Position()});
+            var result = await languageClient.SendRequest<CompletionList>(DocumentNames.Completion, new CompletionParams() { TextDocument = new TextDocumentIdentifier(textDocument.Uri), Position = new Position()});
+            Console.WriteLine(JsonConvert.SerializeObject(result.Items, Formatting.Indented));
 
-            Console.WriteLine(JsonConvert.SerializeObject(result));
+            Task.Delay(3000).Wait();
             languageClient.Dispose();
         }
     }
