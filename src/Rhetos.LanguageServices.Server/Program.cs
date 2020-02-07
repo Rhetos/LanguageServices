@@ -82,7 +82,7 @@ namespace Rhetos.LanguageServices.Server
                         services.AddSingleton<RhetosWorkspace>();
                         services.AddSingleton<RhetosAppContext>();
                         services.AddSingleton<XmlDocumentationProvider>();
-                        services.AddSingleton<ILogProvider, NLogProvider>();
+                        services.AddSingleton<ILogProvider, RhetosNetCoreLogProvider>();
                         services.AddSingleton<PublishDiagnosticsRunner>();
                         /*
                         services.AddSingleton<Foo>(provider => 

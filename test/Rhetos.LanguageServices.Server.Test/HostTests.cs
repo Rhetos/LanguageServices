@@ -18,9 +18,9 @@ namespace Rhetos.LanguageServices.Server.Test
         [TestMethod]
         public async Task Test1()
         {
-            var loggerFactory = LoggerFactory.Create(a => a.AddNLog().SetMinimumLevel(LogLevel.Trace));
-            var serverProcess = new NamedPipeServerProcess("test", loggerFactory);
-            var languageClient = new LanguageClient(loggerFactory, serverProcess);
+            var logFactory = LoggerFactory.Create(a => a.AddNLog().SetMinimumLevel(LogLevel.Trace));
+            var serverProcess = new NamedPipeServerProcess("test", logFactory);
+            var languageClient = new LanguageClient(logFactory, serverProcess);
             var clientInit = languageClient.Initialize("/");
 
             var serverInit = Program.BuildLanguageServer(serverProcess.ClientOutputStream, serverProcess.ClientInputStream, builder => builder.AddNLog().AddLanguageServer().AddConsole());
@@ -31,11 +31,13 @@ namespace Rhetos.LanguageServices.Server.Test
 
             var textDocument = new TextDocumentItem()
             {
-                Text = @"// <rhetosRootPath=""<rootPath>"" />\nble ble ble\nblelle",
+                Text = @"// <rhetosRootPath="""" />\nble ble ble\nblelle",
                 Uri = new Uri("file://ble.rhe")
             };
 
             var opened = await languageClient.SendRequest<object>(DocumentNames.DidOpen, new DidOpenTextDocumentParams() {TextDocument = textDocument});
+
+            // Task.Delay(2500).Wait();
 
             var result = await languageClient.SendRequest<CompletionList>(DocumentNames.Completion, new CompletionParams() { TextDocument = new TextDocumentIdentifier(textDocument.Uri), Position = new Position()});
             Console.WriteLine(JsonConvert.SerializeObject(result.Items, Formatting.Indented));

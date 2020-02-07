@@ -12,6 +12,7 @@ using NLog.Targets;
 using Rhetos.Dsl;
 using Rhetos.LanguageServices.Server.Parsing;
 using Rhetos.LanguageServices.Server.Services;
+using Rhetos.LanguageServices.Server.Tools;
 using Rhetos.Logging;
 using Rhetos.Utilities;
 using Rhetos.Utilities.ApplicationConfiguration;
@@ -22,12 +23,13 @@ namespace Rhetos.LanguageServices.Server.Test
     [TestClass]
     public class DslParserTests
     {
+        private readonly ILoggerFactory logFactory;
         private readonly RhetosAppContext rhetosAppContext;
         public DslParserTests()
         {
             Assembly.Load("Rhetos.Dsl.DefaultConcepts");
-            var loggerFactory = LoggerFactory.Create(b => b.AddConsole());
-            rhetosAppContext = new RhetosAppContext(loggerFactory.CreateLogger<RhetosAppContext>());
+            logFactory = LoggerFactory.Create(b => b.AddConsole());
+            rhetosAppContext = new RhetosAppContext(logFactory);
             rhetosAppContext.InitializeFromCurrentDomain();
         }
 
@@ -57,11 +59,10 @@ Module TestModule
 }
 
 ";
-            var logProvider = new NLogProvider();
-            var rheDocument = new RhetosDocument(rhetosAppContext, logProvider);
+            var rheDocument = new RhetosDocument(rhetosAppContext, logFactory);
             rheDocument.UpdateText(script);
 
-            var dslParser = new DslParser(rheDocument.Tokenizer, rhetosAppContext.ConceptInfoInstances, logProvider);
+            var dslParser = new DslParser(rheDocument.Tokenizer, rhetosAppContext.ConceptInfoInstances, new RhetosNetCoreLogProvider(logFactory));
             var parsedConcepts = dslParser.ParseConceptsWithCallbacks(
                 (tokenReader, keyword) =>
                 {
@@ -93,7 +94,7 @@ Module TestModule
                 .AddKeyValue("ConnectionStrings:ServerConnectionString:ConnectionString", "stub")
                 .Build();
 
-            var containerBuilder = new RhetosContainerBuilder(configuration, new NLogProvider(), LegacyUtilities.GetListAssembliesDelegate(configuration));
+            var containerBuilder = new RhetosContainerBuilder(configuration, new RhetosNetCoreLogProvider(logFactory), LegacyUtilities.GetListAssembliesDelegate(configuration));
             containerBuilder.AddRhetosRuntime();
             var container = containerBuilder.Build();
 

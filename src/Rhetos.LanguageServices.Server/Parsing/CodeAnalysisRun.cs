@@ -5,8 +5,10 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using Rhetos.Dsl;
 using Rhetos.LanguageServices.Server.Services;
+using Rhetos.LanguageServices.Server.Tools;
 using Rhetos.Logging;
 using DslParser = Rhetos.LanguageServices.Server.RhetosTmp.DslParser;
 
@@ -19,15 +21,15 @@ namespace Rhetos.LanguageServices.Server.Parsing
         private readonly RhetosAppContext rhetosAppContext;
         private int targetPos;
         private readonly TextDocument textDocument;
-        private readonly ILogProvider logProvider;
+        private readonly ILogProvider rhetosLogProvider;
         private readonly List<Token> tokens;
 
-        public CodeAnalysisRun(TextDocument textDocument, Tokenizer tokenizer, RhetosAppContext rhetosAppContext, ILogProvider logProvider)
+        public CodeAnalysisRun(TextDocument textDocument, Tokenizer tokenizer, RhetosAppContext rhetosAppContext, ILoggerFactory logFactory)
         {
             this.tokenizer = tokenizer;
             this.rhetosAppContext = rhetosAppContext;
             this.textDocument = textDocument;
-            this.logProvider = logProvider;
+            this.rhetosLogProvider = new RhetosNetCoreLogProvider(logFactory);
             this.tokens = tokenizer.GetTokens();
         }
 
@@ -36,7 +38,7 @@ namespace Rhetos.LanguageServices.Server.Parsing
             if (result != null) throw new InvalidOperationException("Analysis already run.");
             result = new CodeAnalysisResult(line, chr);
             targetPos = textDocument.GetPosition(line, chr);
-            var dslParser = new DslParser(tokenizer, rhetosAppContext.ConceptInfoInstances, logProvider);
+            var dslParser = new DslParser(tokenizer, rhetosAppContext.ConceptInfoInstances, rhetosLogProvider);
             try
             {
                 dslParser.ParseConceptsWithCallbacks(OnKeyword, null, OnUpdateContext);

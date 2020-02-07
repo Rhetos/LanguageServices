@@ -45,6 +45,9 @@ namespace Rhetos.LanguageServices.Server.Handlers
             var sw = Stopwatch.StartNew();
 
             var document = rhetosWorkspace.GetRhetosDocument(request.TextDocument.Uri.ToString());
+            if (document == null)
+                return Task.FromResult(new CompletionList());
+
             var analysisResult = document.GetAnalysis((int) request.Position.Line, (int) request.Position.Character);
             //log.LogInformation(JsonConvert.SerializeObject(analysisResult));
 

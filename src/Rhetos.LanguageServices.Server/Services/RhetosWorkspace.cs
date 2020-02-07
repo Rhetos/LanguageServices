@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using NLog;
 using Rhetos.LanguageServices.Server.Parsing;
+using Rhetos.LanguageServices.Server.Tools;
 using Rhetos.Logging;
 
 namespace Rhetos.LanguageServices.Server.Services
@@ -20,14 +21,14 @@ namespace Rhetos.LanguageServices.Server.Services
         private readonly RhetosAppContext rhetosAppContext;
         private Task analysisTask = Task.CompletedTask;
         private DateTime lastDocumentChangeTime = DateTime.MinValue;
-        private readonly ILogProvider rhetosLogProvider;
         private readonly ILogger<RhetosWorkspace> log;
+        private readonly ILoggerFactory logFactory;
 
-        public RhetosWorkspace(RhetosAppContext rhetosAppContext, ILogProvider rhetosLogProvider, ILogger<RhetosWorkspace> log)
+        public RhetosWorkspace(RhetosAppContext rhetosAppContext, ILoggerFactory logFactory)
         {
             this.rhetosAppContext = rhetosAppContext;
-            this.rhetosLogProvider = rhetosLogProvider;
-            this.log = log;
+            this.log = logFactory.CreateLogger<RhetosWorkspace>();
+            this.logFactory = logFactory;
         }
 
         public void UpdateDocumentText(string id, string text)
@@ -41,7 +42,10 @@ namespace Rhetos.LanguageServices.Server.Services
 
         public RhetosDocument GetRhetosDocument(string id)
         {
-            return rhetosDocuments[id];
+            if (!rhetosDocuments.TryGetValue(id, out var rhetosDocument))
+                return null;
+
+            return rhetosDocument;
         }
 
         public List<(string documentUri, CodeAnalysisError error)> GetAllErrors()
@@ -51,7 +55,7 @@ namespace Rhetos.LanguageServices.Server.Services
             {
                 var documentErrors = rhetosDocument.Value
                     .TokenizerErrors
-                    .Concat(rhetosDocument.Value.AnalysisErrors)
+                    .Concat(rhetosDocument.Value.CodeAnalysisErrors)
                     .Select(error => (rhetosDocument.Key, error));
 
                 result.AddRange(documentErrors);
@@ -82,7 +86,7 @@ namespace Rhetos.LanguageServices.Server.Services
             {
                 if (documentTextUpdates.TryRemove(documentUri, out var text))
                 {
-                    var rhetosDocument = new RhetosDocument(rhetosAppContext, rhetosLogProvider);
+                    var rhetosDocument = new RhetosDocument(rhetosAppContext, logFactory);
                     rhetosDocument.UpdateText(text);
                     rhetosDocuments[documentUri] = rhetosDocument;
                 }

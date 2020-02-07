@@ -10,6 +10,7 @@ using Newtonsoft.Json;
 using NLog;
 using Rhetos.LanguageServices.Server.Parsing;
 using Rhetos.LanguageServices.Server.Services;
+using Rhetos.LanguageServices.Server.Tools;
 using Rhetos.Logging;
 
 namespace Rhetos.LanguageServices.Server.Test
@@ -17,15 +18,15 @@ namespace Rhetos.LanguageServices.Server.Test
     [TestClass]
     public class RhetosWorkspaceTests
     {
-        private readonly ILoggerFactory loggerFactory;
+        private readonly ILoggerFactory logFactory;
         private readonly RhetosAppContext rhetosAppContext;
 
         public RhetosWorkspaceTests()
         {
             Assembly.Load("Rhetos.Dsl.DefaultConcepts");
             LogManager.Configuration.Reload();
-            loggerFactory = LoggerFactory.Create(b => b.AddConsole());
-            rhetosAppContext = new RhetosAppContext(loggerFactory.CreateLogger<RhetosAppContext>());
+            logFactory = LoggerFactory.Create(b => b.AddConsole());
+            rhetosAppContext = new RhetosAppContext(logFactory);
             rhetosAppContext.InitializeFromCurrentDomain();
         }
 
@@ -36,14 +37,13 @@ namespace Rhetos.LanguageServices.Server.Test
 @"Module mad
 {'
 ";
-            var logProvider = new NLogProvider();
             /*
             var log = LogManager.GetLogger("NLOG");
             log.Info($"log 1");
             log.Info($"log 2");
             */
 
-            var workspace = new RhetosWorkspace(rhetosAppContext, logProvider, loggerFactory.CreateLogger<RhetosWorkspace>());
+            var workspace = new RhetosWorkspace(rhetosAppContext, logFactory);
             workspace.UpdateDocumentText("bla", text);
             Task.Delay(500).Wait();
 

@@ -12,6 +12,7 @@ using Microsoft.Extensions.Logging;
 using Rhetos.Deployment;
 using Rhetos.Dsl;
 using Rhetos.Extensibility;
+using Rhetos.LanguageServices.Server.Tools;
 using Rhetos.Logging;
 using Rhetos.Utilities;
 
@@ -26,10 +27,12 @@ namespace Rhetos.LanguageServices.Server.Services
         public IConceptInfo[] ConceptInfoInstances { get; private set; }
 
         private readonly ILogger<RhetosAppContext> log;
+        private readonly ILogProvider rhetosLogProvider;
 
-        public RhetosAppContext(ILogger<RhetosAppContext> log)
+        public RhetosAppContext(ILoggerFactory logFactory)
         {
-            this.log = log;
+            this.log = logFactory.CreateLogger<RhetosAppContext>();
+            this.rhetosLogProvider = new RhetosNetCoreLogProvider(logFactory);
         }
 
         public void InitializeFromCurrentDomain()
@@ -62,7 +65,7 @@ namespace Rhetos.LanguageServices.Server.Services
             {
                 AppDomain.CurrentDomain.AssemblyResolve += resolveDelegate;
 
-                var builder = new RhetosContainerBuilder(configurationProvider, new NLogProvider(), listAssemblies);
+                var builder = new RhetosContainerBuilder(configurationProvider, rhetosLogProvider, listAssemblies);
                 var scanner = builder.GetPluginScanner();
                 var conceptInfoTypes = scanner.FindPlugins(typeof(IConceptInfo)).Select(a => a.Type).ToArray();
                 InitializeFromConceptTypes(conceptInfoTypes);

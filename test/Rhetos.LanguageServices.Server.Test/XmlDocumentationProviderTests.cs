@@ -13,17 +13,17 @@ namespace Rhetos.LanguageServices.Server.Test
     [TestClass]
     public class XmlDocumentationProviderTests
     {
-        private readonly ILoggerFactory loggerFactory;
+        private readonly ILoggerFactory logFactory;
 
         public XmlDocumentationProviderTests()
         {
-            loggerFactory = LoggerFactory.Create(b => b.AddConsole().SetMinimumLevel(LogLevel.Trace));
+            logFactory = LoggerFactory.Create(b => b.AddConsole().SetMinimumLevel(LogLevel.Trace));
         }
 
         [TestMethod]
         public void XmlDocForType()
         {
-            var provider = new XmlDocumentationProvider(loggerFactory.CreateLogger<XmlDocumentationProvider>());
+            var provider = new XmlDocumentationProvider(logFactory.CreateLogger<XmlDocumentationProvider>());
             var xmlDoc = provider.GetDocumentation(typeof(XmlDocumentationProviderTests));
 
             Console.WriteLine(xmlDoc);

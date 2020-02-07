@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using Microsoft.Extensions.Logging;
 using Rhetos.Dsl;
 using Rhetos.LanguageServices.Server.Services;
+using Rhetos.LanguageServices.Server.Tools;
 using Rhetos.Logging;
 using Rhetos.Utilities;
 using DslParser = Rhetos.LanguageServices.Server.RhetosTmp.DslParser;
@@ -15,19 +17,20 @@ namespace Rhetos.LanguageServices.Server.Parsing
         public Tokenizer Tokenizer { get; private set; }
         public TextDocument TextDocument { get; private set; }
         public List<CodeAnalysisError> TokenizerErrors { get; private set; } = new List<CodeAnalysisError>();
-        public List<CodeAnalysisError> AnalysisErrors { get; private set; } = new List<CodeAnalysisError>();
+        public List<CodeAnalysisError> CodeAnalysisErrors { get; private set; } = new List<CodeAnalysisError>();
+        public DateTime LastCodeAnalysisRun { get; private set; } = DateTime.MinValue;
 
         public IEnumerable<DslScript> DslScripts => new[] { new DslScript() { Script = TextDocument.Text } };
 
         private static readonly string[] _lineSeparators = new[] {"\r\n", "\n"};
-        private readonly ILogProvider logProvider;
         private readonly RhetosAppContext rhetosAppContext;
         private readonly object _syncAnalysis = new object();
+        private readonly ILoggerFactory logFactory;
 
-        public RhetosDocument(RhetosAppContext rhetosAppContext, ILogProvider logProvider)
+        public RhetosDocument(RhetosAppContext rhetosAppContext, ILoggerFactory logFactory)
         {
-            this.logProvider = logProvider;
             this.rhetosAppContext = rhetosAppContext;
+            this.logFactory = logFactory;
         }
 
         public void UpdateText(string text)
@@ -36,18 +39,19 @@ namespace Rhetos.LanguageServices.Server.Parsing
             {
                 TextDocument = new TextDocument(text);
                 Tokenizer = CreateTokenizerWithCapturedErrors();
-                var analysisRun = new CodeAnalysisRun(TextDocument, Tokenizer, rhetosAppContext, logProvider);
+                var analysisRun = new CodeAnalysisRun(TextDocument, Tokenizer, rhetosAppContext, logFactory);
                 var analysisResult = analysisRun.RunForPosition(0, 0);
-                AnalysisErrors = analysisResult.Errors;
+                CodeAnalysisErrors = analysisResult.Errors;
+                LastCodeAnalysisRun = DateTime.Now;
             }
-            logProvider.GetLogger("UpdateText").Info("COMPLETE");
+            logFactory.CreateLogger("UpdateText").LogInformation("COMPLETE");
         }
 
         public CodeAnalysisResult GetAnalysis(int line, int chr)
         {
             lock (_syncAnalysis)
             {
-                var analysisRun = new CodeAnalysisRun(TextDocument, Tokenizer, rhetosAppContext, logProvider);
+                var analysisRun = new CodeAnalysisRun(TextDocument, Tokenizer, rhetosAppContext, logFactory);
                 return analysisRun.RunForPosition(line, chr);
             }
         }
@@ -84,7 +88,7 @@ namespace Rhetos.LanguageServices.Server.Parsing
         // valid tokens will be returned without error in subsequent calls
         private Tokenizer CreateTokenizerWithCapturedErrors()
         {
-            var tokenizer = new Tokenizer(this, new FilesUtility(logProvider));
+            var tokenizer = new Tokenizer(this, new FilesUtility(new RhetosNetCoreLogProvider(logFactory)));
             TokenizerErrors.Clear();
             try
             {

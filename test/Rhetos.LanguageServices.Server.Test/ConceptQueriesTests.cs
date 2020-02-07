@@ -23,8 +23,8 @@ namespace Rhetos.LanguageServices.Server.Test
         public ConceptQueriesTests()
         {
             Assembly.Load("Rhetos.Dsl.DefaultConcepts");
-            var loggerFactory = LoggerFactory.Create(b => b.AddConsole());
-            rhetosAppContext = new RhetosAppContext(loggerFactory.CreateLogger<RhetosAppContext>());
+            var logFactory = LoggerFactory.Create(b => b.AddConsole());
+            rhetosAppContext = new RhetosAppContext(logFactory);
             rhetosAppContext.InitializeFromCurrentDomain();
         }
 

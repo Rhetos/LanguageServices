@@ -65,28 +65,7 @@ namespace Rhetos.LanguageServices.Server.Handlers
             var sw = Stopwatch.StartNew();
             var text = notification.ContentChanges.First().Text;
             rhetosWorkspace.UpdateDocumentText(notification.TextDocument.Uri.ToString(), text);
-            /*
-            var rhe = new RhetosDocument(rhetosAppContext, new NLogProvider());
-            rhe.UpdateText(text);
-            var analysisResult = rhe.GetAnalysis(0, 0);
 
-            var diagnostics = analysisResult.Errors
-                .Select(error => new Diagnostic()
-                {
-                    Severity = DiagnosticSeverity.Error,
-                    Message = error.Message,
-                    Range = new Range(new Position(error.Line, error.Chr), new Position(error.Line, error.Chr))
-
-                });
-
-            var publishDiagnostics = new PublishDiagnosticsParams()
-            {
-                Diagnostics = new Container<Diagnostic>(diagnostics),
-                Uri = notification.TextDocument.Uri
-            };
-            server.SendRequest(DocumentNames.PublishDiagnostics, publishDiagnostics)
-                .ContinueWith(_ => _logger.LogInformation($"Published diagnostics for {publishDiagnostics.Uri} in {sw.ElapsedMilliseconds} ms."), token);
-            */
             return Unit.Task;
         }
 

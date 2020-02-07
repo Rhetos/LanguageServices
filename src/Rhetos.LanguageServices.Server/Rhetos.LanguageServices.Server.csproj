@@ -63,6 +63,8 @@
     <Compile Include="Services\XmlDocumentationProvider.cs" />
     <Compile Include="Tools\ConceptInfoType.cs" />
     <Compile Include="Tools\DebugReceiver.cs" />
+    <Compile Include="Tools\RhetosNetCoreLogger.cs" />
+    <Compile Include="Tools\RhetosNetCoreLogProvider.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
