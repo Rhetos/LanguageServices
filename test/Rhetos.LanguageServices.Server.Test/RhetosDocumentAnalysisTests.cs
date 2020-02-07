@@ -14,11 +14,11 @@ using Rhetos.Logging;
 namespace Rhetos.LanguageServices.Server.Test
 {
     [TestClass]
-    public class RheDocumentAnalysisTests
+    public class RhetosDocumentAnalysisTests
     {
         private readonly RhetosAppContext rhetosAppContext;
 
-        public RheDocumentAnalysisTests()
+        public RhetosDocumentAnalysisTests()
         {
             Assembly.Load("Rhetos.Dsl.DefaultConcepts");
             var loggerFactory = LoggerFactory.Create(b => b.AddConsole());
@@ -58,9 +58,10 @@ namespace Rhetos.LanguageServices.Server.Test
         public void CorrectKeywords(int line, int chr, string expectedKeyword)
         {
             Console.WriteLine(script);
-            var rhe = new RheDocument(script, rhetosAppContext, new NLogProvider());
+            var rhe = new RhetosDocument(rhetosAppContext, new NLogProvider());
+            rhe.UpdateText(script);
 
-            Console.WriteLine(rhe.ShowPosition(line, chr));
+            Console.WriteLine(rhe.TextDocument.ShowPosition(line, chr));
             var keywordToken = rhe.GetAnalysis(line, chr).KeywordToken;
             var keyword = keywordToken?.Value;
             Console.WriteLine($"Keyword at cursor ({line}, {chr}): {keyword}");
@@ -82,9 +83,10 @@ namespace Rhetos.LanguageServices.Server.Test
         public void CorrectConceptContexts(int line, int chr, string expectedContext)
         {
             Console.WriteLine(script);
-            var rhe = new RheDocument(script, rhetosAppContext, new NLogProvider());
+            var rhe = new RhetosDocument(rhetosAppContext, new NLogProvider());
+            rhe.UpdateText(script);
 
-            Console.WriteLine(rhe.ShowPosition(line, chr));
+            Console.WriteLine(rhe.TextDocument.ShowPosition(line, chr));
             var context = rhe.GetAnalysis(line, chr).ConceptContext;
             var contextDesc = string.Join(" / ", context);
             Console.WriteLine($"Context at cursor ({line}, {chr}): {contextDesc}");
@@ -107,9 +109,10 @@ namespace Rhetos.LanguageServices.Server.Test
         public void CorrectParsingWithErrors(int line, int chr, string expectedContext)
         {
             Console.WriteLine(scriptErrors);
-            var rhe = new RheDocument(scriptErrors, rhetosAppContext, new NLogProvider());
+            var rhe = new RhetosDocument(rhetosAppContext, new NLogProvider());
+            rhe.UpdateText(scriptErrors);
 
-            Console.WriteLine(rhe.ShowPosition(line, chr));
+            Console.WriteLine(rhe.TextDocument.ShowPosition(line, chr));
             var analysisResult = rhe.GetAnalysis(line, chr);
 
             Assert.IsTrue(analysisResult.Errors.Any());

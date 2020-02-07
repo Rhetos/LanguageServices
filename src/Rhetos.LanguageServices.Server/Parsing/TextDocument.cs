@@ -64,6 +64,13 @@ namespace Rhetos.LanguageServices.Server.Parsing
             return line + posIndicator;
         }
 
+        public string ShowPosition(int line, int chr)
+        {
+            var pos = GetPosition(line, chr);
+            var lineText = ExtractLine(pos);
+            return ShowPositionOnLine(lineText, chr);
+        }
+
         private List<int> GetLineStartPositions()
         {
             var result = new List<int>();

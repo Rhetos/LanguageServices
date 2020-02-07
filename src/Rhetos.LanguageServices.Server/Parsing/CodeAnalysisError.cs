@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Rhetos.LanguageServices.Server.Parsing
 {
-    public class AnalysisError
+    public class CodeAnalysisError
     {
         public int Line { get; set; }
         public int Chr { get; set; }

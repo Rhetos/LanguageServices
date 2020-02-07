@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json;
+using NLog;
 using Rhetos.LanguageServices.Server.Parsing;
 using Rhetos.LanguageServices.Server.Services;
 using Rhetos.Logging;
@@ -14,14 +15,16 @@ using Rhetos.Logging;
 namespace Rhetos.LanguageServices.Server.Test
 {
     [TestClass]
-    public class RheDocumentTests
+    public class RhetosWorkspaceTests
     {
+        private readonly ILoggerFactory loggerFactory;
         private readonly RhetosAppContext rhetosAppContext;
 
-        public RheDocumentTests()
+        public RhetosWorkspaceTests()
         {
             Assembly.Load("Rhetos.Dsl.DefaultConcepts");
-            var loggerFactory = LoggerFactory.Create(b => b.AddConsole());
+            LogManager.Configuration.Reload();
+            loggerFactory = LoggerFactory.Create(b => b.AddConsole());
             rhetosAppContext = new RhetosAppContext(loggerFactory.CreateLogger<RhetosAppContext>());
             rhetosAppContext.InitializeFromCurrentDomain();
         }
@@ -29,22 +32,25 @@ namespace Rhetos.LanguageServices.Server.Test
         [TestMethod]
         public void ParsesTokens()
         {
-//            var text = "entity 'sasa stublic'\r\n{\r\n\tperas;\r\n}\r\nas";
             var text =
-@"entity 'sasa stublic'
-{
-	peras;
-}
-as";
+@"Module mad
+{'
+";
             var logProvider = new NLogProvider();
-            var rhe = new RheDocument(text, rhetosAppContext, logProvider);
-            var tokens = rhe.Tokenizer.GetTokens();
-            Console.WriteLine(tokens.Count);
-            //Console.WriteLine(JsonConvert.SerializeObject(tokens, Formatting.Indented));
-            var tokenAt = rhe.GetTokenAtPosition(0, 5);
-            Console.WriteLine($"At pos: {tokenAt?.Value}");
+            /*
+            var log = LogManager.GetLogger("NLOG");
+            log.Info($"log 1");
+            log.Info($"log 2");
+            */
+
+            var workspace = new RhetosWorkspace(rhetosAppContext, logProvider, loggerFactory.CreateLogger<RhetosWorkspace>());
+            workspace.UpdateDocumentText("bla", text);
+            Task.Delay(500).Wait();
+
+            foreach (var pair in workspace.GetAllErrors())
+            {
+                Console.WriteLine(pair.error.Message);
+            }
         }
-
     }
-
 }

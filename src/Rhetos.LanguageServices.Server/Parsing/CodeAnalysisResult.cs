@@ -7,15 +7,15 @@ using Rhetos.Dsl;
 
 namespace Rhetos.LanguageServices.Server.Parsing
 {
-    public class AnalysisResult
+    public class CodeAnalysisResult
     {
         public int Line { get; }
         public int Chr { get; }
         public List<IConceptInfo> ConceptContext { get; set; } = new List<IConceptInfo>();
         public Token KeywordToken { get; set; }
-        public List<AnalysisError> Errors { get; } = new List<AnalysisError>();
+        public List<CodeAnalysisError> Errors { get; } = new List<CodeAnalysisError>();
 
-        public AnalysisResult(int line, int chr)
+        public CodeAnalysisResult(int line, int chr)
         {
             this.Line = line;
             this.Chr = chr;

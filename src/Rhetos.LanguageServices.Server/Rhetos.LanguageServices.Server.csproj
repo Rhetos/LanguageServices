@@ -47,18 +47,20 @@
     <Compile Include="Handlers\RhetosHoverHandler.cs" />
     <Compile Include="Handlers\ServerEventHandler.cs" />
     <Compile Include="Handlers\TextDocumentHandler.cs" />
-    <Compile Include="Parsing\AnalysisError.cs" />
-    <Compile Include="Parsing\AnalysisResult.cs" />
-    <Compile Include="Parsing\AnalysisRun.cs" />
-    <Compile Include="Parsing\RheDocument.cs" />
+    <Compile Include="Parsing\CodeAnalysisError.cs" />
+    <Compile Include="Parsing\CodeAnalysisResult.cs" />
+    <Compile Include="Parsing\CodeAnalysisRun.cs" />
+    <Compile Include="Parsing\RhetosDocument.cs" />
     <Compile Include="Parsing\TextDocument.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RhetosTmp\DslParser.cs" />
     <Compile Include="RhetosTmp\GenericParser.cs" />
     <Compile Include="Services\ConceptQueries.cs" />
+    <Compile Include="Services\PublishDiagnosticsRunner.cs" />
     <Compile Include="Services\RhetosAppContext.cs" />
-    <Compile Include="Services\TrackedDocuments.cs" />
+    <Compile Include="Services\RhetosWorkspace.cs" />
+    <Compile Include="Services\XmlDocumentationProvider.cs" />
     <Compile Include="Tools\ConceptInfoType.cs" />
     <Compile Include="Tools\DebugReceiver.cs" />
   </ItemGroup>
@@ -79,7 +81,7 @@
       <Version>0.14.1</Version>
     </PackageReference>
     <PackageReference Include="Rhetos">
-      <Version>4.0.0-dev2001291905b545cb</Version>
+      <Version>4.0.0-dev</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup />

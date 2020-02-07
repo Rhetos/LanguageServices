@@ -12,9 +12,9 @@ using DslParser = Rhetos.LanguageServices.Server.RhetosTmp.DslParser;
 
 namespace Rhetos.LanguageServices.Server.Parsing
 {
-    internal class AnalysisRun
+    internal class CodeAnalysisRun
     {
-        private AnalysisResult result = null;
+        private CodeAnalysisResult result = null;
         private readonly Tokenizer tokenizer;
         private readonly RhetosAppContext rhetosAppContext;
         private int targetPos;
@@ -22,7 +22,7 @@ namespace Rhetos.LanguageServices.Server.Parsing
         private readonly ILogProvider logProvider;
         private readonly List<Token> tokens;
 
-        public AnalysisRun(TextDocument textDocument, Tokenizer tokenizer, RhetosAppContext rhetosAppContext, ILogProvider logProvider)
+        public CodeAnalysisRun(TextDocument textDocument, Tokenizer tokenizer, RhetosAppContext rhetosAppContext, ILogProvider logProvider)
         {
             this.tokenizer = tokenizer;
             this.rhetosAppContext = rhetosAppContext;
@@ -31,10 +31,10 @@ namespace Rhetos.LanguageServices.Server.Parsing
             this.tokens = tokenizer.GetTokens();
         }
 
-        public AnalysisResult RunForPosition(int line, int chr)
+        public CodeAnalysisResult RunForPosition(int line, int chr)
         {
             if (result != null) throw new InvalidOperationException("Analysis already run.");
-            result = new AnalysisResult(line, chr);
+            result = new CodeAnalysisResult(line, chr);
             targetPos = textDocument.GetPosition(line, chr);
             var dslParser = new DslParser(tokenizer, rhetosAppContext.ConceptInfoInstances, logProvider);
             try
@@ -45,13 +45,17 @@ namespace Rhetos.LanguageServices.Server.Parsing
             {
                 result.Errors.Add(CreateAnalysisError(e));
             }
+            catch (Exception e)
+            {
+                result.Errors.Add(new CodeAnalysisError() { Line = 0, Chr = 0, Message = e.Message });
+            }
             return result;
         }
 
-        private AnalysisError CreateAnalysisError(DslSyntaxException e)
+        private CodeAnalysisError CreateAnalysisError(DslSyntaxException e)
         {
             var positionMatch = Regex.Match(e.Message, @"At line ([0-9]+), column ([0-9]+)");
-            var error = new AnalysisError()
+            var error = new CodeAnalysisError()
             {
                 Line = int.Parse(positionMatch.Groups[1].Value) - 1,
                 Chr = int.Parse(positionMatch.Groups[2].Value) - 1,

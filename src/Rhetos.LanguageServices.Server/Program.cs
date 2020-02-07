@@ -14,34 +14,41 @@ using OmniSharp.Extensions.LanguageServer.Server;
 using Rhetos.LanguageServices.Server.Handlers;
 using Rhetos.LanguageServices.Server.Services;
 using Rhetos.LanguageServices.Server.Tools;
+using Rhetos.Logging;
 using LogLevel = Microsoft.Extensions.Logging.LogLevel;
 
 namespace Rhetos.LanguageServices.Server
 {
     public static class Program
     {
-        static void Main(string[] args)
-        {
-            MainAsync(args).Wait();
-        }
-
-        static async Task MainAsync(string[] args)
+        public static async Task Main(string[] args)
         {
             var programLogger = LogManager.GetLogger("Program");
             programLogger.Info("Program START");
-            /*
-            Debugger.Launch();
-            while (!System.Diagnostics.Debugger.IsAttached)
-            {
-                await Task.Delay(100);
-            }*/
 
+            try
+            {
+                await RunAndWaitExit(programLogger);
+            }
+            catch (Exception e)
+            {
+                programLogger.Error($"Exception running language server: {e}");
+            }
+
+            programLogger.Info("Program END");
+            LogManager.Flush();
+        }
+
+        public static async Task RunAndWaitExit(Logger programLogger)
+        {
             var server = await BuildLanguageServer(Console.OpenStandardInput(), Console.OpenStandardOutput(),
                 builder => builder
                     .AddNLog()
                     .AddLanguageServer(LogLevel.Information)
                     .SetMinimumLevel(LogLevel.Debug)
             );
+
+            programLogger.Info("Language Server built and started.");
 
             server.Shutdown.Subscribe(next =>
             {
@@ -55,9 +62,6 @@ namespace Rhetos.LanguageServices.Server
             });
 
             await server.WaitForExit;
-
-            programLogger.Info("Program END");
-            LogManager.Flush();
         }
 
         public static async Task<ILanguageServer> BuildLanguageServer(Stream inputStream, Stream outputStream, Action<ILoggingBuilder> logBuilderAction)
@@ -75,8 +79,11 @@ namespace Rhetos.LanguageServices.Server
                     .WithServices(services =>
                     {
                         services.AddTransient<ServerEventHandler>();
-                        services.AddSingleton<TrackedDocuments>();
+                        services.AddSingleton<RhetosWorkspace>();
                         services.AddSingleton<RhetosAppContext>();
+                        services.AddSingleton<XmlDocumentationProvider>();
+                        services.AddSingleton<ILogProvider, NLogProvider>();
+                        services.AddSingleton<PublishDiagnosticsRunner>();
                         /*
                         services.AddSingleton<Foo>(provider => 
                         {
@@ -93,6 +100,7 @@ namespace Rhetos.LanguageServices.Server
                     {
                         response.Capabilities.TextDocumentSync.Kind = TextDocumentSyncKind.Full;
                         response.Capabilities.TextDocumentSync.Options.Change = TextDocumentSyncKind.Full;
+                        srv.Services.GetService<PublishDiagnosticsRunner>().Start();
                         return Task.CompletedTask;
                     })
                     .OnInitialize((s, request) =>

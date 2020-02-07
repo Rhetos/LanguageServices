@@ -58,7 +58,8 @@ Module TestModule
 
 ";
             var logProvider = new NLogProvider();
-            var rheDocument = new RheDocument(script, rhetosAppContext, logProvider);
+            var rheDocument = new RhetosDocument(rhetosAppContext, logProvider);
+            rheDocument.UpdateText(script);
 
             var dslParser = new DslParser(rheDocument.Tokenizer, rhetosAppContext.ConceptInfoInstances, logProvider);
             var parsedConcepts = dslParser.ParseConceptsWithCallbacks(

@@ -30,17 +30,17 @@ namespace Rhetos.LanguageServices.Server.Handlers
 
         private readonly ILogger<TextDocumentHandler> _logger;
         private readonly ILanguageServer server;
-        private readonly TrackedDocuments trackedDocuments;
+        private readonly RhetosWorkspace rhetosWorkspace;
         private readonly ServerEventHandler serverEventsHandler;
         private readonly RhetosAppContext rhetosAppContext;
 
-        public TextDocumentHandler(ILogger<TextDocumentHandler> logger, ILanguageServer server, TrackedDocuments trackedDocuments, 
+        public TextDocumentHandler(ILogger<TextDocumentHandler> logger, ILanguageServer server, RhetosWorkspace rhetosWorkspace, 
             RhetosAppContext rhetosAppContext, ServerEventHandler serverEventsHandler)
         {
             _logger = logger;
             _logger.LogInformation("Initialized");
             this.server = server;
-            this.trackedDocuments = trackedDocuments;
+            this.rhetosWorkspace = rhetosWorkspace;
             this.serverEventsHandler = serverEventsHandler;
             this.rhetosAppContext = rhetosAppContext;
         }
@@ -64,9 +64,10 @@ namespace Rhetos.LanguageServices.Server.Handlers
             _logger.LogInformation($"Document changed: {notification.TextDocument.Uri}.");
             var sw = Stopwatch.StartNew();
             var text = notification.ContentChanges.First().Text;
-            trackedDocuments.UpdateDocumentText(notification.TextDocument.Uri.ToString(), text);
-
-            var rhe = new RheDocument(text, rhetosAppContext, new NLogProvider());
+            rhetosWorkspace.UpdateDocumentText(notification.TextDocument.Uri.ToString(), text);
+            /*
+            var rhe = new RhetosDocument(rhetosAppContext, new NLogProvider());
+            rhe.UpdateText(text);
             var analysisResult = rhe.GetAnalysis(0, 0);
 
             var diagnostics = analysisResult.Errors
@@ -85,7 +86,7 @@ namespace Rhetos.LanguageServices.Server.Handlers
             };
             server.SendRequest(DocumentNames.PublishDiagnostics, publishDiagnostics)
                 .ContinueWith(_ => _logger.LogInformation($"Published diagnostics for {publishDiagnostics.Uri} in {sw.ElapsedMilliseconds} ms."), token);
-
+            */
             return Unit.Task;
         }
 
@@ -96,7 +97,7 @@ namespace Rhetos.LanguageServices.Server.Handlers
 
 
             _logger.LogInformation($"Document opened: {uri}.");
-            trackedDocuments.UpdateDocumentText(uri.ToString(), text);
+            rhetosWorkspace.UpdateDocumentText(uri.ToString(), text);
 
             var pathMatch = Regex.Match(text, @"^\s*//\s*<rhetosRootPath=""(.+)""\s*/>");
             var rootPath = pathMatch.Success

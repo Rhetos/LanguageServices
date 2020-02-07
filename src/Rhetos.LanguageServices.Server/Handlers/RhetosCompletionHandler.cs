@@ -1,30 +1,23 @@
-﻿using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Linq;
-using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
-using NLog;
-using OmniSharp.Extensions.LanguageServer.Protocol;
-using OmniSharp.Extensions.LanguageServer.Protocol.Client.Capabilities;
 using OmniSharp.Extensions.LanguageServer.Protocol.Models;
 using OmniSharp.Extensions.LanguageServer.Protocol.Server;
 using Rhetos.Dsl;
-using Rhetos.LanguageServices.Server.Parsing;
 using Rhetos.LanguageServices.Server.Services;
 using Rhetos.LanguageServices.Server.Tools;
-using Rhetos.Logging;
 
 namespace Rhetos.LanguageServices.Server.Handlers
 {
     public class RhetosCompletionHandler : CompletionHandler
     {
-        private readonly TrackedDocuments trackedDocuments;
         private readonly ILogger<RhetosCompletionHandler> log;
-        private readonly ILanguageServer languageServer;
         private readonly RhetosAppContext rhetosAppContext;
+        private readonly XmlDocumentationProvider xmlDocumentationProvider;
+        private readonly RhetosWorkspace rhetosWorkspace;
 
         private static readonly CompletionRegistrationOptions _completionRegistrationOptions = new CompletionRegistrationOptions()
         {
@@ -33,14 +26,14 @@ namespace Rhetos.LanguageServices.Server.Handlers
             //TriggerCharacters = new Container<string>(" ")
         };
 
-        public RhetosCompletionHandler(TrackedDocuments trackedDocuments, ILogger<RhetosCompletionHandler> log, 
-            ILanguageServer languageServer, RhetosAppContext rhetosAppContext)
+        public RhetosCompletionHandler(RhetosWorkspace rhetosWorkspace, ILogger<RhetosCompletionHandler> log, 
+            RhetosAppContext rhetosAppContext, XmlDocumentationProvider xmlDocumentationProvider)
             : base(_completionRegistrationOptions)
         {
-            this.trackedDocuments = trackedDocuments;
             this.log = log;
-            this.languageServer = languageServer;
             this.rhetosAppContext = rhetosAppContext;
+            this.xmlDocumentationProvider = xmlDocumentationProvider;
+            this.rhetosWorkspace = rhetosWorkspace;
         }
         public override bool CanResolve(CompletionItem value)
         {
@@ -49,17 +42,14 @@ namespace Rhetos.LanguageServices.Server.Handlers
 
         public override Task<CompletionList> Handle(CompletionParams request, CancellationToken cancellationToken)
         {
-            log.LogInformation("Start handle");
             var sw = Stopwatch.StartNew();
 
-            var text = trackedDocuments.GetDocumentText(request.TextDocument.Uri.ToString());
-            
-            var rhe = new RheDocument(text, rhetosAppContext, new NLogProvider());
-            var analysisResult = rhe.GetAnalysis((int) request.Position.Line, (int) request.Position.Character);
-            log.LogInformation(JsonConvert.SerializeObject(analysisResult));
+            var document = rhetosWorkspace.GetRhetosDocument(request.TextDocument.Uri.ToString());
+            var analysisResult = document.GetAnalysis((int) request.Position.Line, (int) request.Position.Character);
+            //log.LogInformation(JsonConvert.SerializeObject(analysisResult));
 
-            var typingToken = rhe.GetTokenBeingTypedAtCursor((int) request.Position.Line, (int) request.Position.Character);
-            log.LogInformation($"Typing token: '{typingToken?.Value}'.");
+            var typingToken = document.GetTokenBeingTypedAtCursor((int) request.Position.Line, (int) request.Position.Character);
+            //log.LogInformation($"Typing token: '{typingToken?.Value}'.");
             if (analysisResult.KeywordToken != null && analysisResult.KeywordToken != typingToken)
                 return Task.FromResult(new CompletionList());
             
@@ -97,11 +87,18 @@ namespace Rhetos.LanguageServices.Server.Handlers
             var keywordTypes = rhetosAppContext.Keywords[request.Label];
 
             var descriptions = keywordTypes
-                .Select(type => ConceptInfoType.SignatureDescription(type));
+                .Select(type =>
+                {
+                    var signature = ConceptInfoType.SignatureDescription(type);
+                    var documentation = xmlDocumentationProvider.GetDocumentation(type);
+                    if (!string.IsNullOrEmpty(documentation)) documentation = $"\n* {documentation}\n";
+                    return signature + documentation;
+                });
 
+            var allDescriptions = string.Join("\n", descriptions);
             var item = new CompletionItem()
             {
-                Detail = string.Join("\n", descriptions)
+                Detail = allDescriptions
             };
 
             return Task.FromResult(item);
