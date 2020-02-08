@@ -7,6 +7,7 @@ using Microsoft.Extensions.Logging;
 using OmniSharp.Extensions.LanguageServer.Protocol;
 using OmniSharp.Extensions.LanguageServer.Protocol.Models;
 using OmniSharp.Extensions.LanguageServer.Server;
+using Rhetos.LanguageServices.Server.Parsing;
 
 namespace Rhetos.LanguageServices.Server.Services
 {
@@ -33,41 +34,64 @@ namespace Rhetos.LanguageServices.Server.Services
         // TODO: publish documents with no errors!
         private void PublishLoop()
         {
-            var lastPublishTime = DateTime.Now;
+            var lastPublishTime = DateTime.MinValue;
+
             while (true)
             {
                 Task.Delay(100).Wait();
 
-                if (rhetosWorkspace.LastAnalysisRunTime > lastPublishTime)
+                var startPublishCheckTime = DateTime.Now;
+                var updatedDocuments = rhetosWorkspace.GetAllDocuments()
+                    .Where(document => document.Value.LastCodeAnalysisRun > lastPublishTime)
+                    .ToList();
+
+                if (!updatedDocuments.Any()) 
+                    continue;
+
+                var publishTasks = new List<Task>();
+                foreach (var updatedDocument in updatedDocuments)
                 {
-                    var publishTasks = new List<Task>();
-                    var allErrors = rhetosWorkspace.GetAllErrors();
-                    var errorsByDocument = allErrors.GroupBy(error => error.documentUri);
-                    foreach (var documentErrors in errorsByDocument)
+                    var diagnostics = updatedDocument.Value.AllAnalysisErrors
+                        .Select(error => DiagnosticFromAnalysisError(updatedDocument.Value, error));
+
+                    var publishDiagnostics = new PublishDiagnosticsParams()
                     {
-                        var diagnostics = documentErrors
-                            .Select(error => new Diagnostic()
-                            {
-                                Severity = DiagnosticSeverity.Error,
-                                Message = error.error.Message,
-                                Range = new Range(new Position(error.error.Line, error.error.Chr), new Position(error.error.Line, error.error.Chr)),
-                            });
-
-                        var publishDiagnostics = new PublishDiagnosticsParams()
-                        {
-                            Diagnostics = new Container<Diagnostic>(diagnostics),
-                            Uri = new Uri(documentErrors.Key)
-                        };
-                        log.LogInformation($"Publish new diagnostics for '{documentErrors.Key}'.");
-                        var publishTask = languageServer.SendRequest(DocumentNames.PublishDiagnostics, publishDiagnostics);
-                        publishTasks.Add(publishTask);
-                    }
-
-                    Task.WaitAll(publishTasks.ToArray());
-                    log.LogInformation($"Publish diagnostics complete for {publishTasks.Count} documents.");
-                    lastPublishTime = rhetosWorkspace.LastAnalysisRunTime;
+                        Diagnostics = new Container<Diagnostic>(diagnostics),
+                        Uri = new Uri(updatedDocument.Key)
+                    };
+                    log.LogInformation($"Publish new diagnostics for '{updatedDocument.Key}'.");
+                    var publishTask = languageServer.SendRequest(DocumentNames.PublishDiagnostics, publishDiagnostics);
+                    publishTasks.Add(publishTask);
                 }
+
+                Task.WaitAll(publishTasks.ToArray());
+                log.LogInformation($"Publish diagnostics complete for {publishTasks.Count} documents.");
+                lastPublishTime = startPublishCheckTime;
             }
+        }
+
+        private Diagnostic DiagnosticFromAnalysisError(RhetosDocument rhetosDocument, CodeAnalysisError error)
+        {
+            var start = new Position(error.Line, error.Chr);
+            Position end;
+            var tokenAtPosition = rhetosDocument.GetTokenAtPosition(error.Line, error.Chr);
+
+            if (tokenAtPosition != null)
+            {
+                var (line, chr) = rhetosDocument.TextDocument.GetLineChr(tokenAtPosition.PositionInDslScript + tokenAtPosition.Value.Length);
+                end = new Position(line, chr);
+            }
+            else
+            {
+                end = new Position(error.Line, error.Chr);
+            }
+
+            return new Diagnostic()
+            {
+                Severity = DiagnosticSeverity.Error,
+                Message = error.Message,
+                Range = new Range(start, end),
+            };
         }
     }
 }

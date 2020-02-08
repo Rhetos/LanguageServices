@@ -8,7 +8,6 @@ using Rhetos.LanguageServices.Server.Services;
 using Rhetos.LanguageServices.Server.Tools;
 using Rhetos.Logging;
 using Rhetos.Utilities;
-using DslParser = Rhetos.LanguageServices.Server.RhetosTmp.DslParser;
 
 namespace Rhetos.LanguageServices.Server.Parsing
 {
@@ -18,6 +17,7 @@ namespace Rhetos.LanguageServices.Server.Parsing
         public TextDocument TextDocument { get; private set; }
         public List<CodeAnalysisError> TokenizerErrors { get; private set; } = new List<CodeAnalysisError>();
         public List<CodeAnalysisError> CodeAnalysisErrors { get; private set; } = new List<CodeAnalysisError>();
+        public IEnumerable<CodeAnalysisError> AllAnalysisErrors => TokenizerErrors.Concat(CodeAnalysisErrors);
         public DateTime LastCodeAnalysisRun { get; private set; } = DateTime.MinValue;
 
         public IEnumerable<DslScript> DslScripts => new[] { new DslScript() { Script = TextDocument.Text } };
@@ -94,9 +94,14 @@ namespace Rhetos.LanguageServices.Server.Parsing
             {
                 _ = tokenizer.GetTokens();
             }
-            catch (DslSyntaxException e)
+            catch (DslParseSyntaxException e)
             {
-                TokenizerErrors.Add(new CodeAnalysisError() { Message = e.Message });
+                var (line, chr) = TextDocument.GetLineChr(e.Position);
+                TokenizerErrors.Add(new CodeAnalysisError() { Message = e.SimpleMessage, Line = line, Chr = chr });
+            }
+            catch (Exception e)
+            {
+                TokenizerErrors.Add(new CodeAnalysisError() {Message = e.Message});
             }
             return tokenizer;
         }

@@ -37,6 +37,7 @@ namespace Rhetos.LanguageServices.Server.RhetosTmp
     /// 4. Recursive "parent" property (referencing the same concept type) does not have to be the first property
 	/// to be used in the embedded form. This allows construction of recursive concepts such as menus.
     /// </summary>
+    /*
     public class GenericParser : IConceptParser
     {
         private readonly string Keyword;
@@ -175,4 +176,5 @@ namespace Rhetos.LanguageServices.Server.RhetosTmp
             }
         }
     }
+    */
 }

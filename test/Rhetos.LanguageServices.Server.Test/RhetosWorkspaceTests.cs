@@ -29,28 +29,5 @@ namespace Rhetos.LanguageServices.Server.Test
             rhetosAppContext = new RhetosAppContext(logFactory);
             rhetosAppContext.InitializeFromCurrentDomain();
         }
-
-        [TestMethod]
-        public void ParsesTokens()
-        {
-            var text =
-@"Module mad
-{'
-";
-            /*
-            var log = LogManager.GetLogger("NLOG");
-            log.Info($"log 1");
-            log.Info($"log 2");
-            */
-
-            var workspace = new RhetosWorkspace(rhetosAppContext, logFactory);
-            workspace.UpdateDocumentText("bla", text);
-            Task.Delay(500).Wait();
-
-            foreach (var pair in workspace.GetAllErrors())
-            {
-                Console.WriteLine(pair.error.Message);
-            }
-        }
     }
 }

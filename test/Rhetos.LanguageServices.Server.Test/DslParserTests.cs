@@ -16,7 +16,6 @@ using Rhetos.LanguageServices.Server.Tools;
 using Rhetos.Logging;
 using Rhetos.Utilities;
 using Rhetos.Utilities.ApplicationConfiguration;
-using DslParser = Rhetos.LanguageServices.Server.RhetosTmp.DslParser;
 
 namespace Rhetos.LanguageServices.Server.Test
 {

@@ -7,6 +7,8 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Newtonsoft.Json;
+using Rhetos.Dsl;
 using Rhetos.LanguageServices.Server.Parsing;
 using Rhetos.LanguageServices.Server.Services;
 using Rhetos.LanguageServices.Server.Tools;
@@ -126,6 +128,25 @@ namespace Rhetos.LanguageServices.Server.Test
             var contextDesc = string.Join(" / ", analysisResult.ConceptContext);
             Console.WriteLine($"Context at cursor ({line}, {chr}): {contextDesc}");
             Assert.AreEqual(expectedContext, contextDesc);
+        }
+
+        private readonly string scriptTokenError =
+@"Module 'M
+{ 
+    Entity E
+    {
+    }
+}
+";
+        [TestMethod]
+        public void HandleTokenError()
+        {
+            Console.WriteLine(scriptTokenError);
+            var rhe = new RhetosDocument(rhetosAppContext, logFactory);
+            rhe.UpdateText(scriptTokenError);
+            Assert.AreEqual(1, rhe.TokenizerErrors.Count);
+            Console.WriteLine(JsonConvert.SerializeObject(rhe.TokenizerErrors[0], Formatting.Indented));
+            StringAssert.Contains(rhe.TokenizerErrors[0].Message, "Missing closing character");
         }
 
     }

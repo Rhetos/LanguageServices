@@ -28,7 +28,8 @@ using Rhetos.Dsl;
 
 namespace Rhetos.LanguageServices.Server.RhetosTmp
 {
-    public class DslParser : IDslParser
+    /*
+    public class _DslParser : IDslParser
     {
         private readonly Tokenizer _tokenizer;
         private readonly IConceptInfo[] _conceptInfoPlugins;
@@ -36,7 +37,7 @@ namespace Rhetos.LanguageServices.Server.RhetosTmp
         private readonly ILogger _logger;
         private readonly ILogger _keywordsLogger;
 
-        public DslParser(Tokenizer tokenizer, IConceptInfo[] conceptInfoPlugins, ILogProvider logProvider)
+        public _DslParser(Tokenizer tokenizer, IConceptInfo[] conceptInfoPlugins, ILogProvider logProvider)
         {
             _tokenizer = tokenizer;
             _conceptInfoPlugins = conceptInfoPlugins;
@@ -315,5 +316,5 @@ namespace Rhetos.LanguageServices.Server.RhetosTmp
             _performanceLogger.Write(stopwatch, "DslParser.InitializeAlternativeInitializationConcepts (" + newConcepts.Count() + " new concepts created).");
             return newConcepts;
         }
-    }
+    }*/
 }

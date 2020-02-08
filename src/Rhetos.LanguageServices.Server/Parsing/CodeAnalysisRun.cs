@@ -10,7 +10,6 @@ using Rhetos.Dsl;
 using Rhetos.LanguageServices.Server.Services;
 using Rhetos.LanguageServices.Server.Tools;
 using Rhetos.Logging;
-using DslParser = Rhetos.LanguageServices.Server.RhetosTmp.DslParser;
 
 namespace Rhetos.LanguageServices.Server.Parsing
 {
@@ -43,7 +42,7 @@ namespace Rhetos.LanguageServices.Server.Parsing
             {
                 dslParser.ParseConceptsWithCallbacks(OnKeyword, null, OnUpdateContext);
             }
-            catch (DslSyntaxException e)
+            catch (DslParseSyntaxException e)
             {
                 result.Errors.Add(CreateAnalysisError(e));
             }
@@ -54,16 +53,10 @@ namespace Rhetos.LanguageServices.Server.Parsing
             return result;
         }
 
-        private CodeAnalysisError CreateAnalysisError(DslSyntaxException e)
+        private CodeAnalysisError CreateAnalysisError(DslParseSyntaxException e)
         {
-            var positionMatch = Regex.Match(e.Message, @"At line ([0-9]+), column ([0-9]+)");
-            var error = new CodeAnalysisError()
-            {
-                Line = int.Parse(positionMatch.Groups[1].Value) - 1,
-                Chr = int.Parse(positionMatch.Groups[2].Value) - 1,
-                Message = e.Message
-            };
-            return error;
+            var (line, chr) = textDocument.GetLineChr(e.Position);
+            return new CodeAnalysisError() {Message = e.SimpleMessage, Line = line, Chr = chr};
         }
 
         private void OnUpdateContext(ITokenReader iTokenReader, Stack<IConceptInfo> context, bool isOpening)
@@ -78,6 +71,8 @@ namespace Rhetos.LanguageServices.Server.Parsing
         private void OnKeyword(ITokenReader iTokenReader, string keyword)
         {
             var tokenReader = (TokenReader)iTokenReader;
+            if (tokenReader.PositionInTokenList >= tokens.Count) return;
+            
             var lastToken = tokens[tokenReader.PositionInTokenList];
             if (targetPos >= lastToken.PositionInDslScript)
             {

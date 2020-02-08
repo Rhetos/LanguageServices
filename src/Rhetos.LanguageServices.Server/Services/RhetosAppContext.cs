@@ -59,7 +59,7 @@ namespace Rhetos.LanguageServices.Server.Services
 
             var listAssemblies = LegacyUtilities.GetListAssembliesDelegate(configurationProvider);
 
-            var resolveDelegate = CreateAssemblyResolveDelegate(listAssemblies());
+            var resolveDelegate = CreateAssemblyResolveDelegate(listAssemblies().ToList());
 
             try
             {

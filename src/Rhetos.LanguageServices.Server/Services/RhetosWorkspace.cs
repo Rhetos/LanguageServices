@@ -14,8 +14,6 @@ namespace Rhetos.LanguageServices.Server.Services
 {
     public class RhetosWorkspace
     {
-        public DateTime LastAnalysisRunTime { get; private set; } = DateTime.MinValue;
-
         private readonly ConcurrentDictionary<string, RhetosDocument> rhetosDocuments = new ConcurrentDictionary<string, RhetosDocument>();
         private readonly ConcurrentDictionary<string, string> documentTextUpdates = new ConcurrentDictionary<string, string>();
         private readonly RhetosAppContext rhetosAppContext;
@@ -48,6 +46,12 @@ namespace Rhetos.LanguageServices.Server.Services
             return rhetosDocument;
         }
 
+        public Dictionary<string, RhetosDocument> GetAllDocuments()
+        {
+            return rhetosDocuments.ToDictionary(document => document.Key, document => document.Value);
+        }
+
+        /*
         public List<(string documentUri, CodeAnalysisError error)> GetAllErrors()
         {
             var result = new List<(string, CodeAnalysisError)>();
@@ -62,7 +66,7 @@ namespace Rhetos.LanguageServices.Server.Services
             }
 
             return result;
-        }
+        }*/
 
         private void PendingProcessLoop()
         {
@@ -91,8 +95,6 @@ namespace Rhetos.LanguageServices.Server.Services
                     rhetosDocuments[documentUri] = rhetosDocument;
                 }
             }
-            LastAnalysisRunTime = DateTime.Now;
-            
             log.LogInformation($"Document analysis COMPLETE.");
         }
     }
