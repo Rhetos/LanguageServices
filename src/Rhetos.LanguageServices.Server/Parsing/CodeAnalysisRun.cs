@@ -10,6 +10,7 @@ using Rhetos.Dsl;
 using Rhetos.LanguageServices.Server.Services;
 using Rhetos.LanguageServices.Server.Tools;
 using Rhetos.Logging;
+using Rhetos.Utilities;
 
 namespace Rhetos.LanguageServices.Server.Parsing
 {
@@ -40,7 +41,7 @@ namespace Rhetos.LanguageServices.Server.Parsing
             var dslParser = new DslParser(tokenizer, rhetosAppContext.ConceptInfoInstances, rhetosLogProvider);
             try
             {
-                dslParser.ParseConceptsWithCallbacks(OnKeyword, null, OnUpdateContext);
+                dslParser.ParseConceptsWithCallbacks(OnKeyword, OnMemberRead, OnUpdateContext);
             }
             catch (DslParseSyntaxException e)
             {
@@ -51,6 +52,24 @@ namespace Rhetos.LanguageServices.Server.Parsing
                 result.Errors.Add(new CodeAnalysisError() { Line = 0, Chr = 0, Message = e.Message });
             }
             return result;
+        }
+
+        private void OnMemberRead(ITokenReader iTokenReader, IConceptInfo conceptInfo, ConceptMember conceptMember, ValueOrError<object> valueOrError)
+        {
+            var tokenReader = (TokenReader)iTokenReader;
+            // if (tokenReader.PositionInTokenList >= tokens.Count) return;
+            if (tokenReader.PositionInTokenList == 0) return;
+
+            var lastToken = tokens[tokenReader.PositionInTokenList - 1];
+            if (lastToken.PositionInDslScript > targetPos) return;
+
+            var type = conceptInfo.GetType().Name;
+            if (!result.MemberDebug.ContainsKey(type)) result.MemberDebug[type] = new List<string>();
+
+            var value = valueOrError.IsError ? valueOrError.Error : valueOrError.Value.ToString();
+
+            var debugInfo = $"Member: {conceptMember.ValueType.Name}:'{conceptMember.Name}', Value: '{value}'.";
+            result.MemberDebug[type].Add(debugInfo);
         }
 
         private CodeAnalysisError CreateAnalysisError(DslParseSyntaxException e)
@@ -74,12 +93,21 @@ namespace Rhetos.LanguageServices.Server.Parsing
             if (tokenReader.PositionInTokenList >= tokens.Count) return;
             
             var lastToken = tokens[tokenReader.PositionInTokenList];
-            if (targetPos >= lastToken.PositionInDslScript)
+            if (lastToken.PositionInDslScript <= targetPos)
             {
                 if (keyword != null)
+                {
                     result.KeywordToken = lastToken;
+                    result.MemberDebug = new Dictionary<string, List<string>>();
+                }
                 else
+                {
                     result.KeywordToken = null;
+                }
+            }
+            else if (result.NextKeywordToken == null)
+            {
+                result.NextKeywordToken = lastToken;
             }
         }
     }

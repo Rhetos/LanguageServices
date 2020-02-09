@@ -1,37 +1,34 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Rhetos.Dsl;
 using Rhetos.Dsl.DefaultConcepts;
 using Rhetos.LanguageServices.Server.Services;
 using Rhetos.LanguageServices.Server.Tools;
-using Rhetos.Logging;
-using PropertyInfo = Rhetos.Dsl.DefaultConcepts.PropertyInfo;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Rhetos.LanguageServices.Server.Test
 {
     [TestClass]
     public class ConceptQueriesTests
     {
-        private readonly RhetosAppContext rhetosAppContext;
+        private readonly IServiceProvider serviceProvider;
 
         public ConceptQueriesTests()
         {
             Assembly.Load("Rhetos.Dsl.DefaultConcepts");
-            var logFactory = LoggerFactory.Create(b => b.AddConsole());
-            rhetosAppContext = new RhetosAppContext(logFactory);
-            rhetosAppContext.InitializeFromCurrentDomain();
+            serviceProvider = TestCommon.CreateTestServiceProvider();
+            serviceProvider.GetService<RhetosAppContext>().InitializeFromCurrentDomain();
         }
 
+
+        // TODO: Missing assert
         [TestMethod]
         public void Test()
         {
-            var conceptQueries = new ConceptQueries(rhetosAppContext);
+            var conceptQueries = serviceProvider.GetService<ConceptQueries>();
             var validConcepts = conceptQueries.ValidConceptsForParent(typeof(EntityInfo));
 
             foreach (var validConcept in validConcepts)
@@ -45,6 +42,7 @@ namespace Rhetos.LanguageServices.Server.Test
             */
         }
 
+        // TODO: Missing assert
         [TestMethod]
         public void Test2()
         {

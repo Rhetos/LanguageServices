@@ -26,11 +26,13 @@ namespace Rhetos.LanguageServices.Server.Parsing
         private readonly RhetosAppContext rhetosAppContext;
         private readonly object _syncAnalysis = new object();
         private readonly ILoggerFactory logFactory;
+        private readonly ConceptQueries conceptQueries;
 
-        public RhetosDocument(RhetosAppContext rhetosAppContext, ILoggerFactory logFactory)
+        public RhetosDocument(RhetosAppContext rhetosAppContext, ConceptQueries conceptQueries, ILoggerFactory logFactory)
         {
             this.rhetosAppContext = rhetosAppContext;
             this.logFactory = logFactory;
+            this.conceptQueries = conceptQueries;
         }
 
         public void UpdateText(string text)
@@ -54,6 +56,28 @@ namespace Rhetos.LanguageServices.Server.Parsing
                 var analysisRun = new CodeAnalysisRun(TextDocument, Tokenizer, rhetosAppContext, logFactory);
                 return analysisRun.RunForPosition(line, chr);
             }
+        }
+
+        public List<string> GetCompletionKeywordsAtPosition(int line, int chr)
+        {
+            var analysisResult = GetAnalysis(line, chr);
+
+            var typingToken = GetTokenBeingTypedAtCursor(line, chr);
+            if (analysisResult.KeywordToken != null && analysisResult.KeywordToken != typingToken)
+                return new List<string>();
+
+            var lastParent = analysisResult.ConceptContext.LastOrDefault();
+            var validConcepts = lastParent == null
+                ? rhetosAppContext.ConceptInfoTypes.ToList()
+                : conceptQueries.ValidConceptsForParent(lastParent.GetType());
+
+            var keywords = validConcepts
+                .Select(concept => ConceptInfoHelper.GetKeyword(concept))
+                .Where(keyword => keyword != null)
+                .Distinct()
+                .ToList();
+
+            return keywords;
         }
 
         public Token GetTokenBeingTypedAtCursor(int line, int chr)

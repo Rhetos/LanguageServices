@@ -9,6 +9,7 @@ using NLog;
 using Rhetos.LanguageServices.Server.Parsing;
 using Rhetos.LanguageServices.Server.Tools;
 using Rhetos.Logging;
+using ILogger = Microsoft.Extensions.Logging.ILogger;
 
 namespace Rhetos.LanguageServices.Server.Services
 {
@@ -16,17 +17,15 @@ namespace Rhetos.LanguageServices.Server.Services
     {
         private readonly ConcurrentDictionary<string, RhetosDocument> rhetosDocuments = new ConcurrentDictionary<string, RhetosDocument>();
         private readonly ConcurrentDictionary<string, string> documentTextUpdates = new ConcurrentDictionary<string, string>();
-        private readonly RhetosAppContext rhetosAppContext;
         private Task analysisTask = Task.CompletedTask;
         private DateTime lastDocumentChangeTime = DateTime.MinValue;
         private readonly ILogger<RhetosWorkspace> log;
-        private readonly ILoggerFactory logFactory;
+        private readonly RhetosDocumentFactory rhetosDocumentFactory;
 
-        public RhetosWorkspace(RhetosAppContext rhetosAppContext, ILoggerFactory logFactory)
+        public RhetosWorkspace(RhetosDocumentFactory rhetosDocumentFactory, ILogger<RhetosWorkspace> log)
         {
-            this.rhetosAppContext = rhetosAppContext;
-            this.log = logFactory.CreateLogger<RhetosWorkspace>();
-            this.logFactory = logFactory;
+            this.log = log;
+            this.rhetosDocumentFactory = rhetosDocumentFactory;
         }
 
         public void UpdateDocumentText(string id, string text)
@@ -90,7 +89,7 @@ namespace Rhetos.LanguageServices.Server.Services
             {
                 if (documentTextUpdates.TryRemove(documentUri, out var text))
                 {
-                    var rhetosDocument = new RhetosDocument(rhetosAppContext, logFactory);
+                    var rhetosDocument = rhetosDocumentFactory.CreateNew();
                     rhetosDocument.UpdateText(text);
                     rhetosDocuments[documentUri] = rhetosDocument;
                 }

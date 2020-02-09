@@ -21,27 +21,33 @@ namespace Rhetos.LanguageServices.Server
 {
     public static class Program
     {
+        private static Guid processGuid;
         public static async Task Main(string[] args)
         {
+            processGuid = Guid.NewGuid();
             var programLogger = LogManager.GetLogger("Program");
-            programLogger.Info("Program START");
+            programLogger.Info($"Program START {processGuid}");
 
             try
             {
-                await RunAndWaitExit(programLogger);
+                using (var input = Console.OpenStandardInput())
+                using (var output = Console.OpenStandardOutput())
+                {
+                    await RunAndWaitExit(programLogger, input, output);
+                }
             }
             catch (Exception e)
             {
                 programLogger.Error($"Exception running language server: {e}");
             }
 
-            programLogger.Info("Program END");
+            programLogger.Info($"Program END {processGuid}");
             LogManager.Flush();
         }
 
-        public static async Task RunAndWaitExit(Logger programLogger)
+        public static async Task RunAndWaitExit(Logger programLogger, Stream input, Stream output)
         {
-            var server = await BuildLanguageServer(Console.OpenStandardInput(), Console.OpenStandardOutput(),
+            var server = await BuildLanguageServer(input, output,
                 builder => builder
                     .AddNLog()
                     .AddLanguageServer(LogLevel.Information)
@@ -53,7 +59,7 @@ namespace Rhetos.LanguageServices.Server
             server.Shutdown.Subscribe(next =>
             {
                 programLogger.Info($"SHUTDOWN SUBSCRIBE {next}");
-                Task.Delay(10000).Wait();
+                Task.Delay(500).Wait();
             });
 
             server.Exit.Subscribe(next =>
@@ -72,7 +78,8 @@ namespace Rhetos.LanguageServices.Server
                     .WithOutput(outputStream)
                     .ConfigureLogging(logBuilderAction)
                     .WithHandler<TextDocumentHandler>()
-                    //.WithHandler<RhetosHoverHandler>()
+                    .WithHandler<RhetosHoverHandler>()
+                    .WithHandler<RhetosSignatureHelpHandler>()
                     //.WithReciever(new DebugReceiver())
                     .WithHandler<RhetosCompletionHandler>()
                     //.WithHandler<DidChangeWatchedFilesHandler>()
@@ -80,10 +87,12 @@ namespace Rhetos.LanguageServices.Server
                     {
                         services.AddTransient<ServerEventHandler>();
                         services.AddSingleton<RhetosWorkspace>();
+                        services.AddTransient<RhetosDocumentFactory>();
                         services.AddSingleton<RhetosAppContext>();
                         services.AddSingleton<XmlDocumentationProvider>();
                         services.AddSingleton<ILogProvider, RhetosNetCoreLogProvider>();
                         services.AddSingleton<PublishDiagnosticsRunner>();
+                        services.AddSingleton<ConceptQueries>();
                         /*
                         services.AddSingleton<Foo>(provider => 
                         {
@@ -105,7 +114,7 @@ namespace Rhetos.LanguageServices.Server
                     })
                     .OnInitialize((s, request) =>
                     {
-                        //LogManager.GetLogger("Init").Info(JsonConvert.SerializeObject(request, Formatting.Indented));
+                        LogManager.GetLogger("Init").Info(JsonConvert.SerializeObject(request, Formatting.Indented));
                         return Task.CompletedTask;
                     })
             );

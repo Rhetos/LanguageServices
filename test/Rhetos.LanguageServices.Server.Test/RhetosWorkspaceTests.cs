@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json;
@@ -18,16 +19,13 @@ namespace Rhetos.LanguageServices.Server.Test
     [TestClass]
     public class RhetosWorkspaceTests
     {
-        private readonly ILoggerFactory logFactory;
-        private readonly RhetosAppContext rhetosAppContext;
+        private readonly IServiceProvider serviceProvider;
 
         public RhetosWorkspaceTests()
         {
             Assembly.Load("Rhetos.Dsl.DefaultConcepts");
-            LogManager.Configuration.Reload();
-            logFactory = LoggerFactory.Create(b => b.AddConsole());
-            rhetosAppContext = new RhetosAppContext(logFactory);
-            rhetosAppContext.InitializeFromCurrentDomain();
+            serviceProvider = TestCommon.CreateTestServiceProvider();
+            serviceProvider.GetService<RhetosAppContext>().InitializeFromCurrentDomain();
         }
     }
 }

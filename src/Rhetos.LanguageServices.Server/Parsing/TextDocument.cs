@@ -31,12 +31,16 @@ namespace Rhetos.LanguageServices.Server.Parsing
             if (line < lineStarts.Value.Count - 1 && lineStarts.Value[line] + chr >= lineStarts.Value[line + 1])
                 pos = lineStarts.Value[line + 1] - 1;
 
+            if (Text[pos] == '\n' && pos > 0 && Text[pos - 1] == '\r') pos--;
+
             return pos;
         }
 
         public (int line, int chr) GetLineChr(int pos)
         {
             if (pos >= Text.Length) pos = Text.Length - 1;
+
+            if (Text[pos] == '\n' && pos > 0 && Text[pos - 1] == '\r') pos--;
 
             var lineStarts = GetLineStartPositions();
             var line = 0;
@@ -75,11 +79,17 @@ namespace Rhetos.LanguageServices.Server.Parsing
         {
             var result = new List<int>();
             result.Add(0);
-            for (var i = 1; i < Text.Length; i++)
+            for (var i = 0; i < Text.Length; i++)
             {
-                if (Text[i - 1] == '\n')
+                if (Text[i] == '\n')
                 {
-                    result.Add(i);
+                    result.Add(i + 1);
+                }
+
+                if (Text[i] == '\r' && i < Text.Length - 1 && Text[i + 1] == '\n')
+                {
+                    i++;
+                    result.Add(i + 1);
                 }
             }
 

@@ -45,6 +45,7 @@
   <ItemGroup>
     <Compile Include="Handlers\RhetosCompletionHandler.cs" />
     <Compile Include="Handlers\RhetosHoverHandler.cs" />
+    <Compile Include="Handlers\RhetosSignatureHelpHandler.cs" />
     <Compile Include="Handlers\ServerEventHandler.cs" />
     <Compile Include="Handlers\TextDocumentHandler.cs" />
     <Compile Include="Parsing\CodeAnalysisError.cs" />
@@ -59,6 +60,7 @@
     <Compile Include="Services\ConceptQueries.cs" />
     <Compile Include="Services\PublishDiagnosticsRunner.cs" />
     <Compile Include="Services\RhetosAppContext.cs" />
+    <Compile Include="Services\RhetosDocumentFactory.cs" />
     <Compile Include="Services\RhetosWorkspace.cs" />
     <Compile Include="Services\XmlDocumentationProvider.cs" />
     <Compile Include="Tools\ConceptInfoType.cs" />
@@ -80,10 +82,10 @@
       <Version>1.6.1</Version>
     </PackageReference>
     <PackageReference Include="OmniSharp.Extensions.LanguageServer">
-      <Version>0.14.1</Version>
+      <Version>0.14.2</Version>
     </PackageReference>
     <PackageReference Include="Rhetos">
-      <Version>4.0.0-dev20020819434949f9</Version>
+      <Version>4.0.0-dev20020920474be604</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup />

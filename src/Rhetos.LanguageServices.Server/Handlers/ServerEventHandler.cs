@@ -11,13 +11,11 @@ namespace Rhetos.LanguageServices.Server.Handlers
 {
     public class ServerEventHandler
     {
-        private readonly ILanguageServer languageServer;
         private readonly RhetosAppContext rhetosContext;
         private readonly ILogger<ServerEventHandler> log;
 
-        public ServerEventHandler(ILanguageServer languageServer, RhetosAppContext rhetosContext, ILogger<ServerEventHandler> log)
+        public ServerEventHandler(RhetosAppContext rhetosContext, ILogger<ServerEventHandler> log)
         {
-            this.languageServer = languageServer;
             this.rhetosContext = rhetosContext;
             this.log = log;
         }

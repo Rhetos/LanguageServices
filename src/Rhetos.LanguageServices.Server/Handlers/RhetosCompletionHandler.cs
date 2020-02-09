@@ -15,9 +15,8 @@ namespace Rhetos.LanguageServices.Server.Handlers
     public class RhetosCompletionHandler : CompletionHandler
     {
         private readonly ILogger<RhetosCompletionHandler> log;
-        private readonly RhetosAppContext rhetosAppContext;
-        private readonly XmlDocumentationProvider xmlDocumentationProvider;
         private readonly RhetosWorkspace rhetosWorkspace;
+        private readonly ConceptQueries conceptQueries;
 
         private static readonly CompletionRegistrationOptions _completionRegistrationOptions = new CompletionRegistrationOptions()
         {
@@ -26,14 +25,12 @@ namespace Rhetos.LanguageServices.Server.Handlers
             //TriggerCharacters = new Container<string>(" ")
         };
 
-        public RhetosCompletionHandler(RhetosWorkspace rhetosWorkspace, ILogger<RhetosCompletionHandler> log, 
-            RhetosAppContext rhetosAppContext, XmlDocumentationProvider xmlDocumentationProvider)
+        public RhetosCompletionHandler(RhetosWorkspace rhetosWorkspace, ConceptQueries conceptQueries, ILogger<RhetosCompletionHandler> log)
             : base(_completionRegistrationOptions)
         {
             this.log = log;
-            this.rhetosAppContext = rhetosAppContext;
-            this.xmlDocumentationProvider = xmlDocumentationProvider;
             this.rhetosWorkspace = rhetosWorkspace;
+            this.conceptQueries = conceptQueries;
         }
         public override bool CanResolve(CompletionItem value)
         {
@@ -48,63 +45,25 @@ namespace Rhetos.LanguageServices.Server.Handlers
             if (document == null)
                 return Task.FromResult(new CompletionList());
 
-            var analysisResult = document.GetAnalysis((int) request.Position.Line, (int) request.Position.Character);
-            //log.LogInformation(JsonConvert.SerializeObject(analysisResult));
-
-            var typingToken = document.GetTokenBeingTypedAtCursor((int) request.Position.Line, (int) request.Position.Character);
-            //log.LogInformation($"Typing token: '{typingToken?.Value}'.");
-            if (analysisResult.KeywordToken != null && analysisResult.KeywordToken != typingToken)
-                return Task.FromResult(new CompletionList());
-            
-            var conceptQueries = new ConceptQueries(rhetosAppContext);
-
-            var lastParent = analysisResult.ConceptContext.LastOrDefault();
-            var validConcepts = lastParent == null
-                ? rhetosAppContext.ConceptInfoTypes.ToList()
-                : conceptQueries.ValidConceptsForParent(lastParent.GetType());
-
-            var keywords = validConcepts
-                .Select(concept => ConceptInfoHelper.GetKeyword(concept))
-                .Where(keyword => keyword != null)
-                .Distinct()
-                .ToList();
+            var keywords = document.GetCompletionKeywordsAtPosition((int) request.Position.Line, (int) request.Position.Character);
 
             var completionItems = keywords
-                .Select(keyword => new CompletionItem()
-                {
-                    Label = keyword,
-                    Kind = CompletionItemKind.Keyword
-                })
+                .Select(keyword => new CompletionItem() {Label = keyword, Kind = CompletionItemKind.Keyword, Detail = conceptQueries.GetDescriptionForKeyword(keyword)})
                 .ToList();
 
             var list = new CompletionList(completionItems);
-            
+
+            // debug signature
+            var memberDebug = document.GetAnalysis((int) request.Position.Line, (int) request.Position.Character);
+            log.LogInformation($"Member info: {JsonConvert.SerializeObject(memberDebug.MemberDebug, Formatting.Indented)}");
+
             log.LogInformation($"End handle completion in {sw.ElapsedMilliseconds} ms.");
             return Task.FromResult(list);
         }
         
         public override Task<CompletionItem> Handle(CompletionItem request, CancellationToken cancellationToken)
         {
-            if (!rhetosAppContext.Keywords.ContainsKey(request.Label))
-                return Task.FromResult(new CompletionItem());
-            var keywordTypes = rhetosAppContext.Keywords[request.Label];
-
-            var descriptions = keywordTypes
-                .Select(type =>
-                {
-                    var signature = ConceptInfoType.SignatureDescription(type);
-                    var documentation = xmlDocumentationProvider.GetDocumentation(type);
-                    if (!string.IsNullOrEmpty(documentation)) documentation = $"\n* {documentation}\n";
-                    return signature + documentation;
-                });
-
-            var allDescriptions = string.Join("\n", descriptions);
-            var item = new CompletionItem()
-            {
-                Detail = allDescriptions
-            };
-
-            return Task.FromResult(item);
+            return Task.FromResult(request);
         }
     }
 }

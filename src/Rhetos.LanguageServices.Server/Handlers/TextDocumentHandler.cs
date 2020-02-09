@@ -58,11 +58,9 @@ namespace Rhetos.LanguageServices.Server.Handlers
             // _logger.LogInformation(JsonConvert.SerializeObject(capability, Formatting.Indented));
         }
 
-        // TODO: isolate lint to service to prevent overlapping linting tasks
         public Task<Unit> Handle(DidChangeTextDocumentParams notification, CancellationToken token)
         {
             _logger.LogInformation($"Document changed: {notification.TextDocument.Uri}.");
-            var sw = Stopwatch.StartNew();
             var text = notification.ContentChanges.First().Text;
             rhetosWorkspace.UpdateDocumentText(notification.TextDocument.Uri.ToString(), text);
 

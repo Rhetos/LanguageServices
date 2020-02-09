@@ -1,33 +1,27 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json;
-using Rhetos.Dsl;
 using Rhetos.LanguageServices.Server.Parsing;
 using Rhetos.LanguageServices.Server.Services;
-using Rhetos.LanguageServices.Server.Tools;
-using Rhetos.Logging;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Rhetos.LanguageServices.Server.Test
 {
     [TestClass]
     public class RhetosDocumentAnalysisTests
     {
-        private readonly ILoggerFactory logFactory;
-        private readonly RhetosAppContext rhetosAppContext;
+        private readonly IServiceProvider serviceProvider;
+        private readonly RhetosDocumentFactory rhetosDocumentFactory;
 
         public RhetosDocumentAnalysisTests()
         {
             Assembly.Load("Rhetos.Dsl.DefaultConcepts");
-            logFactory = LoggerFactory.Create(b => b.AddConsole());
-            rhetosAppContext = new RhetosAppContext(logFactory);
-            rhetosAppContext.InitializeFromCurrentDomain();
+            serviceProvider = TestCommon.CreateTestServiceProvider();
+
+            serviceProvider.GetService<RhetosAppContext>().InitializeFromCurrentDomain();
+            rhetosDocumentFactory = serviceProvider.GetService<RhetosDocumentFactory>();
         }
 
         private readonly string script =
@@ -62,7 +56,7 @@ namespace Rhetos.LanguageServices.Server.Test
         public void CorrectKeywords(int line, int chr, string expectedKeyword)
         {
             Console.WriteLine(script);
-            var rhe = new RhetosDocument(rhetosAppContext, logFactory);
+            var rhe = rhetosDocumentFactory.CreateNew();
             rhe.UpdateText(script);
 
             Console.WriteLine(rhe.TextDocument.ShowPosition(line, chr));
@@ -87,7 +81,7 @@ namespace Rhetos.LanguageServices.Server.Test
         public void CorrectConceptContexts(int line, int chr, string expectedContext)
         {
             Console.WriteLine(script);
-            var rhe = new RhetosDocument(rhetosAppContext, logFactory);
+            var rhe = rhetosDocumentFactory.CreateNew();
             rhe.UpdateText(script);
 
             Console.WriteLine(rhe.TextDocument.ShowPosition(line, chr));
@@ -113,7 +107,7 @@ namespace Rhetos.LanguageServices.Server.Test
         public void CorrectParsingWithErrors(int line, int chr, string expectedContext)
         {
             Console.WriteLine(scriptErrors);
-            var rhe = new RhetosDocument(rhetosAppContext, logFactory);
+            var rhe = rhetosDocumentFactory.CreateNew();
             rhe.UpdateText(scriptErrors);
 
             Console.WriteLine(rhe.TextDocument.ShowPosition(line, chr));
@@ -138,11 +132,12 @@ namespace Rhetos.LanguageServices.Server.Test
     }
 }
 ";
+
         [TestMethod]
         public void HandleTokenError()
         {
             Console.WriteLine(scriptTokenError);
-            var rhe = new RhetosDocument(rhetosAppContext, logFactory);
+            var rhe = rhetosDocumentFactory.CreateNew();
             rhe.UpdateText(scriptTokenError);
             Assert.AreEqual(1, rhe.TokenizerErrors.Count);
             Console.WriteLine(JsonConvert.SerializeObject(rhe.TokenizerErrors[0], Formatting.Indented));

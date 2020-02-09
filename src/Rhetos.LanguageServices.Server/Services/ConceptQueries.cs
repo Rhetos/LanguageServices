@@ -11,10 +11,30 @@ namespace Rhetos.LanguageServices.Server.Services
     public class ConceptQueries
     {
         private readonly RhetosAppContext rhetosAppContext;
+        private readonly XmlDocumentationProvider xmlDocumentationProvider;
 
-        public ConceptQueries(RhetosAppContext rhetosAppContext)
+        public ConceptQueries(RhetosAppContext rhetosAppContext, XmlDocumentationProvider xmlDocumentationProvider)
         {
             this.rhetosAppContext = rhetosAppContext;
+            this.xmlDocumentationProvider = xmlDocumentationProvider;
+        }
+
+        public string GetDescriptionForKeyword(string keyword)
+        {
+            if (!rhetosAppContext.Keywords.TryGetValue(keyword, out var keywordTypes))
+                return null;
+
+            var descriptions = keywordTypes
+                .Select(type =>
+                {
+                    var signature = ConceptInfoType.SignatureDescription(type);
+                    var documentation = xmlDocumentationProvider.GetDocumentation(type);
+                    if (!string.IsNullOrEmpty(documentation)) documentation = $"\n* {documentation}\n";
+                    return signature + documentation;
+                });
+
+            var allDescriptions = string.Join("\n", descriptions);
+            return allDescriptions;
         }
 
         public List<Type> ValidConceptsForParent(Type parentConceptInfoType)
