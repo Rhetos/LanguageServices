@@ -28,17 +28,17 @@ namespace Rhetos.LanguageServices.Server.Handlers
             DocumentSelector = RhetosDocumentSelector
         };
 
-        private readonly ILogger<TextDocumentHandler> _logger;
+        private readonly ILogger<TextDocumentHandler> log;
         private readonly ILanguageServer server;
         private readonly RhetosWorkspace rhetosWorkspace;
         private readonly ServerEventHandler serverEventsHandler;
         private readonly RhetosAppContext rhetosAppContext;
 
-        public TextDocumentHandler(ILogger<TextDocumentHandler> logger, ILanguageServer server, RhetosWorkspace rhetosWorkspace, 
+        public TextDocumentHandler(ILogger<TextDocumentHandler> log, ILanguageServer server, RhetosWorkspace rhetosWorkspace, 
             RhetosAppContext rhetosAppContext, ServerEventHandler serverEventsHandler)
         {
-            _logger = logger;
-            _logger.LogInformation("Initialized");
+            this.log = log;
+            log.LogInformation("Initialized");
             this.server = server;
             this.rhetosWorkspace = rhetosWorkspace;
             this.serverEventsHandler = serverEventsHandler;
@@ -55,14 +55,12 @@ namespace Rhetos.LanguageServices.Server.Handlers
 
         public void SetCapability(SynchronizationCapability capability)
         {
-            // _logger.LogInformation(JsonConvert.SerializeObject(capability, Formatting.Indented));
         }
 
         public Task<Unit> Handle(DidChangeTextDocumentParams notification, CancellationToken token)
         {
-            _logger.LogInformation($"Document changed: {notification.TextDocument.Uri}.");
             var text = notification.ContentChanges.First().Text;
-            rhetosWorkspace.UpdateDocumentText(notification.TextDocument.Uri.ToString(), text);
+            rhetosWorkspace.UpdateDocumentText(notification.TextDocument.Uri, text);
 
             return Unit.Task;
         }
@@ -72,9 +70,8 @@ namespace Rhetos.LanguageServices.Server.Handlers
             var text = notification.TextDocument.Text;
             var uri = notification.TextDocument.Uri;
 
-
-            _logger.LogInformation($"Document opened: {uri}.");
-            rhetosWorkspace.UpdateDocumentText(uri.ToString(), text);
+            log.LogInformation($"Document opened: {uri}.");
+            rhetosWorkspace.UpdateDocumentText(uri, text);
 
             var pathMatch = Regex.Match(text, @"^\s*//\s*<rhetosRootPath=""(.+)""\s*/>");
             var rootPath = pathMatch.Success

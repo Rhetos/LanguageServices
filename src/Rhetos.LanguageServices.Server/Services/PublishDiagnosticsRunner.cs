@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -30,60 +31,63 @@ namespace Rhetos.LanguageServices.Server.Services
             Task.Factory.StartNew(PublishLoop, TaskCreationOptions.LongRunning);
         }
 
-        // TODO: publish only documents with changed analysis
-        // TODO: publish documents with no errors!
         private void PublishLoop()
         {
             var lastPublishTime = DateTime.MinValue;
 
             while (true)
             {
-                Task.Delay(100).Wait();
+                Task.Delay(300).Wait();
+                var sw = Stopwatch.StartNew();
 
                 var startPublishCheckTime = DateTime.Now;
-                var updatedDocuments = rhetosWorkspace.GetAllDocuments()
-                    .Where(document => document.Value.LastCodeAnalysisRun > lastPublishTime)
+                var updatedDocumentIds = rhetosWorkspace.DocumentChangeTimes
+                    .Where(a => a.Value > lastPublishTime)
+                    .Select(a => a.Key)
                     .ToList();
 
-                if (!updatedDocuments.Any()) 
+                if (!updatedDocumentIds.Any()) 
                     continue;
 
                 var publishTasks = new List<Task>();
-                foreach (var updatedDocument in updatedDocuments)
+                foreach (var documentId in updatedDocumentIds)
                 {
-                    var diagnostics = updatedDocument.Value.AllAnalysisErrors
-                        .Select(error => DiagnosticFromAnalysisError(updatedDocument.Value, error));
+                    var rhetosDocument = rhetosWorkspace.GetRhetosDocument(documentId);
+                    var analysisResult = rhetosDocument.GetAnalysis();
+
+                    var diagnostics = analysisResult.AllErrors
+                        .Select(error => DiagnosticFromAnalysisError(analysisResult, error));
 
                     var publishDiagnostics = new PublishDiagnosticsParams()
                     {
                         Diagnostics = new Container<Diagnostic>(diagnostics),
-                        Uri = new Uri(updatedDocument.Key)
+                        Uri = new Uri(documentId)
                     };
-                    log.LogInformation($"Publish new diagnostics for '{updatedDocument.Key}'.");
+                    log.LogDebug($"Publish new diagnostics for '{documentId}'.");
                     var publishTask = languageServer.SendRequest(DocumentNames.PublishDiagnostics, publishDiagnostics);
                     publishTasks.Add(publishTask);
                 }
 
                 Task.WaitAll(publishTasks.ToArray());
-                log.LogInformation($"Publish diagnostics complete for {publishTasks.Count} documents.");
+                log.LogInformation($"Publish diagnostics complete for {publishTasks.Count} documents in {sw.Elapsed.TotalMilliseconds:0.00} ms.");
                 lastPublishTime = startPublishCheckTime;
             }
         }
 
-        private Diagnostic DiagnosticFromAnalysisError(RhetosDocument rhetosDocument, CodeAnalysisError error)
+        private Diagnostic DiagnosticFromAnalysisError(CodeAnalysisResult analysisResult, CodeAnalysisError error)
         {
-            var start = new Position(error.Line, error.Chr);
+            var start = error.LineChr.ToPosition();
             Position end;
-            var tokenAtPosition = rhetosDocument.GetTokenAtPosition(error.Line, error.Chr);
+            var tokenAtPosition = analysisResult.GetTokenAtPosition(error.LineChr);
 
             if (tokenAtPosition != null)
             {
-                var (line, chr) = rhetosDocument.TextDocument.GetLineChr(tokenAtPosition.PositionInDslScript + tokenAtPosition.Value.Length);
-                end = new Position(line, chr);
+                var lineChr = analysisResult.TextDocument.GetLineChr(tokenAtPosition.PositionInDslScript + tokenAtPosition.Value.Length);
+                end = lineChr.ToPosition();
             }
             else
             {
-                end = new Position(error.Line, error.Chr);
+                end = error.LineChr.ToPosition();
             }
 
             return new Diagnostic()

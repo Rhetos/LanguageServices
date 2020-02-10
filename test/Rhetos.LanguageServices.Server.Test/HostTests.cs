@@ -37,7 +37,7 @@ namespace Rhetos.LanguageServices.Server.Test
 
             var opened = await languageClient.SendRequest<object>(DocumentNames.DidOpen, new DidOpenTextDocumentParams() {TextDocument = textDocument});
 
-            // Task.Delay(2500).Wait();
+            Task.Delay(2500).Wait();
 
             var result = await languageClient.SendRequest<CompletionList>(DocumentNames.Completion, new CompletionParams() { TextDocument = new TextDocumentIdentifier(textDocument.Uri), Position = new Position()});
             Console.WriteLine(JsonConvert.SerializeObject(result.Items, Formatting.Indented));

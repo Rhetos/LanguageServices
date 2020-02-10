@@ -1,28 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using Microsoft.Extensions.Logging;
 using Rhetos.Dsl;
 using Rhetos.LanguageServices.Server.Services;
 using Rhetos.LanguageServices.Server.Tools;
-using Rhetos.Logging;
 using Rhetos.Utilities;
 
 namespace Rhetos.LanguageServices.Server.Parsing
 {
-    public class RhetosDocument : IDslScriptsProvider
+    public class RhetosDocument
     {
-        public Tokenizer Tokenizer { get; private set; }
         public TextDocument TextDocument { get; private set; }
-        public List<CodeAnalysisError> TokenizerErrors { get; private set; } = new List<CodeAnalysisError>();
-        public List<CodeAnalysisError> CodeAnalysisErrors { get; private set; } = new List<CodeAnalysisError>();
-        public IEnumerable<CodeAnalysisError> AllAnalysisErrors => TokenizerErrors.Concat(CodeAnalysisErrors);
-        public DateTime LastCodeAnalysisRun { get; private set; } = DateTime.MinValue;
-
-        public IEnumerable<DslScript> DslScripts => new[] { new DslScript() { Script = TextDocument.Text } };
-
-        private static readonly string[] _lineSeparators = new[] {"\r\n", "\n"};
         private readonly RhetosAppContext rhetosAppContext;
         private readonly object _syncAnalysis = new object();
         private readonly ILoggerFactory logFactory;
@@ -37,32 +26,26 @@ namespace Rhetos.LanguageServices.Server.Parsing
 
         public void UpdateText(string text)
         {
-            lock (_syncAnalysis)
-            {
-                TextDocument = new TextDocument(text);
-                Tokenizer = CreateTokenizerWithCapturedErrors();
-                var analysisRun = new CodeAnalysisRun(TextDocument, Tokenizer, rhetosAppContext, logFactory);
-                var analysisResult = analysisRun.RunForPosition(0, 0);
-                CodeAnalysisErrors = analysisResult.Errors;
-                LastCodeAnalysisRun = DateTime.Now;
-            }
-            logFactory.CreateLogger("UpdateText").LogInformation("COMPLETE");
+            TextDocument = new TextDocument(text);
         }
 
-        public CodeAnalysisResult GetAnalysis(int line, int chr)
+        public CodeAnalysisResult GetAnalysis()
+            => GetAnalysis(LineChr.Zero);
+
+        public CodeAnalysisResult GetAnalysis(LineChr lineChr)
         {
             lock (_syncAnalysis)
             {
-                var analysisRun = new CodeAnalysisRun(TextDocument, Tokenizer, rhetosAppContext, logFactory);
-                return analysisRun.RunForPosition(line, chr);
+                var analysisRun = new CodeAnalysisRun(TextDocument, rhetosAppContext, logFactory);
+                return analysisRun.RunForPosition(lineChr);
             }
         }
 
-        public List<string> GetCompletionKeywordsAtPosition(int line, int chr)
+        public List<string> GetCompletionKeywordsAtPosition(LineChr lineChr)
         {
-            var analysisResult = GetAnalysis(line, chr);
+            var analysisResult = GetAnalysis(lineChr);
 
-            var typingToken = GetTokenBeingTypedAtCursor(line, chr);
+            var typingToken = analysisResult.GetTokenBeingTypedAtCursor(lineChr);
             if (analysisResult.KeywordToken != null && analysisResult.KeywordToken != typingToken)
                 return new List<string>();
 
@@ -79,55 +62,24 @@ namespace Rhetos.LanguageServices.Server.Parsing
 
             return keywords;
         }
-
-        public Token GetTokenBeingTypedAtCursor(int line, int chr)
+        
+        public (string description, LineChr startPosition, LineChr endPosition) GetHoverDescriptionAtPosition(LineChr lineChr)
         {
-            if (GetTokenAtPosition(line, chr) != null)
-                return null;
+            var analysis = GetAnalysis(lineChr);
+            if (analysis.KeywordToken == null)
+                return (null, LineChr.Zero, LineChr.Zero);
 
-            return GetTokenLeftOfPosition(line, chr);
-        }
+            var description = conceptQueries.GetFullDescription(analysis.KeywordToken.Value);
+            if (string.IsNullOrEmpty(description))
+                description = $"No documentation found for '{analysis.KeywordToken.Value}'.";
 
-        public Token GetTokenAtPosition(int line, int chr)
-        {
-            var tokens = Tokenizer.GetTokens();
-            var position = TextDocument.GetPosition(line, chr);
+            var startPosition = TextDocument.GetLineChr(analysis.KeywordToken.PositionInDslScript);
 
-            foreach (var token in tokens)
-            {
-                if (position >= token.PositionInDslScript && position < token.PositionInDslScript + token.Value.Length)
-                    return token;
-            }
+            var endPosition = lineChr;
+            if (analysis.NextKeywordToken != null)
+                endPosition = TextDocument.GetLineChr(analysis.NextKeywordToken.PositionInDslScript - 1);
 
-            return null;
-        }
-
-        public Token GetTokenLeftOfPosition(int line, int chr)
-        {
-            if (chr > 0) chr--;
-            return GetTokenAtPosition(line, chr);
-        }
-
-        // Due to unusual way the tokenizer works, if we capture errors during initial call to GetToken(),
-        // valid tokens will be returned without error in subsequent calls
-        private Tokenizer CreateTokenizerWithCapturedErrors()
-        {
-            var tokenizer = new Tokenizer(this, new FilesUtility(new RhetosNetCoreLogProvider(logFactory)));
-            TokenizerErrors.Clear();
-            try
-            {
-                _ = tokenizer.GetTokens();
-            }
-            catch (DslParseSyntaxException e)
-            {
-                var (line, chr) = TextDocument.GetLineChr(e.Position);
-                TokenizerErrors.Add(new CodeAnalysisError() { Message = e.SimpleMessage, Line = line, Chr = chr });
-            }
-            catch (Exception e)
-            {
-                TokenizerErrors.Add(new CodeAnalysisError() {Message = e.Message});
-            }
-            return tokenizer;
+            return (description, startPosition, endPosition);
         }
     }
 }

@@ -17,39 +17,44 @@ namespace Rhetos.LanguageServices.Server.Parsing
     internal class CodeAnalysisRun
     {
         private CodeAnalysisResult result = null;
-        private readonly Tokenizer tokenizer;
         private readonly RhetosAppContext rhetosAppContext;
         private int targetPos;
         private readonly TextDocument textDocument;
         private readonly ILogProvider rhetosLogProvider;
-        private readonly List<Token> tokens;
 
-        public CodeAnalysisRun(TextDocument textDocument, Tokenizer tokenizer, RhetosAppContext rhetosAppContext, ILoggerFactory logFactory)
+        public CodeAnalysisRun(TextDocument textDocument, RhetosAppContext rhetosAppContext, ILoggerFactory logFactory)
         {
-            this.tokenizer = tokenizer;
             this.rhetosAppContext = rhetosAppContext;
             this.textDocument = textDocument;
             this.rhetosLogProvider = new RhetosNetCoreLogProvider(logFactory);
-            this.tokens = tokenizer.GetTokens();
         }
 
-        public CodeAnalysisResult RunForPosition(int line, int chr)
+        public CodeAnalysisResult RunForDocument()
+        {
+            return RunForPosition(LineChr.Zero);
+        }
+
+        public CodeAnalysisResult RunForPosition(LineChr lineChr)
         {
             if (result != null) throw new InvalidOperationException("Analysis already run.");
-            result = new CodeAnalysisResult(line, chr);
-            targetPos = textDocument.GetPosition(line, chr);
-            var dslParser = new DslParser(tokenizer, rhetosAppContext.ConceptInfoInstances, rhetosLogProvider);
+            result = new CodeAnalysisResult(textDocument, lineChr.Line, lineChr.Chr);
+            var resolvedTokenizer = CreateTokenizerWithCapturedErrors();
+            result.Tokens = resolvedTokenizer.tokenizer.GetTokens();
+            result.TokenizerErrors.AddRange(resolvedTokenizer.capturedErrors);
+            
+            targetPos = textDocument.GetPosition(lineChr);
+            var dslParser = new DslParser(resolvedTokenizer.tokenizer, rhetosAppContext.ConceptInfoInstances, rhetosLogProvider);
             try
             {
                 dslParser.ParseConceptsWithCallbacks(OnKeyword, OnMemberRead, OnUpdateContext);
             }
             catch (DslParseSyntaxException e)
             {
-                result.Errors.Add(CreateAnalysisError(e));
+                result.DslParserErrors.Add(CreateAnalysisError(e));
             }
             catch (Exception e)
             {
-                result.Errors.Add(new CodeAnalysisError() { Line = 0, Chr = 0, Message = e.Message });
+                result.DslParserErrors.Add(new CodeAnalysisError() { LineChr = LineChr.Zero, Message = e.Message });
             }
             return result;
         }
@@ -60,7 +65,7 @@ namespace Rhetos.LanguageServices.Server.Parsing
             // if (tokenReader.PositionInTokenList >= tokens.Count) return;
             if (tokenReader.PositionInTokenList == 0) return;
 
-            var lastToken = tokens[tokenReader.PositionInTokenList - 1];
+            var lastToken = result.Tokens[tokenReader.PositionInTokenList - 1];
             if (lastToken.PositionInDslScript > targetPos) return;
 
             var type = conceptInfo.GetType().Name;
@@ -74,14 +79,14 @@ namespace Rhetos.LanguageServices.Server.Parsing
 
         private CodeAnalysisError CreateAnalysisError(DslParseSyntaxException e)
         {
-            var (line, chr) = textDocument.GetLineChr(e.Position);
-            return new CodeAnalysisError() {Message = e.SimpleMessage, Line = line, Chr = chr};
+            var lineChr = textDocument.GetLineChr(e.Position);
+            return new CodeAnalysisError() {LineChr = lineChr, Message = e.SimpleMessage};
         }
 
         private void OnUpdateContext(ITokenReader iTokenReader, Stack<IConceptInfo> context, bool isOpening)
         {
             var tokenReader = (TokenReader)iTokenReader;
-            var lastToken = tokens[tokenReader.PositionInTokenList - 1];
+            var lastToken = result.Tokens[tokenReader.PositionInTokenList - 1];
             var contextPos = lastToken.PositionInDslScript + lastToken.Value.Length;
             if (contextPos <= targetPos)
                 result.ConceptContext = context.Reverse().ToList();
@@ -90,9 +95,9 @@ namespace Rhetos.LanguageServices.Server.Parsing
         private void OnKeyword(ITokenReader iTokenReader, string keyword)
         {
             var tokenReader = (TokenReader)iTokenReader;
-            if (tokenReader.PositionInTokenList >= tokens.Count) return;
+            if (tokenReader.PositionInTokenList >= result.Tokens.Count) return;
             
-            var lastToken = tokens[tokenReader.PositionInTokenList];
+            var lastToken = result.Tokens[tokenReader.PositionInTokenList];
             if (lastToken.PositionInDslScript <= targetPos)
             {
                 if (keyword != null)
@@ -110,5 +115,28 @@ namespace Rhetos.LanguageServices.Server.Parsing
                 result.NextKeywordToken = lastToken;
             }
         }
+
+        // Due to unusual way the tokenizer works, if we capture errors during initial call to GetToken(),
+        // valid tokens will be returned without error in subsequent calls
+        private (Tokenizer tokenizer, List<CodeAnalysisError> capturedErrors) CreateTokenizerWithCapturedErrors()
+        {
+            var capturedErrors = new List<CodeAnalysisError>();
+            var tokenizer = new Tokenizer(textDocument, new FilesUtility(rhetosLogProvider));
+            try
+            {
+                _ = tokenizer.GetTokens();
+            }
+            catch (DslParseSyntaxException e)
+            {
+                var lineChr = textDocument.GetLineChr(e.Position);
+                capturedErrors.Add(new CodeAnalysisError() { LineChr = lineChr, Message = e.SimpleMessage });
+            }
+            catch (Exception e)
+            {
+                capturedErrors.Add(new CodeAnalysisError() { Message = e.Message });
+            }
+            return (tokenizer, capturedErrors);
+        }
+
     }
 }

@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Rhetos.LanguageServices.Server.Parsing;
+using Rhetos.LanguageServices.Server.Tools;
 
 namespace Rhetos.LanguageServices.Server.Test
 {
@@ -35,14 +36,14 @@ namespace Rhetos.LanguageServices.Server.Test
             Assert.AreEqual(8, doc.GetPosition(3, 2));
             Assert.AreEqual(text.Length - 1, doc.GetPosition(6, 3));
 
-            Assert.AreEqual((0, 0), doc.GetLineChr(0));
-            Assert.AreEqual((0, 3), doc.GetLineChr(3));
-            Assert.AreEqual((0, 4), doc.GetLineChr(4));
-            Assert.AreEqual((2, 0), doc.GetLineChr(6));
-            Assert.AreEqual((2, 1), doc.GetLineChr(7));
-            Assert.AreEqual((3, 0), doc.GetLineChr(text.Length - 2));
-            Assert.AreEqual((4, 0), doc.GetLineChr(text.Length));
-            Assert.AreEqual((4, 0), doc.GetLineChr(text.Length + 1));
+            Assert.AreEqual(new LineChr(0, 0), doc.GetLineChr(0));
+            Assert.AreEqual(new LineChr(0, 3), doc.GetLineChr(3));
+            Assert.AreEqual(new LineChr(0, 4), doc.GetLineChr(4));
+            Assert.AreEqual(new LineChr(2, 0), doc.GetLineChr(6));
+            Assert.AreEqual(new LineChr(2, 1), doc.GetLineChr(7));
+            Assert.AreEqual(new LineChr(3, 0), doc.GetLineChr(text.Length - 2));
+            Assert.AreEqual(new LineChr(4, 0), doc.GetLineChr(text.Length));
+            Assert.AreEqual(new LineChr(4, 0), doc.GetLineChr(text.Length + 1));
         }
 
         [TestMethod]
@@ -66,14 +67,14 @@ namespace Rhetos.LanguageServices.Server.Test
             Assert.AreEqual(11, doc.GetPosition(3, 2));
             Assert.AreEqual(text.Length - 2, doc.GetPosition(6, 3));
 
-            Assert.AreEqual((0, 0), doc.GetLineChr(0));
-            Assert.AreEqual((0, 3), doc.GetLineChr(3));
-            Assert.AreEqual((0, 4), doc.GetLineChr(4));
-            Assert.AreEqual((2, 0), doc.GetLineChr(8));
-            Assert.AreEqual((2, 1), doc.GetLineChr(9));
-            Assert.AreEqual((3, 0), doc.GetLineChr(text.Length - 3));
-            Assert.AreEqual((4, 0), doc.GetLineChr(text.Length));
-            Assert.AreEqual((4, 0), doc.GetLineChr(text.Length + 1));
+            Assert.AreEqual(new LineChr(0, 0), doc.GetLineChr(0));
+            Assert.AreEqual(new LineChr(0, 3), doc.GetLineChr(3));
+            Assert.AreEqual(new LineChr(0, 4), doc.GetLineChr(4));
+            Assert.AreEqual(new LineChr(2, 0), doc.GetLineChr(8));
+            Assert.AreEqual(new LineChr(2, 1), doc.GetLineChr(9));
+            Assert.AreEqual(new LineChr(3, 0), doc.GetLineChr(text.Length - 3));
+            Assert.AreEqual(new LineChr(4, 0), doc.GetLineChr(text.Length));
+            Assert.AreEqual(new LineChr(4, 0), doc.GetLineChr(text.Length + 1));
         }
 
         [TestMethod]
@@ -88,7 +89,7 @@ namespace Rhetos.LanguageServices.Server.Test
             Assert.AreEqual(5, doc.GetPosition(1, 0));
             Assert.AreEqual(5, doc.GetPosition(2, 0));
             Assert.AreEqual(5, doc.GetPosition(1, 1));
-            Assert.AreEqual((1, 0), doc.GetLineChr(text.Length - 1));
+            Assert.AreEqual(new LineChr(1, 0), doc.GetLineChr(text.Length - 1));
         }
 
         [TestMethod]

@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Rhetos.LanguageServices.Server.Tools;
 
 namespace Rhetos.LanguageServices.Server.Parsing
 {
     public class CodeAnalysisError
     {
-        public int Line { get; set; }
-        public int Chr { get; set; }
+        public LineChr LineChr;
         public string Message { get; set; }
     }
 }

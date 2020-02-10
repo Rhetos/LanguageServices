@@ -35,53 +35,6 @@ namespace Rhetos.LanguageServices.Server.Test
             Console.WriteLine($"Keywords: {rhetosAppContext.Keywords.Count}, ConceptTypes: {rhetosAppContext.ConceptInfoTypes.Length}.");
         }
 
-
-        // TODO: missing asserts
-        [TestMethod]
-        public void Test1()
-        {
-            var script = @"
-Module TestModule
-{
-    Entity Pero
-    {
-        Logging;
-        Reference blo;
-    }
-    Entity Empty
-    { 
- 
-    }
-    Entity After;
-}
-
-";
-            var rheDocument = serviceProvider.GetService<RhetosDocumentFactory>().CreateNew();
-            rheDocument.UpdateText(script);
-
-            var dslParser = new DslParser(rheDocument.Tokenizer, rhetosAppContext.ConceptInfoInstances, serviceProvider.GetService<ILogProvider>());
-            var parsedConcepts = dslParser.ParseConceptsWithCallbacks(
-                (tokenReader, keyword) =>
-                {
-                    var reader = tokenReader as TokenReader;
-                    var token = rheDocument.Tokenizer.GetTokens()[reader.PositionInTokenList];
-                    Console.WriteLine($"OnKeyword, token={token.Value}, keyword={keyword}.");
-                },
-                OnMemberRead,
-                null);
-
-            Console.WriteLine(parsedConcepts.Count());
-            foreach (var parsedConcept in parsedConcepts)
-            {
-                Console.WriteLine($"{parsedConcept.GetType().Name}: {parsedConcept.GetKey()}");
-            }
-        }
-
-        private void OnMemberRead(ITokenReader tokenReader, IConceptInfo conceptInfo, ConceptMember member, ValueOrError<object> value)
-        {
-            Console.WriteLine($"OnMemberRead: conceptInfo={conceptInfo.GetType().Name}, member={member.Name}, value={value.ToString()}.");
-        }
-
         [TestMethod]
         public void DslModel()
         {

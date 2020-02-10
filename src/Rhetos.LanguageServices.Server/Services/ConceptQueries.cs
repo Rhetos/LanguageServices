@@ -19,22 +19,30 @@ namespace Rhetos.LanguageServices.Server.Services
             this.xmlDocumentationProvider = xmlDocumentationProvider;
         }
 
-        public string GetDescriptionForKeyword(string keyword)
+        public string GetFullDescription(string keyword)
         {
-            if (!rhetosAppContext.Keywords.TryGetValue(keyword, out var keywordTypes))
+            var signatures = GetSignaturesWithDocumentation(keyword);
+            if (signatures == null) return null;
+                
+            var fullDescription = string.Join("\n", signatures);
+            return fullDescription;
+        }
+
+        public List<(Type conceptInfoType, string signatureDescription)> GetSignaturesWithDocumentation(string keyword)
+        {
+            if (string.IsNullOrEmpty(keyword) || !rhetosAppContext.Keywords.TryGetValue(keyword, out var keywordTypes))
                 return null;
 
-            var descriptions = keywordTypes
+            var signatures = keywordTypes
                 .Select(type =>
                 {
                     var signature = ConceptInfoType.SignatureDescription(type);
                     var documentation = xmlDocumentationProvider.GetDocumentation(type);
                     if (!string.IsNullOrEmpty(documentation)) documentation = $"\n* {documentation}\n";
-                    return signature + documentation;
+                    return (type, signature + documentation);
                 });
 
-            var allDescriptions = string.Join("\n", descriptions);
-            return allDescriptions;
+            return signatures.ToList();
         }
 
         public List<Type> ValidConceptsForParent(Type parentConceptInfoType)

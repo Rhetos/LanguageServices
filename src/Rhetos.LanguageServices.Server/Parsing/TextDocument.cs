@@ -4,20 +4,28 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Rhetos.Dsl;
+using Rhetos.LanguageServices.Server.Tools;
 
 namespace Rhetos.LanguageServices.Server.Parsing
 {
-    public class TextDocument
+    public class TextDocument : IDslScriptsProvider
     {
         public string Text { get; }
 
-        private readonly Lazy<List<int>> lineStarts;
+        public IEnumerable<DslScript> DslScripts => new[] {new DslScript() { Script = Text }};
 
+        private readonly Lazy<List<int>> lineStarts;
 
         public TextDocument(string text)
         {
             this.Text = text;
             lineStarts = new Lazy<List<int>>(GetLineStartPositions);
+        }
+
+        public int GetPosition(LineChr lineChr)
+        {
+            return GetPosition(lineChr.Line, lineChr.Chr);
         }
 
         public int GetPosition(int line, int chr)
@@ -36,7 +44,7 @@ namespace Rhetos.LanguageServices.Server.Parsing
             return pos;
         }
 
-        public (int line, int chr) GetLineChr(int pos)
+        public LineChr GetLineChr(int pos)
         {
             if (pos >= Text.Length) pos = Text.Length - 1;
 
@@ -45,12 +53,12 @@ namespace Rhetos.LanguageServices.Server.Parsing
             var lineStarts = GetLineStartPositions();
             var line = 0;
             while (line < lineStarts.Count && lineStarts[line] <= pos) line++;
-            return (line - 1, pos - lineStarts[line - 1]);
+            return new LineChr(line - 1, pos - lineStarts[line - 1]);
         }
 
         public string ExtractLine(int posOnLine)
         {
-            var (line, _) = GetLineChr(posOnLine);
+            var line = GetLineChr(posOnLine).Line;
 
             var start = lineStarts.Value[line];
             var end = line >= lineStarts.Value.Count - 1
@@ -62,17 +70,18 @@ namespace Rhetos.LanguageServices.Server.Parsing
 
         public static string ShowPositionOnLine(string line, int pos)
         {
+            line = line.Replace('\t', ' ');
             if (pos >= line.Length) pos = line.Length - 1;
             var posIndicator = "^".PadLeft(pos + 1, ' ');
             if (!line.EndsWith("\n")) line += "\n";
             return line + posIndicator;
         }
 
-        public string ShowPosition(int line, int chr)
+        public string ShowPosition(LineChr lineChr)
         {
-            var pos = GetPosition(line, chr);
+            var pos = GetPosition(lineChr);
             var lineText = ExtractLine(pos);
-            return ShowPositionOnLine(lineText, chr);
+            return ShowPositionOnLine(lineText, lineChr.Chr);
         }
 
         private List<int> GetLineStartPositions()

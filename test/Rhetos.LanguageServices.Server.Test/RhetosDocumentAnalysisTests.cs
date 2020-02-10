@@ -6,6 +6,7 @@ using Newtonsoft.Json;
 using Rhetos.LanguageServices.Server.Parsing;
 using Rhetos.LanguageServices.Server.Services;
 using Microsoft.Extensions.DependencyInjection;
+using Rhetos.LanguageServices.Server.Tools;
 
 namespace Rhetos.LanguageServices.Server.Test
 {
@@ -36,9 +37,8 @@ namespace Rhetos.LanguageServices.Server.Test
     { 
  
     }
-    Entity After;
+    Entity After; 
 }
-
 ";
 
         [DataTestMethod]
@@ -52,15 +52,17 @@ namespace Rhetos.LanguageServices.Server.Test
         [DataRow(4, 15, null)]
         [DataRow(5, 18, "Reference")]
         [DataRow(9, 0, null)]
+        [DataRow(11, 16, null)]
         [DataRow(12, 2, null)]
         public void CorrectKeywords(int line, int chr, string expectedKeyword)
         {
             Console.WriteLine(script);
+            var lineChr = new LineChr(line, chr);
             var rhe = rhetosDocumentFactory.CreateNew();
             rhe.UpdateText(script);
 
-            Console.WriteLine(rhe.TextDocument.ShowPosition(line, chr));
-            var keywordToken = rhe.GetAnalysis(line, chr).KeywordToken;
+            Console.WriteLine(rhe.TextDocument.ShowPosition(lineChr));
+            var keywordToken = rhe.GetAnalysis(lineChr).KeywordToken;
             var keyword = keywordToken?.Value;
             Console.WriteLine($"Keyword at cursor ({line}, {chr}): {keyword}");
             Assert.AreEqual(expectedKeyword, keyword);
@@ -81,11 +83,12 @@ namespace Rhetos.LanguageServices.Server.Test
         public void CorrectConceptContexts(int line, int chr, string expectedContext)
         {
             Console.WriteLine(script);
+            var lineChr = new LineChr(line, chr);
             var rhe = rhetosDocumentFactory.CreateNew();
             rhe.UpdateText(script);
 
-            Console.WriteLine(rhe.TextDocument.ShowPosition(line, chr));
-            var context = rhe.GetAnalysis(line, chr).ConceptContext;
+            Console.WriteLine(rhe.TextDocument.ShowPosition(lineChr));
+            var context = rhe.GetAnalysis(lineChr).ConceptContext;
             var contextDesc = string.Join(" / ", context);
             Console.WriteLine($"Context at cursor ({line}, {chr}): {contextDesc}");
             Assert.AreEqual(expectedContext, contextDesc);
@@ -107,18 +110,19 @@ namespace Rhetos.LanguageServices.Server.Test
         public void CorrectParsingWithErrors(int line, int chr, string expectedContext)
         {
             Console.WriteLine(scriptErrors);
+            var lineChr = new LineChr(line, chr);
             var rhe = rhetosDocumentFactory.CreateNew();
             rhe.UpdateText(scriptErrors);
 
-            Console.WriteLine(rhe.TextDocument.ShowPosition(line, chr));
-            var analysisResult = rhe.GetAnalysis(line, chr);
+            Console.WriteLine(rhe.TextDocument.ShowPosition(lineChr));
+            var analysisResult = rhe.GetAnalysis(lineChr);
 
-            Assert.IsTrue(analysisResult.Errors.Any());
-            var error = analysisResult.Errors.First();
+            Assert.IsTrue(analysisResult.AllErrors.Any());
+            var error = analysisResult.AllErrors.First();
             Console.WriteLine($"ERROR: {error.Message}.");
             StringAssert.Contains(error.Message, "Unrecognized concept keyword 'error'.");
-            Assert.AreEqual(5, error.Line);
-            Assert.AreEqual(4, error.Chr);
+            Assert.AreEqual(5, error.LineChr.Line);
+            Assert.AreEqual(4, error.LineChr.Chr);
             var contextDesc = string.Join(" / ", analysisResult.ConceptContext);
             Console.WriteLine($"Context at cursor ({line}, {chr}): {contextDesc}");
             Assert.AreEqual(expectedContext, contextDesc);
@@ -139,10 +143,10 @@ namespace Rhetos.LanguageServices.Server.Test
             Console.WriteLine(scriptTokenError);
             var rhe = rhetosDocumentFactory.CreateNew();
             rhe.UpdateText(scriptTokenError);
-            Assert.AreEqual(1, rhe.TokenizerErrors.Count);
-            Console.WriteLine(JsonConvert.SerializeObject(rhe.TokenizerErrors[0], Formatting.Indented));
-            StringAssert.Contains(rhe.TokenizerErrors[0].Message, "Missing closing character");
+            var analysisResult = rhe.GetAnalysis();
+            Assert.AreEqual(1, analysisResult.TokenizerErrors.Count);
+            Console.WriteLine(JsonConvert.SerializeObject(analysisResult.TokenizerErrors[0], Formatting.Indented));
+            StringAssert.Contains(analysisResult.TokenizerErrors[0].Message, "Missing closing character");
         }
-
     }
 }

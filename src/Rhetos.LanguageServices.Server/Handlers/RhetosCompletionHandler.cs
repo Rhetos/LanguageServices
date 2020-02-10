@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -40,25 +41,20 @@ namespace Rhetos.LanguageServices.Server.Handlers
         public override Task<CompletionList> Handle(CompletionParams request, CancellationToken cancellationToken)
         {
             var sw = Stopwatch.StartNew();
-
-            var document = rhetosWorkspace.GetRhetosDocument(request.TextDocument.Uri.ToString());
+            var document = rhetosWorkspace.GetRhetosDocument(request.TextDocument.Uri);
             if (document == null)
-                return Task.FromResult(new CompletionList());
+                return Task.FromResult<CompletionList>(null);
 
-            var keywords = document.GetCompletionKeywordsAtPosition((int) request.Position.Line, (int) request.Position.Character);
+            var keywords = document.GetCompletionKeywordsAtPosition(request.Position.ToLineChr());
 
             var completionItems = keywords
-                .Select(keyword => new CompletionItem() {Label = keyword, Kind = CompletionItemKind.Keyword, Detail = conceptQueries.GetDescriptionForKeyword(keyword)})
+                .Select(keyword => new CompletionItem() {Label = keyword, Kind = CompletionItemKind.Keyword, Detail = conceptQueries.GetFullDescription(keyword)})
                 .ToList();
 
-            var list = new CompletionList(completionItems);
-
-            // debug signature
-            var memberDebug = document.GetAnalysis((int) request.Position.Line, (int) request.Position.Character);
-            log.LogInformation($"Member info: {JsonConvert.SerializeObject(memberDebug.MemberDebug, Formatting.Indented)}");
-
+            var completionList = new CompletionList(completionItems);
             log.LogInformation($"End handle completion in {sw.ElapsedMilliseconds} ms.");
-            return Task.FromResult(list);
+
+            return Task.FromResult(completionList);
         }
         
         public override Task<CompletionItem> Handle(CompletionItem request, CancellationToken cancellationToken)

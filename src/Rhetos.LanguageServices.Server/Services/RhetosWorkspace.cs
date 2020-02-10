@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,10 +16,9 @@ namespace Rhetos.LanguageServices.Server.Services
 {
     public class RhetosWorkspace
     {
-        private readonly ConcurrentDictionary<string, RhetosDocument> rhetosDocuments = new ConcurrentDictionary<string, RhetosDocument>();
-        private readonly ConcurrentDictionary<string, string> documentTextUpdates = new ConcurrentDictionary<string, string>();
-        private Task analysisTask = Task.CompletedTask;
-        private DateTime lastDocumentChangeTime = DateTime.MinValue;
+        public Dictionary<string, DateTime> DocumentChangeTimes { get; } = new Dictionary<string, DateTime>();
+
+        private readonly Dictionary<string, RhetosDocument> rhetosDocuments = new Dictionary<string, RhetosDocument>();
         private readonly ILogger<RhetosWorkspace> log;
         private readonly RhetosDocumentFactory rhetosDocumentFactory;
 
@@ -28,14 +28,24 @@ namespace Rhetos.LanguageServices.Server.Services
             this.rhetosDocumentFactory = rhetosDocumentFactory;
         }
 
+        public void UpdateDocumentText(Uri documentUri, string text)
+            => UpdateDocumentText(documentUri.AbsoluteUri, text);
+
         public void UpdateDocumentText(string id, string text)
         {
-            documentTextUpdates[id] = text;
-            lastDocumentChangeTime = DateTime.Now;
+            var rhetosDocument = GetRhetosDocument(id);
+            if (rhetosDocument == null)
+            {
+                rhetosDocument = rhetosDocumentFactory.CreateNew();
+                rhetosDocuments.Add(id, rhetosDocument);
+            }
 
-            log.LogInformation($"Update text queued.");
-            analysisTask = analysisTask.ContinueWith(_ => PendingProcessLoop());
+            rhetosDocument.UpdateText(text);
+            DocumentChangeTimes[id] = DateTime.Now;
         }
+
+        public RhetosDocument GetRhetosDocument(Uri documentUri)
+            => GetRhetosDocument(documentUri.AbsoluteUri);
 
         public RhetosDocument GetRhetosDocument(string id)
         {
@@ -45,31 +55,10 @@ namespace Rhetos.LanguageServices.Server.Services
             return rhetosDocument;
         }
 
-        public Dictionary<string, RhetosDocument> GetAllDocuments()
-        {
-            return rhetosDocuments.ToDictionary(document => document.Key, document => document.Value);
-        }
-
         /*
-        public List<(string documentUri, CodeAnalysisError error)> GetAllErrors()
-        {
-            var result = new List<(string, CodeAnalysisError)>();
-            foreach (var rhetosDocument in rhetosDocuments.ToList())
-            {
-                var documentErrors = rhetosDocument.Value
-                    .TokenizerErrors
-                    .Concat(rhetosDocument.Value.CodeAnalysisErrors)
-                    .Select(error => (rhetosDocument.Key, error));
-
-                result.AddRange(documentErrors);
-            }
-
-            return result;
-        }*/
-
         private void PendingProcessLoop()
         {
-            log.LogInformation($"New ProcessLoop started.");
+            log.LogTrace($"New ProcessLoop started.");
             while (documentTextUpdates.Any())
             {
                 Task.Delay(100).Wait();
@@ -78,7 +67,7 @@ namespace Rhetos.LanguageServices.Server.Services
                 
                 RunAnalysis();
             }
-            log.LogInformation($"ProcessLoop completed.");
+            log.LogTrace($"ProcessLoop completed.");
         }
 
         private void RunAnalysis()
@@ -95,6 +84,6 @@ namespace Rhetos.LanguageServices.Server.Services
                 }
             }
             log.LogInformation($"Document analysis COMPLETE.");
-        }
+        }*/
     }
 }
