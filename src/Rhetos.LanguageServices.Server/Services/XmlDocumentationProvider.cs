@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Linq;
 using Microsoft.Extensions.Logging;
@@ -22,10 +23,15 @@ namespace Rhetos.LanguageServices.Server.Services
             this.log = log;
         }
 
-        public string GetDocumentation(Type type)
+        public string GetDocumentation(Type type, string linePrefix = null)
         {
-            var documentation = typeDocumentation.GetOrAdd(type, key => new Lazy<string>(() => LoadDocumentation(key)));
-            return documentation.Value;
+            var documentation = typeDocumentation.GetOrAdd(type, key => new Lazy<string>(() => LoadDocumentation(key)))
+                .Value;
+
+            if (!string.IsNullOrEmpty(documentation) && !string.IsNullOrEmpty(linePrefix))
+                documentation = linePrefix + documentation.Replace("\n", $"\n{linePrefix}");
+
+            return documentation;
         }
 
         private string LoadDocumentation(Type type)

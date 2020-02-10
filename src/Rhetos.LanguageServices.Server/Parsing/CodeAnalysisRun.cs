@@ -38,12 +38,12 @@ namespace Rhetos.LanguageServices.Server.Parsing
         {
             if (result != null) throw new InvalidOperationException("Analysis already run.");
             result = new CodeAnalysisResult(textDocument, lineChr.Line, lineChr.Chr);
-            var resolvedTokenizer = CreateTokenizerWithCapturedErrors();
-            result.Tokens = resolvedTokenizer.tokenizer.GetTokens();
-            result.TokenizerErrors.AddRange(resolvedTokenizer.capturedErrors);
+            var (tokenizer, capturedErrors) = CreateTokenizerWithCapturedErrors();
+            result.Tokens = tokenizer.GetTokens();
+            result.TokenizerErrors.AddRange(capturedErrors);
             
             targetPos = textDocument.GetPosition(lineChr);
-            var dslParser = new DslParser(resolvedTokenizer.tokenizer, rhetosAppContext.ConceptInfoInstances, rhetosLogProvider);
+            var dslParser = new DslParser(tokenizer, rhetosAppContext.ConceptInfoInstances, rhetosLogProvider);
             try
             {
                 dslParser.ParseConceptsWithCallbacks(OnKeyword, OnMemberRead, OnUpdateContext);
@@ -67,6 +67,8 @@ namespace Rhetos.LanguageServices.Server.Parsing
 
             var lastToken = result.Tokens[tokenReader.PositionInTokenList - 1];
             if (lastToken.PositionInDslScript > targetPos) return;
+
+            if (!result.ValidConcepts.Contains(conceptInfo)) result.ValidConcepts.Add(conceptInfo);
 
             var type = conceptInfo.GetType().Name;
             if (!result.MemberDebug.ContainsKey(type)) result.MemberDebug[type] = new List<string>();
@@ -96,7 +98,7 @@ namespace Rhetos.LanguageServices.Server.Parsing
         {
             var tokenReader = (TokenReader)iTokenReader;
             if (tokenReader.PositionInTokenList >= result.Tokens.Count) return;
-            
+
             var lastToken = result.Tokens[tokenReader.PositionInTokenList];
             if (lastToken.PositionInDslScript <= targetPos)
             {
@@ -104,6 +106,7 @@ namespace Rhetos.LanguageServices.Server.Parsing
                 {
                     result.KeywordToken = lastToken;
                     result.MemberDebug = new Dictionary<string, List<string>>();
+                    result.ValidConcepts = new List<IConceptInfo>();
                 }
                 else
                 {

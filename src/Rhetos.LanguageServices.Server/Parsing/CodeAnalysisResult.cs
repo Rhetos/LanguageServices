@@ -22,6 +22,7 @@ namespace Rhetos.LanguageServices.Server.Parsing
         public IEnumerable<CodeAnalysisError> AllErrors => TokenizerErrors.Concat(DslParserErrors);
 
         public Dictionary<string, List<string>> MemberDebug = new Dictionary<string, List<string>>();
+        public List<IConceptInfo> ValidConcepts = new List<IConceptInfo>();
 
         public CodeAnalysisResult(TextDocument textDocument, int line, int chr)
         {

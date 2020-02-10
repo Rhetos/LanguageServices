@@ -17,7 +17,7 @@ namespace Rhetos.LanguageServices.Server.Tools
             {
                 if (!member.IsParsable) continue;
                 if (member.IsKey)
-                    keys.Add(ConceptInfoHelper.GetKeywordOrTypeName(member.ValueType));
+                    keys.Add($"{member.Name}: {member.ValueType.Name}");
                 else
                     parameters.Add(member.ValueType.Name);
             }

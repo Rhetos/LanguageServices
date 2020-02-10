@@ -43,8 +43,30 @@ namespace Rhetos.LanguageServices.Server.Handlers
             //log.LogInformation($"Member info: {JsonConvert.SerializeObject(analysisResult.MemberDebug, Formatting.Indented)}");
 
             var keyword = analysisResult.KeywordToken?.Value;
-            log.LogInformation($"Current keyword: '{keyword}' at {request.Position.ToLineChr()}.");
-            log.LogInformation("\n" + rhetosDocument.TextDocument.ShowPosition(request.Position.ToLineChr()));
+
+            Func<IConceptInfo, int> NonNullMemberCount = info => 
+                ConceptMembers.Get(info).Count(member => member.GetValue(info) != null);
+
+            var bestMatch = analysisResult.ValidConcepts.OrderByDescending(NonNullMemberCount).FirstOrDefault();
+
+            {
+                if (bestMatch != null)
+                {
+                    var members = ConceptMembers.Get(bestMatch);
+                    var membersDesc = string.Join(", ", members.Select(a => $"{a.Name}:'{a.GetValue(bestMatch)}'"));
+                    log.LogInformation($"BestMatch ==> {bestMatch.GetType().Name}: " + membersDesc);
+                }
+            }
+            //log.LogInformation($"Current keyword: '{keyword}' at {request.Position.ToLineChr()}.");
+            //log.LogInformation("\n" + rhetosDocument.TextDocument.ShowPosition(request.Position.ToLineChr()));
+            /*
+            foreach (var validConcept in analysisResult.ValidConcepts)
+            {
+                var members = ConceptMembers.Get(validConcept);
+                var membersDesc = string.Join(", ", members.Select(a => $"{a.Name}:'{a.GetValue(validConcept)}'"));
+                log.LogInformation($"{validConcept.GetType().Name}: " + membersDesc);
+            }
+            */
             var signatures = conceptQueries.GetSignaturesWithDocumentation(keyword);
 
             if (signatures == null)
@@ -60,9 +82,9 @@ namespace Rhetos.LanguageServices.Server.Handlers
 
                 var signatureInfo = new SignatureInformation()
                 {
-                    Documentation = new StringOrMarkupContent(signature.signatureDescription),
+                    Documentation = new StringOrMarkupContent(signature.documentation),
                     Parameters = new Container<ParameterInformation>(parameters),
-                    Label = signature.conceptInfoType.Name
+                    Label = signature.signature
                 };
                 signatureInfos.Add(signatureInfo);
             }
@@ -76,6 +98,21 @@ namespace Rhetos.LanguageServices.Server.Handlers
                 ActiveSignature = 0,
                 Signatures = new Container<SignatureInformation>(signatureInfos)
             };
+
+            if (bestMatch != null)
+            {
+                var signatureIndex = signatures.FindIndex(sig => sig.conceptInfoType == bestMatch.GetType());
+                log.LogInformation($"SigIndex: {signatureIndex}");
+                if (signatureIndex != -1)
+                {
+                    signatureHelp.ActiveSignature = signatureIndex;
+                    var conceptInfoInstance = analysisResult.ValidConcepts.Single(concept => concept.GetType() == signatures[signatureIndex].conceptInfoType);
+                    var paramIndex = NonNullMemberCount(conceptInfoInstance);
+                    log.LogInformation($"ParamIndex: {paramIndex}");
+                    if (paramIndex < signatureInfos[signatureIndex].Parameters.Count())
+                        signatureHelp.ActiveParameter = paramIndex;
+                }
+            }
 
             return Task.FromResult(signatureHelp);
         }

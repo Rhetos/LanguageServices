@@ -24,22 +24,24 @@ namespace Rhetos.LanguageServices.Server.Services
             var signatures = GetSignaturesWithDocumentation(keyword);
             if (signatures == null) return null;
                 
-            var fullDescription = string.Join("\n", signatures);
+            var fullDescription = string.Join("\n\n", signatures.Select(sig => $"{sig.signature}\n{sig.documentation}"));
             return fullDescription;
         }
 
-        public List<(Type conceptInfoType, string signatureDescription)> GetSignaturesWithDocumentation(string keyword)
+        public List<(Type conceptInfoType, string signature, string documentation)> GetSignaturesWithDocumentation(string keyword)
         {
             if (string.IsNullOrEmpty(keyword) || !rhetosAppContext.Keywords.TryGetValue(keyword, out var keywordTypes))
                 return null;
 
+            var prefix = "    ";
             var signatures = keywordTypes
                 .Select(type =>
                 {
                     var signature = ConceptInfoType.SignatureDescription(type);
-                    var documentation = xmlDocumentationProvider.GetDocumentation(type);
-                    if (!string.IsNullOrEmpty(documentation)) documentation = $"\n* {documentation}\n";
-                    return (type, signature + documentation);
+                    var documentation = $"{prefix}Defined by {type.Name}";
+                    var xmlDocumentation = xmlDocumentationProvider.GetDocumentation(type, prefix);
+                    if (!string.IsNullOrEmpty(xmlDocumentation)) documentation += $"\n{xmlDocumentation}";
+                    return (type, signature, documentation);
                 });
 
             return signatures.ToList();
