@@ -51,7 +51,7 @@
   <ItemGroup>
     <Compile Include="ConceptInfoTypeTests.cs" />
     <Compile Include="ConceptQueriesTests.cs" />
-    <Compile Include="RhetosDocumentAnalysisTests.cs" />
+    <Compile Include="CodeAnalysisTests.cs" />
     <Compile Include="DslParserTests.cs" />
     <Compile Include="HostTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

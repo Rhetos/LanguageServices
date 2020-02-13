@@ -14,6 +14,7 @@ namespace Rhetos.LanguageServices.Server.Parsing
         public int Chr { get; }
         public TextDocument TextDocument { get; }
         public List<Token> Tokens { get; set; }
+        public List<Token> CommentTokens { get; set; }
         public List<IConceptInfo> ConceptContext { get; set; } = new List<IConceptInfo>();
         public Token KeywordToken { get; set; }
         public Token NextKeywordToken { get; set; }

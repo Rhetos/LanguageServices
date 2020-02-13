@@ -41,7 +41,8 @@ namespace Rhetos.LanguageServices.Server.Parsing
             var (tokenizer, capturedErrors) = CreateTokenizerWithCapturedErrors();
             result.Tokens = tokenizer.GetTokens();
             result.TokenizerErrors.AddRange(capturedErrors);
-            
+            result.CommentTokens = ParseCommentTokens();
+
             targetPos = textDocument.GetPosition(lineChr);
             var dslParser = new DslParser(tokenizer, rhetosAppContext.ConceptInfoInstances, rhetosLogProvider);
             try
@@ -61,6 +62,12 @@ namespace Rhetos.LanguageServices.Server.Parsing
 
         private void OnMemberRead(ITokenReader iTokenReader, IConceptInfo conceptInfo, ConceptMember conceptMember, ValueOrError<object> valueOrError)
         {
+            // TODO: monkey patching
+            if (!valueOrError.IsError)
+            {
+                conceptMember.SetMemberValue(conceptInfo, valueOrError.Value);
+            }
+
             var tokenReader = (TokenReader)iTokenReader;
             // if (tokenReader.PositionInTokenList >= tokens.Count) return;
             if (tokenReader.PositionInTokenList == 0) return;
@@ -117,6 +124,38 @@ namespace Rhetos.LanguageServices.Server.Parsing
             {
                 result.NextKeywordToken = lastToken;
             }
+        }
+
+        // Tokenizer just skips comments, so we are unable to detect whether typing is done inside a comment 
+        // Therefore we need to reparse and detect all comment tokens
+        private List<Token> ParseCommentTokens()
+        {
+            var script = textDocument.DslScripts.Single();
+            var commentTokens = new List<Token>();
+            try
+            {
+                var scriptPosition = 0;
+                while (true)
+                {
+                    TokenizerInternals.SkipWhitespaces(script.Script, ref scriptPosition);
+                    if (scriptPosition >= textDocument.Text.Length)
+                        break;
+
+                    var startPosition = scriptPosition;
+                    var token = TokenizerInternals.GetNextToken_ValueType(script, ref scriptPosition, _ => "");
+                    token.DslScript = script;
+                    token.PositionInDslScript = startPosition;
+
+                    if (token.Type == TokenType.Comment)
+                        commentTokens.Add(token);
+                }
+            }
+            catch
+            {
+                // we will ignore all errors as any relevant ones are capture by CreateTokenizerWithCapturedErrors()
+            }
+
+            return commentTokens;
         }
 
         // Due to unusual way the tokenizer works, if we capture errors during initial call to GetToken(),

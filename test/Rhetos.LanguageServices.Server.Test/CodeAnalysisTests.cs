@@ -11,12 +11,12 @@ using Rhetos.LanguageServices.Server.Tools;
 namespace Rhetos.LanguageServices.Server.Test
 {
     [TestClass]
-    public class RhetosDocumentAnalysisTests
+    public class CodeAnalysisTests
     {
         private readonly IServiceProvider serviceProvider;
         private readonly RhetosDocumentFactory rhetosDocumentFactory;
 
-        public RhetosDocumentAnalysisTests()
+        public CodeAnalysisTests()
         {
             Assembly.Load("Rhetos.Dsl.DefaultConcepts");
             serviceProvider = TestCommon.CreateTestServiceProvider();

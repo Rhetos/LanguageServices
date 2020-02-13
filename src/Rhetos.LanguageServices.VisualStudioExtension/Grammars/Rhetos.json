@@ -1,0 +1,68 @@
+{
+  "name": "Rhetos",
+  "scopeName": "source.rhetos",
+  "fileTypes": [
+    ".rhe",
+    ".alpha"
+  ],
+  "uuid": "6323fccc-e736-40e3-8225-d0ee164acd31",
+  "patterns": [
+    {
+      "include": "#keywords"
+    },
+    {
+      "include": "#strings"
+    },
+    {
+      "include": "#comments"
+    }
+  ],
+  "repository": {
+    "keywords": {
+      "patterns": [
+        {
+          "match": "(?i)\\b(Action|AdditionalCondition|AfterSave|Allow|AllowRead|AllowSave|AllowSaveBrojTelefona|AllowSaveEmail|AllowSaveOIB|AllowSaveRegex|AllowWrite|AllowWriteOnZpoForAtomarnoPravo|AllProperties|AllPropertiesFrom|AllPropertiesWithCascadeDeleteFrom|ApplyFilterOnClientRead|ApplyOnClientRead|AutoApplyRowPermissionsFilter|AutoCode|AutoCodeCached|AutoCodeForEach|AutoCodeForEachCached|AutodetectSqlDependencies|AutoInheritRowPermissions|AutoInheritRowPermissionsInternally|AutoLogging|AutomatskoKreiranjeSekcija|AutoSaveSnapshot|BeforeAction|BeforeQuery|Binary|Bool|BrojTelefona|Browse|Browseable|CascadeDelete|ChangesOnBaseItem|ChangesOnChangedItems|ChangesOnLinkedItems|ChangesOnReferenced|Clustered|ComposableFilterBy|ComposableFilterByReferenced|Computed|ComputedFrom|ComputeForNewBaseItems|ComputeForNewItems|ConvertFormat|CopyDocuments|CreatedBy|CreatedFor|CreateSnapshotInfo|CreationInfo|CreationTime|CustomClaim|DataSource|DataSources|DataStructure|Date|DateRange|DateTime|DateTimeRange|Deactivatable|DeactivateOnDelete|DeactivateSaveSnapshot|Decimal|Default|DefaultLoadFilter|DefaultValue|Deny|DenyDelete|DenyDeleteForDetailsAndExtensions|DenyRead|DenySave|DenyUserEdit|DenyWrite|Derives|Detail|DisplayName|Email|Entity|ErrorMetadata|Event|ExtAction|ExtActionWithContext|ExtComposableFilterBy|ExtDenySave|Extends|ExtendTrigger|ExternalReference|ExtFilterBy|ExtInvalidData|FilterBy|FilterByBase|FilterByLinkedItems|FilterByReferenced|From|Guid|Hierarchy|History|Iban|Implements|ImplementsQueryable|InheritFrom|InheritFromBase|Initialization|Integer|IntegerRange|InvalidData|InvalidDataForDetailsAndExtensions|Is|ItemFilter|ItemFilterReferenced|Jmbg|KeepSynchronized|KeepSynchronizedDokJeProjektUUnosu|KeyProperties|KeyProperty|KeyPropertyID|KopirajProjektAction|LegacyEntity|LegacyProperty|LegacyPropertyReadOnly|Length|LightDmsDocument|LinkedItems|LoadOldItems|Lock|LockExcept|LockProperty|Log|Logging|LongString|LookupVisible|MarkProperty|Materialized|MaxLength|MaxValue|Mbg|MessageFunction|MessageParametersConstant|MessageParametersItem|MinLength|MinValue|MisFilterBy|Mod11_10|ModificationTimeOf|Module|Money|NNRelatedItem|Oib|OnInitialization|OnSaveUpdate|OnSaveValidate|Parameter|Persisted|PessimisticLocking|PessimisticLockingParent|Polymorphic|PravnaOsobaIliObrtID|PrerequisiteAllProperties|PropertyFrom|Query|QueryableExtension|Range|Reference|RegExMatch|RegisteredImplementation|RelatedItem|ReportData|ReportFile|ReportFileWithParam|RepositoryUses|Required|RequiredAllowSave|RequiredModularnoPolje|RequiredSnapshot|Restorable|RestorePDFromSnapshotAction|RestorePozivFromSnapshotAction|RowPermissions|RowPermissionsRead|RowPermissionsWrite|SamePropertyValue|SaveMethod|ShortString|SingleRoot|SmartSearch|Snapshot|SnapshotDetail|SnapshotDiff|SnapshotDiffDetail|SnapshotLight|SnapshotRoot|Snowflake|SqlDefault|SqlDependsOn|SqlDependsOnFunction|SqlDependsOnID|SqlDependsOnIndex|SqlDependsOnSqlObject|SqlDependsOnView|SqlFunction|SqlImplementation|SqlIndex|SqlIndexMultiple|SqlNotNull|SqlObject|SqlProcedure|SqlQueryable|SqlTrigger|SqlView|SuppressSynchronization|SystemRequired|Take|TemplaterReport|TemplaterReportWithParam|TemporalLock|Unique|UniqueMultiple|UniqueReference|UseExecutionContext|UserRequired|VratiPodatkeNaZadnjuVerzijuNaSnazi|Where|WithHistory|Write|ZpoEvent)\\b",
+          "name": "keyword.other"
+        }
+      ]
+    },
+    "strings": {
+      "patterns": [
+        {
+          "begin": "\"",
+          "end": "\"",
+          "patterns": [
+            {
+              "include": "source.sql"
+            }
+          ]
+        },
+        {
+          "begin": "'",
+          "end": "'",
+          "patterns": [
+            {
+              "include": "$self"
+            },
+            {
+              "include": "source.cs"
+            }
+          ]
+        },
+        {
+          "begin": "<",
+          "end": ">",
+          "name": "variable"
+        }
+      ]
+    },
+    "comments": {
+      "patterns": [
+        {
+          "match": "(//).*",
+          "name": "comment.line.double-slash"
+        }
+      ]
+    }
+  }
+}

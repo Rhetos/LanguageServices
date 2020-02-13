@@ -17,15 +17,20 @@ namespace Rhetos.LanguageServices.Server.Tools
             {
                 if (!member.IsParsable) continue;
                 if (member.IsKey)
-                    keys.Add($"{member.Name}: {member.ValueType.Name}");
+                    keys.Add(ConceptMemberDescription(member));
                 else
-                    parameters.Add(member.ValueType.Name);
+                    parameters.Add(ConceptMemberDescription(member));
             }
 
             var keyword = ConceptInfoHelper.GetKeywordOrTypeName(type);
             var keysDesc = string.Join(".", keys.Select(key => $"<{key}>"));
             var paramDesc = string.Join(" ", parameters.Select(parameter => $"<{parameter}>"));
             return $"{keyword} {keysDesc} {paramDesc}";
+        }
+
+        public static string ConceptMemberDescription(ConceptMember conceptMember)
+        {
+            return $"{conceptMember.Name}: {conceptMember.ValueType.Name}";
         }
 
         public static List<Type> ConceptInfoKeys(Type type)

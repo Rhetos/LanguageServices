@@ -78,7 +78,7 @@ namespace Rhetos.LanguageServices.Server.Handlers
                 var members = ConceptMembers.Get(signature.conceptInfoType);
                 var parameters = members
                     .Where(member => member.IsParsable)
-                    .Select(member => new ParameterInformation() {Label = new ParameterInformationLabel(member.Name)});
+                    .Select(member => new ParameterInformation() {Label = new ParameterInformationLabel(ConceptInfoType.ConceptMemberDescription(member))});
 
                 var signatureInfo = new SignatureInformation()
                 {
