@@ -18,6 +18,8 @@ namespace Rhetos.LanguageServices.Server.Services
         private readonly ILanguageServer languageServer;
         private readonly ILogger<PublishDiagnosticsRunner> log;
 
+        private DateTime lastPublishTime = DateTime.MinValue;
+
         public PublishDiagnosticsRunner(RhetosWorkspace rhetosWorkspace, ILanguageServer languageServer, ILogger<PublishDiagnosticsRunner> log)
         {
             this.rhetosWorkspace = rhetosWorkspace;
@@ -33,45 +35,56 @@ namespace Rhetos.LanguageServices.Server.Services
 
         private void PublishLoop()
         {
-            var lastPublishTime = DateTime.MinValue;
-
             while (true)
             {
                 Task.Delay(300).Wait();
-                var sw = Stopwatch.StartNew();
 
-                var startPublishCheckTime = DateTime.Now;
-                var updatedDocumentIds = rhetosWorkspace.DocumentChangeTimes
-                    .Where(a => a.Value > lastPublishTime)
-                    .Select(a => a.Key)
-                    .ToList();
-
-                if (!updatedDocumentIds.Any()) 
-                    continue;
-
-                var publishTasks = new List<Task>();
-                foreach (var documentId in updatedDocumentIds)
+                try
                 {
-                    var rhetosDocument = rhetosWorkspace.GetRhetosDocument(documentId);
-                    var analysisResult = rhetosDocument.GetAnalysis();
-
-                    var diagnostics = analysisResult.AllErrors
-                        .Select(error => DiagnosticFromAnalysisError(analysisResult, error));
-
-                    var publishDiagnostics = new PublishDiagnosticsParams()
-                    {
-                        Diagnostics = new Container<Diagnostic>(diagnostics),
-                        Uri = new Uri(documentId)
-                    };
-                    log.LogDebug($"Publish new diagnostics for '{documentId}'.");
-                    var publishTask = languageServer.SendRequest(DocumentNames.PublishDiagnostics, publishDiagnostics);
-                    publishTasks.Add(publishTask);
+                    LoopCycle();
                 }
-
-                Task.WaitAll(publishTasks.ToArray());
-                log.LogInformation($"Publish diagnostics complete for {publishTasks.Count} documents in {sw.Elapsed.TotalMilliseconds:0.00} ms.");
-                lastPublishTime = startPublishCheckTime;
+                catch (Exception e)
+                {
+                    log.LogWarning($"Error occured during document diagnostics: {e}");
+                }
             }
+        }
+
+        private void LoopCycle()
+        {
+            var sw = Stopwatch.StartNew();
+
+            var startPublishCheckTime = DateTime.Now;
+            var updatedDocumentIds = rhetosWorkspace.DocumentChangeTimes
+                .Where(a => a.Value > lastPublishTime)
+                .Select(a => a.Key)
+                .ToList();
+
+            if (!updatedDocumentIds.Any())
+                return;
+
+            var publishTasks = new List<Task>();
+            foreach (var documentId in updatedDocumentIds)
+            {
+                var rhetosDocument = rhetosWorkspace.GetRhetosDocument(documentId);
+                var analysisResult = rhetosDocument.GetAnalysis();
+
+                var diagnostics = analysisResult.AllErrors
+                    .Select(error => DiagnosticFromAnalysisError(analysisResult, error));
+
+                var publishDiagnostics = new PublishDiagnosticsParams()
+                {
+                    Diagnostics = new Container<Diagnostic>(diagnostics),
+                    Uri = new Uri(documentId)
+                };
+                log.LogDebug($"Publish new diagnostics for '{documentId}'.");
+                var publishTask = languageServer.SendRequest(DocumentNames.PublishDiagnostics, publishDiagnostics);
+                publishTasks.Add(publishTask);
+            }
+
+            Task.WaitAll(publishTasks.ToArray());
+            log.LogInformation($"Publish diagnostics complete for {publishTasks.Count} documents in {sw.Elapsed.TotalMilliseconds:0.00} ms.");
+            lastPublishTime = startPublishCheckTime;
         }
 
         private Diagnostic DiagnosticFromAnalysisError(CodeAnalysisResult analysisResult, CodeAnalysisError error)

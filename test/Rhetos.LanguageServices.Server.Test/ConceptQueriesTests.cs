@@ -23,6 +23,55 @@ namespace Rhetos.LanguageServices.Server.Test
             serviceProvider.GetService<RhetosAppContext>().InitializeFromCurrentDomain();
         }
 
+        // Derived ConceptInfo classes without own keywords should not be included
+        [TestMethod]
+        public void DerivedInfoWithoutKeyword()
+        {
+            var conceptQueries = serviceProvider.GetService<ConceptQueries>();
+            var signatures = conceptQueries.GetSignaturesWithDocumentation("SqlObject");
+            Assert.AreEqual(1, signatures.Count);
+            StringAssert.StartsWith(signatures.Single().signature, "SqlObject");
+        }
+
+        [TestMethod]
+        public void ValidForParent()
+        {
+            var conceptQueries = serviceProvider.GetService<ConceptQueries>();
+            var rhetosAppContext = serviceProvider.GetService<RhetosAppContext>();
+
+            var browseInfoType = rhetosAppContext.Keywords["Browse"].First();
+            var moduleInfoType = rhetosAppContext.Keywords["Module"].First();
+            var entityInfoType = rhetosAppContext.Keywords["Entity"].First();
+            var shortStringInfoType = rhetosAppContext.Keywords["ShortString"].First();
+
+            {
+                var validTypes = conceptQueries.ValidConceptsForParent(moduleInfoType);
+                CollectionAssert.Contains(validTypes, browseInfoType);
+                CollectionAssert.Contains(validTypes, entityInfoType);
+            }
+
+            // Browse inside Entity has Module parameter fulfilled, but shouldn't be valid because Entity is an extra parent it doesn't require as a key
+            {
+                var validTypes = conceptQueries.ValidConceptsForParent(entityInfoType);
+                CollectionAssert.DoesNotContain(validTypes, browseInfoType);
+                CollectionAssert.DoesNotContain(validTypes, entityInfoType);
+                CollectionAssert.DoesNotContain(validTypes, moduleInfoType);
+            }
+
+            // Browse can't contain Browse, Entity or Module
+            {
+                var validTypes = conceptQueries.ValidConceptsForParent(browseInfoType);
+                CollectionAssert.DoesNotContain(validTypes, browseInfoType);
+                CollectionAssert.DoesNotContain(validTypes, entityInfoType);
+                CollectionAssert.DoesNotContain(validTypes, moduleInfoType);
+            }
+
+            // Support parent from derived key classes
+            {
+                var validTypes = conceptQueries.ValidConceptsForParent(entityInfoType);
+                CollectionAssert.Contains(validTypes, shortStringInfoType);
+            }
+        }
 
         // TODO: Missing assert
         [TestMethod]

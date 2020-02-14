@@ -50,18 +50,20 @@ namespace Rhetos.LanguageServices.Server.Services
         public List<Type> ValidConceptsForParent(Type parentConceptInfoType)
         {
             var result = new List<Type>();
-            var parentKeys = ConceptInfoType.ConceptInfoKeys(parentConceptInfoType);
             foreach (var conceptType in rhetosAppContext.ConceptInfoTypes)
             {
                 if (conceptType == parentConceptInfoType) continue;
-                var conceptKeys = ConceptInfoType.ConceptInfoKeys(conceptType);
-                if (StartsWithEquivalentConceptTypes(conceptKeys, parentKeys)) result.Add(conceptType);
+                var firstMember = ConceptMembers.Get(conceptType).FirstOrDefault();
+                if (firstMember == null || !firstMember.IsKey || !firstMember.IsConceptInfo) continue;
+
+                if (firstMember.ValueType.IsAssignableFrom(parentConceptInfoType))
+                    result.Add(conceptType);
             }
 
             return result;
         }
         
-        // TODO: SqlDependsOnID ??
+        // TODO: SqlDependsOnID??, method obsolete?
         private bool StartsWithEquivalentConceptTypes(List<Type> list, List<Type> subList)
         {
             if (subList.Count > list.Count) return false;

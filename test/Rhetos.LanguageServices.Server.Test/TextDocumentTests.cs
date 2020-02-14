@@ -119,18 +119,36 @@ namespace Rhetos.LanguageServices.Server.Test
             Assert.AreEqual(line + leadSpaces(13), TextDocument.ShowPositionOnLine(line, 14));
         }
 
-        /*
         [TestMethod]
-        public void LastPosition()
+        public void EmptyDocument()
         {
-            var text = "0123\r\n\r\n";
-            var doc = new TextDocument(text);
-            var pos = ;
+            var doc = new TextDocument("");
 
-            Console.WriteLine($"Char at pos {pos} is {(int)doc.Text[pos]}.");
-            var lineChr = doc.GetLineChr(pos);
-            Console.WriteLine(lineChr);
-            Console.WriteLine(doc.ShowPosition(lineChr.line, lineChr.chr));
-        }*/
+            Assert.AreEqual(0, doc.GetPosition(0, 0));
+            Assert.AreEqual(0, doc.GetPosition(0, 10));
+            Assert.AreEqual(0, doc.GetPosition(10, 0));
+            Assert.AreEqual(0, doc.GetPosition(10, 10));
+
+            Assert.AreEqual(LineChr.Zero, doc.GetLineChr(0));
+            Assert.AreEqual(LineChr.Zero, doc.GetLineChr(1));
+
+        }
+
+        [TestMethod]
+        public void SingleEmptyLine()
+        {
+            var doc = new TextDocument("\r\n");
+
+            Assert.AreEqual(0, doc.GetPosition(0, 1));
+            Assert.AreEqual(0, doc.GetPosition(0, 5));
+            Assert.AreEqual(0, doc.GetPosition(1, 1));
+            Assert.AreEqual(0, doc.GetPosition(1, 5));
+            Assert.AreEqual(0, doc.GetPosition(2, 5));
+
+            Assert.AreEqual(LineChr.Zero, doc.GetLineChr(0));
+            Assert.AreEqual(LineChr.Zero, doc.GetLineChr(1));
+            Assert.AreEqual(LineChr.Zero, doc.GetLineChr(2));
+            Assert.AreEqual(LineChr.Zero, doc.GetLineChr(3));
+        }
     }
 }

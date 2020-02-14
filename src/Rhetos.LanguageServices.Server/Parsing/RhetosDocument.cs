@@ -22,6 +22,7 @@ namespace Rhetos.LanguageServices.Server.Parsing
             this.rhetosAppContext = rhetosAppContext;
             this.logFactory = logFactory;
             this.conceptQueries = conceptQueries;
+            UpdateText("");
         }
 
         public void UpdateText(string text)
@@ -36,6 +37,8 @@ namespace Rhetos.LanguageServices.Server.Parsing
         {
             lock (_syncAnalysis)
             {
+                // gracefully return empty analysis if RhetosAppContext is not yet initialized
+                if (!rhetosAppContext.IsInitialized) return new CodeAnalysisResult(TextDocument, 0, 0);
                 var analysisRun = new CodeAnalysisRun(TextDocument, rhetosAppContext, logFactory);
                 return analysisRun.RunForPosition(lineChr);
             }

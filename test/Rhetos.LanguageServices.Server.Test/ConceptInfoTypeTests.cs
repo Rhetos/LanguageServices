@@ -13,10 +13,10 @@ namespace Rhetos.LanguageServices.Server.Test
     public class ConceptInfoTypeTests
     {
         [DataTestMethod]
-        [DataRow(typeof(EntityInfo), "Entity <Module>.<String> ")]
-        [DataRow(typeof(AllPropertiesLoggingInfo), "AllProperties <Logging> ")]
-        [DataRow(typeof(ShortStringPropertyInfo), "ShortString <DataStructure>.<String> ")]
-        [DataRow(typeof(ReferencePropertyInfo), "Reference <DataStructure>.<String> <DataStructureInfo>")]
+        [DataRow(typeof(EntityInfo), "Entity <Module: ModuleInfo>.<Name: String> ")]
+        [DataRow(typeof(AllPropertiesLoggingInfo), "AllProperties <EntityLogging: EntityLoggingInfo> ")]
+        [DataRow(typeof(ShortStringPropertyInfo), "ShortString <DataStructure: DataStructureInfo>.<Name: String> ")]
+        [DataRow(typeof(ReferencePropertyInfo), "Reference <DataStructure: DataStructureInfo>.<Name: String> <Referenced: DataStructureInfo>")]
         public void SignatureDescriptions(Type conceptInfoType, string expectedDescription)
         {
             var description = ConceptInfoType.SignatureDescription(conceptInfoType);

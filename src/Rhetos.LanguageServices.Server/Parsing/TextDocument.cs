@@ -30,6 +30,7 @@ namespace Rhetos.LanguageServices.Server.Parsing
 
         public int GetPosition(int line, int chr)
         {
+            if (Text.Length == 0) return 0;
             if (line >= lineStarts.Value.Count) line = lineStarts.Value.Count - 1;
             var pos = lineStarts.Value[line] + chr;
             
@@ -46,6 +47,7 @@ namespace Rhetos.LanguageServices.Server.Parsing
 
         public LineChr GetLineChr(int pos)
         {
+            if (Text.Length == 0) return LineChr.Zero;
             if (pos >= Text.Length) pos = Text.Length - 1;
 
             if (Text[pos] == '\n' && pos > 0 && Text[pos - 1] == '\r') pos--;

@@ -95,11 +95,10 @@ namespace Rhetos.LanguageServices.Server.Services
         private void LoadKeywords()
         {
             Keywords = ConceptInfoTypes
-                .Select(info => (keywordAttribute: info.GetCustomAttribute(typeof(ConceptKeywordAttribute)) as ConceptKeywordAttribute, infoType: info))
-                .Select(info => (keyword: info.keywordAttribute?.Keyword, info.infoType))
-                .Where(info => info.keyword != null)
+                .Select(type => (keyword: ConceptInfoHelper.GetKeyword(type), type))
+                .Where(info => !string.IsNullOrEmpty(info.keyword))
                 .GroupBy(info => info.keyword)
-                .ToDictionary(group => group.Key, group => group.Select(info => info.infoType).ToArray());
+                .ToDictionary(group => group.Key, group => group.Select(info => info.type).ToArray());
         }
 
         // These methods for additional assembly resolving are copied from Rhetos plugin scanner to replicate <probingPath> behavior of Rhetos Apps.

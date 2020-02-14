@@ -61,7 +61,6 @@ namespace Rhetos.LanguageServices.Server.Handlers
         {
             var text = notification.ContentChanges.First().Text;
             rhetosWorkspace.UpdateDocumentText(notification.TextDocument.Uri, text);
-
             return Unit.Task;
         }
 

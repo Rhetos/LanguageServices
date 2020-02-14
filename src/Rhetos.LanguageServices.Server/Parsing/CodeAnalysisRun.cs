@@ -1,10 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Rhetos.Dsl;
 using Rhetos.LanguageServices.Server.Services;
@@ -37,7 +33,9 @@ namespace Rhetos.LanguageServices.Server.Parsing
         public CodeAnalysisResult RunForPosition(LineChr lineChr)
         {
             if (result != null) throw new InvalidOperationException("Analysis already run.");
+            if (!rhetosAppContext.IsInitialized) throw new InvalidOperationException($"Attempted CodeAnalysisRun before RhetosAppContext was initialized.");
             result = new CodeAnalysisResult(textDocument, lineChr.Line, lineChr.Chr);
+
             var (tokenizer, capturedErrors) = CreateTokenizerWithCapturedErrors();
             result.Tokens = tokenizer.GetTokens();
             result.TokenizerErrors.AddRange(capturedErrors);
@@ -57,6 +55,8 @@ namespace Rhetos.LanguageServices.Server.Parsing
             {
                 result.DslParserErrors.Add(new CodeAnalysisError() { LineChr = LineChr.Zero, Message = e.Message });
             }
+
+            result.SuccessfulRun = true;
             return result;
         }
 

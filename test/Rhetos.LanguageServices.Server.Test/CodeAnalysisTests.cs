@@ -116,6 +116,7 @@ namespace Rhetos.LanguageServices.Server.Test
 
             Console.WriteLine(rhe.TextDocument.ShowPosition(lineChr));
             var analysisResult = rhe.GetAnalysis(lineChr);
+            Assert.IsTrue(analysisResult.SuccessfulRun);
 
             Assert.IsTrue(analysisResult.AllErrors.Any());
             var error = analysisResult.AllErrors.First();
@@ -147,6 +148,21 @@ namespace Rhetos.LanguageServices.Server.Test
             Assert.AreEqual(1, analysisResult.TokenizerErrors.Count);
             Console.WriteLine(JsonConvert.SerializeObject(analysisResult.TokenizerErrors[0], Formatting.Indented));
             StringAssert.Contains(analysisResult.TokenizerErrors[0].Message, "Missing closing character");
+        }
+
+        [TestMethod]
+        public void RunAnalysisOnUninitilizedRhetosAppContext()
+        {
+            var newProvider = TestCommon.CreateTestServiceProvider();
+
+            var documentFactory = newProvider.GetService<RhetosDocumentFactory>();
+
+            {
+                var document = documentFactory.CreateNew();
+                var analysisResult = document.GetAnalysis();
+                Assert.AreEqual(0, analysisResult.AllErrors.Count());
+                Assert.IsFalse(analysisResult.SuccessfulRun);
+            }
         }
     }
 }
