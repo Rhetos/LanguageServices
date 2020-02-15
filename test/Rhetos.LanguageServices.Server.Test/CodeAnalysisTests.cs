@@ -39,7 +39,7 @@ namespace Rhetos.LanguageServices.Server.Test
     }
     Entity After; 
 }
-";
+ ";
 
         [DataTestMethod]
         [DataRow(0, 0, "Module")]
@@ -88,7 +88,9 @@ namespace Rhetos.LanguageServices.Server.Test
             rhe.UpdateText(script);
 
             Console.WriteLine(rhe.TextDocument.ShowPosition(lineChr));
-            var context = rhe.GetAnalysis(lineChr).ConceptContext;
+            var analysis = rhe.GetAnalysis(lineChr);
+            Console.WriteLine(analysis.TextDocument.ShowPosition(lineChr));
+            var context = analysis.ConceptContext;
             var contextDesc = string.Join(" / ", context);
             Console.WriteLine($"Context at cursor ({line}, {chr}): {contextDesc}");
             Assert.AreEqual(expectedContext, contextDesc);
@@ -107,6 +109,7 @@ namespace Rhetos.LanguageServices.Server.Test
         [DataRow(2, 0, "M")]
         [DataRow(4, 0, "M / M.E")]
         [DataRow(4, 5, "M")]
+        [DataRow(5, 4, "M")]
         public void CorrectParsingWithErrors(int line, int chr, string expectedContext)
         {
             Console.WriteLine(scriptErrors);
@@ -119,11 +122,8 @@ namespace Rhetos.LanguageServices.Server.Test
             Assert.IsTrue(analysisResult.SuccessfulRun);
 
             Assert.IsTrue(analysisResult.AllErrors.Any());
-            var error = analysisResult.AllErrors.First();
-            Console.WriteLine($"ERROR: {error.Message}.");
-            StringAssert.Contains(error.Message, "Unrecognized concept keyword 'error'.");
-            Assert.AreEqual(5, error.LineChr.Line);
-            Assert.AreEqual(4, error.LineChr.Chr);
+            Console.WriteLine(string.Join("\n", analysisResult.AllErrors));
+            
             var contextDesc = string.Join(" / ", analysisResult.ConceptContext);
             Console.WriteLine($"Context at cursor ({line}, {chr}): {contextDesc}");
             Assert.AreEqual(expectedContext, contextDesc);
@@ -163,6 +163,59 @@ namespace Rhetos.LanguageServices.Server.Test
                 Assert.AreEqual(0, analysisResult.AllErrors.Count());
                 Assert.IsFalse(analysisResult.SuccessfulRun);
             }
+        }
+
+        private readonly string commentScript =
+@"Module module1 // comment 1
+{
+    Entity entity1
+// comment 2
+    {
+    }
+// s
+}";
+        [DataTestMethod]
+        [DataRow(0, 14, "Module", false)]
+        [DataRow(0, 15, null, true)]
+        [DataRow(0, 25, null, true)]
+        [DataRow(0, 26, null, true)]
+        [DataRow(0, 27, null, true)]
+        [DataRow(1, 0, null, false)]
+        [DataRow(1, 1, null, false)]
+        [DataRow(2, 3, null, false)]
+        [DataRow(2, 4, "Entity", false)]
+        [DataRow(2, 10, "Entity", false)]
+        [DataRow(3, 0, null, true)]
+        [DataRow(3, 15, null, true)]
+        [DataRow(3, 20, null, true)]
+        [DataRow(4, 0, "Entity", false)]
+        [DataRow(4, 3, "Entity", false)]
+        [DataRow(4, 4, null, false)]
+        [DataRow(6, 10, null, true)]
+        public void CorrectKeywordsWithComments(int line, int chr, string expectedKeyword, bool isInsideComment)
+        {
+            var rhe = rhetosDocumentFactory.CreateNew();
+            rhe.UpdateText(commentScript);
+            Console.WriteLine(commentScript);
+            Console.WriteLine();
+
+            var lineChr = new LineChr(line, chr);
+            var analysisResult = rhe.GetAnalysis(lineChr);
+
+            Console.WriteLine($"Found comment tokens:\n-----------------------");
+            foreach (var commentToken in analysisResult.CommentTokens)
+            {
+                var commentLineChr = analysisResult.TextDocument.GetLineChr(commentToken.PositionInDslScript);
+                Console.WriteLine($"Comment Token: '{commentToken.Value}' at position {commentLineChr}");
+                Console.WriteLine(analysisResult.TextDocument.ShowPosition(commentLineChr));
+            }
+
+            Console.WriteLine($"Keywords:\n-----------------------");
+            Console.WriteLine($"Keyword at position: {analysisResult.KeywordToken?.Value}");
+            Console.WriteLine(rhe.TextDocument.ShowPosition(lineChr));
+
+            Assert.AreEqual(expectedKeyword, analysisResult.KeywordToken?.Value);
+            Assert.AreEqual(isInsideComment, analysisResult.IsInsideComment);
         }
     }
 }

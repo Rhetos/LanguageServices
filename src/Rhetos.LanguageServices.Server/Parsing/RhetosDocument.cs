@@ -31,15 +31,20 @@ namespace Rhetos.LanguageServices.Server.Parsing
         }
 
         public CodeAnalysisResult GetAnalysis()
-            => GetAnalysis(LineChr.Zero);
+            => GetAnalysis(null);
 
-        public CodeAnalysisResult GetAnalysis(LineChr lineChr)
+        public CodeAnalysisResult GetAnalysis(LineChr? lineChr)
         {
             lock (_syncAnalysis)
             {
                 // gracefully return empty analysis if RhetosAppContext is not yet initialized
                 if (!rhetosAppContext.IsInitialized) return new CodeAnalysisResult(TextDocument, 0, 0);
-                var analysisRun = new CodeAnalysisRun(TextDocument, rhetosAppContext, logFactory);
+
+                var relevantText = TextDocument;
+                if (lineChr != null)
+                    relevantText = new TextDocument(TextDocument.GetTruncatedAtNextEndOfLine(lineChr.Value));
+
+                var analysisRun = new CodeAnalysisRun(relevantText, rhetosAppContext, logFactory);
                 return analysisRun.RunForPosition(lineChr);
             }
         }
@@ -47,6 +52,9 @@ namespace Rhetos.LanguageServices.Server.Parsing
         public List<string> GetCompletionKeywordsAtPosition(LineChr lineChr)
         {
             var analysisResult = GetAnalysis(lineChr);
+
+            if (analysisResult.IsInsideComment)
+                return new List<string>();
 
             var typingToken = analysisResult.GetTokenBeingTypedAtCursor(lineChr);
             if (analysisResult.KeywordToken != null && analysisResult.KeywordToken != typingToken)

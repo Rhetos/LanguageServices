@@ -18,6 +18,7 @@ namespace Rhetos.LanguageServices.Server.Parsing
         public List<Token> CommentTokens { get; set; }
         public List<IConceptInfo> ConceptContext { get; set; } = new List<IConceptInfo>();
         public Token KeywordToken { get; set; }
+        public bool IsInsideComment { get; set; }
         public Token NextKeywordToken { get; set; }
         public List<CodeAnalysisError> TokenizerErrors { get; } = new List<CodeAnalysisError>();
         public List<CodeAnalysisError> DslParserErrors { get; } = new List<CodeAnalysisError>();

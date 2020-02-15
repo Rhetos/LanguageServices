@@ -27,21 +27,22 @@ namespace Rhetos.LanguageServices.Server.Parsing
 
         public CodeAnalysisResult RunForDocument()
         {
-            return RunForPosition(LineChr.Zero);
+            return RunForPosition(null);
         }
 
-        public CodeAnalysisResult RunForPosition(LineChr lineChr)
+        public CodeAnalysisResult RunForPosition(LineChr? lineChr)
         {
+            if (lineChr == null) lineChr = LineChr.Zero;
             if (result != null) throw new InvalidOperationException("Analysis already run.");
             if (!rhetosAppContext.IsInitialized) throw new InvalidOperationException($"Attempted CodeAnalysisRun before RhetosAppContext was initialized.");
-            result = new CodeAnalysisResult(textDocument, lineChr.Line, lineChr.Chr);
+            result = new CodeAnalysisResult(textDocument, lineChr.Value.Line, lineChr.Value.Chr);
 
             var (tokenizer, capturedErrors) = CreateTokenizerWithCapturedErrors();
             result.Tokens = tokenizer.GetTokens();
             result.TokenizerErrors.AddRange(capturedErrors);
             result.CommentTokens = ParseCommentTokens();
 
-            targetPos = textDocument.GetPosition(lineChr);
+            targetPos = textDocument.GetPosition(lineChr.Value);
             var dslParser = new DslParser(tokenizer, rhetosAppContext.ConceptInfoInstances, rhetosLogProvider);
             try
             {
@@ -56,8 +57,39 @@ namespace Rhetos.LanguageServices.Server.Parsing
                 result.DslParserErrors.Add(new CodeAnalysisError() { LineChr = LineChr.Zero, Message = e.Message });
             }
 
+            ApplyCommentsToResult();
             result.SuccessfulRun = true;
             return result;
+        }
+
+        private void ApplyCommentsToResult()
+        {
+            Token lastTokenBeforeTarget = null;
+            foreach (var commentToken in result.CommentTokens)
+            {
+                // leading '//' characters are not included in token.Value
+                if (targetPos >= commentToken.PositionInDslScript && targetPos < commentToken.PositionInDslScript + commentToken.Value.Length + 2)
+                {
+                    result.KeywordToken = null;
+                    result.IsInsideComment = true;
+                    break;
+                }
+
+                if (commentToken.PositionInDslScript > targetPos)
+                    break;
+
+                lastTokenBeforeTarget = commentToken;
+            }
+            // handle situation where position is at the EOL after the comment
+            if (lastTokenBeforeTarget != null)
+            {
+                var lastTokenLine = textDocument.GetLineChr(lastTokenBeforeTarget.PositionInDslScript).Line;
+                if (lastTokenLine == result.Line)
+                {
+                    result.KeywordToken = null;
+                    result.IsInsideComment = true;
+                }
+            }
         }
 
         private void OnMemberRead(ITokenReader iTokenReader, IConceptInfo conceptInfo, ConceptMember conceptMember, ValueOrError<object> valueOrError)

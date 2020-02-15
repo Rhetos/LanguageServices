@@ -26,5 +26,28 @@ namespace Rhetos.LanguageServices.Server.Test
 
             return services.BuildServiceProvider();
         }
+
+        public static string ToEndings(this string text, EndingsStyle endingsStyle)
+        {
+            switch (endingsStyle)
+            {
+                case EndingsStyle.Linux:
+                    return text.ToLinuxEndings();
+                case EndingsStyle.Windows:
+                    return text.ToWindowsEndings();
+                default:
+                    throw new NotImplementedException();
+            }
+        }
+
+        public static string ToLinuxEndings(this string text)
+        {
+            return text.Replace("\r\n", "\n");
+        }
+
+        public static string ToWindowsEndings(this string text)
+        {
+            return text.ToLinuxEndings().Replace("\n", "\r\n");
+        }
     }
 }

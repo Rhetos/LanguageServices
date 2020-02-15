@@ -15,14 +15,15 @@ namespace Rhetos.LanguageServices.Server.Test
     [TestClass]
     public class TextDocumentTests
     {
-        [TestMethod]
+        [TestMethod]        
         public void PositionConversionsLinuxStyle()
         {
             var text = "0123\n" +
-                        "\n" +
-                        "0\n" +
-                        "\n" +
-                        "\n";
+                       "\n" +
+                       "0\n" +
+                       "\n" +
+                       "\n";
+
             var doc = new TextDocument(text);
 
             Assert.AreEqual(0, doc.GetPosition(0, 0));
@@ -108,10 +109,13 @@ namespace Rhetos.LanguageServices.Server.Test
             Assert.AreEqual("0", doc.ExtractLine(6));
         }
 
-        [TestMethod]
-        public void ShowPosition()
+        [DataTestMethod]
+        [DataRow(EndingsStyle.Linux, DisplayName = "Linux")]
+        [DataRow(EndingsStyle.Windows, DisplayName = "Windows")]
+        public void ShowPosition(EndingsStyle endingsStyle)
         {
             var line = "Line test ble\n";
+            line = line.ToEndings(endingsStyle);
             Func<int, string> leadSpaces = spaces => "^".PadLeft(spaces + 1);
             Assert.AreEqual(line + leadSpaces(0), TextDocument.ShowPositionOnLine(line, 0));
             Assert.AreEqual(line + leadSpaces(4), TextDocument.ShowPositionOnLine(line, 4));
@@ -134,10 +138,14 @@ namespace Rhetos.LanguageServices.Server.Test
 
         }
 
-        [TestMethod]
-        public void SingleEmptyLine()
+        [DataTestMethod]
+        [DataRow(EndingsStyle.Linux, DisplayName = "Linux")]
+        [DataRow(EndingsStyle.Windows, DisplayName = "Windows")]
+        public void SingleEmptyLine(EndingsStyle endingsStyle)
         {
-            var doc = new TextDocument("\r\n");
+            var text = "\n";
+            text = text.ToEndings(endingsStyle);
+            var doc = new TextDocument(text);
 
             Assert.AreEqual(0, doc.GetPosition(0, 1));
             Assert.AreEqual(0, doc.GetPosition(0, 5));
@@ -149,6 +157,56 @@ namespace Rhetos.LanguageServices.Server.Test
             Assert.AreEqual(LineChr.Zero, doc.GetLineChr(1));
             Assert.AreEqual(LineChr.Zero, doc.GetLineChr(2));
             Assert.AreEqual(LineChr.Zero, doc.GetLineChr(3));
+        }
+
+        [DataTestMethod]
+        [DataRow(0, 0, "\n")]
+        [DataRow(1, 0, "// comment\n")]
+        [DataRow(4, 0, "\n\n")]
+        [DataRow(4, 1, "\n\n")]
+        [DataRow(4, 2, "\n\n")]
+        [DataRow(6, 0, "{\n")]
+        [DataRow(6, 10, "{\n")]
+        [DataRow(9, 0, "}\n")]
+        [DataRow(10, 0, "\n\n")]
+        [DataRow(11, 0, "\n\n")]
+        public void CorrectlyTruncates(int line, int chr, string expectedEndsWith)
+        {
+            var testText =
+@"
+// comment
+Module
+{
+
+    Entity
+    {
+        ShortString;
+    }
+}
+
+";
+            var variants = new[]
+            {
+                (endingsStyle: EndingsStyle.Linux, name: "Linux"),
+                (endingsStyle: EndingsStyle.Windows, name: "Windows")
+            };
+
+            foreach (var variant in variants)
+            {
+                var text = testText.ToEndings(variant.endingsStyle);
+                var textDocument = new TextDocument(text);
+                var truncated = textDocument.GetTruncatedAtNextEndOfLine(new LineChr(line, chr));
+                StringAssert.EndsWith(truncated, expectedEndsWith.ToEndings(variant.endingsStyle), variant.name);
+            }
+        }
+
+        [TestMethod]
+        public void CorrectlyTruncatesEmptyString()
+        {
+            var textDocument = new TextDocument("");
+            Assert.AreEqual("", textDocument.GetTruncatedAtNextEndOfLine(new LineChr(0, 0)));
+            Assert.AreEqual("", textDocument.GetTruncatedAtNextEndOfLine(new LineChr(0, 1)));
+            Assert.AreEqual("", textDocument.GetTruncatedAtNextEndOfLine(new LineChr(1, 0)));
         }
     }
 }

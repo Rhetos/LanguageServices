@@ -53,6 +53,7 @@
     <Compile Include="ConceptQueriesTests.cs" />
     <Compile Include="CodeAnalysisTests.cs" />
     <Compile Include="DslParserTests.cs" />
+    <Compile Include="EndingsStyle.cs" />
     <Compile Include="HostTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RhetosWorkspaceTests.cs" />

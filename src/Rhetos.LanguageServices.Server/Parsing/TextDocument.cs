@@ -1,9 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Rhetos.Dsl;
 using Rhetos.LanguageServices.Server.Tools;
 
@@ -74,6 +70,7 @@ namespace Rhetos.LanguageServices.Server.Parsing
         {
             line = line.Replace('\t', ' ');
             if (pos >= line.Length) pos = line.Length - 1;
+            if (line[pos] == '\n' && pos > 0 && line[pos - 1] == '\r') pos--;
             var posIndicator = "^".PadLeft(pos + 1, ' ');
             if (!line.EndsWith("\n")) line += "\n";
             return line + posIndicator;
@@ -84,6 +81,18 @@ namespace Rhetos.LanguageServices.Server.Parsing
             var pos = GetPosition(lineChr);
             var lineText = ExtractLine(pos);
             return ShowPositionOnLine(lineText, lineChr.Chr);
+        }
+
+        public string GetTruncatedAtNextEndOfLine(LineChr lineChr)
+        {
+            if (Text.Length == 0) return "";
+            var pos = GetPosition(lineChr);
+            while (pos < Text.Length)
+            {
+                if (Text[pos++] == '\n') break;
+            }
+
+            return Text.Substring(0, pos);
         }
 
         private List<int> GetLineStartPositions()
