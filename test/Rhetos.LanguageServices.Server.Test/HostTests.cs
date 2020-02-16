@@ -16,6 +16,7 @@ namespace Rhetos.LanguageServices.Server.Test
     public class HostTests
     {
         [TestMethod]
+        [Ignore("Needs configuration")]
         public async Task Test1()
         {
             var logFactory = LoggerFactory.Create(a => a.AddNLog().SetMinimumLevel(LogLevel.Trace));

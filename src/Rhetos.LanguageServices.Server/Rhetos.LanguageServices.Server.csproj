@@ -52,6 +52,7 @@
     <Compile Include="Parsing\CodeAnalysisResult.cs" />
     <Compile Include="Parsing\CodeAnalysisRun.cs" />
     <Compile Include="Parsing\RhetosDocument.cs" />
+    <Compile Include="Parsing\RhetosSignature.cs" />
     <Compile Include="Parsing\TextDocument.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -87,7 +88,7 @@
       <Version>0.14.2</Version>
     </PackageReference>
     <PackageReference Include="Rhetos">
-      <Version>4.0.0-dev20020920474be604</Version>
+      <Version>4.0.0-dev20021620524be604</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup />

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using Microsoft.Extensions.Logging;
 using Rhetos.Dsl;
 using Rhetos.LanguageServices.Server.Services;
@@ -15,13 +16,16 @@ namespace Rhetos.LanguageServices.Server.Parsing
         private CodeAnalysisResult result = null;
         private readonly RhetosAppContext rhetosAppContext;
         private int targetPos;
-        private readonly TextDocument textDocument;
+        private Token lastTokenBeforeTarget;
+        private readonly TextDocument fullTextDocument;
+        private TextDocument textDocument;
+        private Tokenizer tokenizer;
         private readonly ILogProvider rhetosLogProvider;
 
         public CodeAnalysisRun(TextDocument textDocument, RhetosAppContext rhetosAppContext, ILoggerFactory logFactory)
         {
             this.rhetosAppContext = rhetosAppContext;
-            this.textDocument = textDocument;
+            this.fullTextDocument = textDocument;
             this.rhetosLogProvider = new RhetosNetCoreLogProvider(logFactory);
         }
 
@@ -32,17 +36,48 @@ namespace Rhetos.LanguageServices.Server.Parsing
 
         public CodeAnalysisResult RunForPosition(LineChr? lineChr)
         {
-            if (lineChr == null) lineChr = LineChr.Zero;
-            if (result != null) throw new InvalidOperationException("Analysis already run.");
             if (!rhetosAppContext.IsInitialized) throw new InvalidOperationException($"Attempted CodeAnalysisRun before RhetosAppContext was initialized.");
-            result = new CodeAnalysisResult(textDocument, lineChr.Value.Line, lineChr.Value.Chr);
 
-            var (tokenizer, capturedErrors) = CreateTokenizerWithCapturedErrors();
+            InitializeResult(lineChr);
+            InitializeTokenizers();
+
+            // run-scoped variables needed for parse and callbacks
+            targetPos = textDocument.GetPosition(result.Line, result.Chr);
+            lastTokenBeforeTarget = result.Tokens.LastOrDefault(token => token.PositionInDslScript <= targetPos);
+            
+            ParseAndCaptureErrors();
+            ApplyCommentsToResult();
+
+            result.SuccessfulRun = true;
+            return result;
+        }
+
+        private void InitializeResult(LineChr? lineChr)
+        {
+            if (result != null) throw new InvalidOperationException("Analysis already run.");
+
+            if (lineChr == null)
+                textDocument = fullTextDocument;
+            else
+                textDocument = new TextDocument(fullTextDocument.GetTruncatedAtNextEndOfLine(lineChr.Value));
+
+            result = lineChr == null
+                ? new CodeAnalysisResult(textDocument, 0, 0)
+                : new CodeAnalysisResult(textDocument, lineChr.Value.Line, lineChr.Value.Chr);
+        }
+
+        private void InitializeTokenizers()
+        {
+            var (createdTokenizer, capturedErrors) = CreateTokenizerWithCapturedErrors();
+            tokenizer = createdTokenizer;
             result.Tokens = tokenizer.GetTokens();
             result.TokenizerErrors.AddRange(capturedErrors);
-            result.CommentTokens = ParseCommentTokens();
 
-            targetPos = textDocument.GetPosition(lineChr.Value);
+            result.CommentTokens = ParseCommentTokens();
+        }
+
+        private void ParseAndCaptureErrors()
+        {
             var dslParser = new DslParser(tokenizer, rhetosAppContext.ConceptInfoInstances, rhetosLogProvider);
             try
             {
@@ -56,15 +91,11 @@ namespace Rhetos.LanguageServices.Server.Parsing
             {
                 result.DslParserErrors.Add(new CodeAnalysisError() { LineChr = LineChr.Zero, Message = e.Message });
             }
-
-            ApplyCommentsToResult();
-            result.SuccessfulRun = true;
-            return result;
         }
 
         private void ApplyCommentsToResult()
         {
-            Token lastTokenBeforeTarget = null;
+            Token lastCommentTokenBeforeTarget = null;
             foreach (var commentToken in result.CommentTokens)
             {
                 // leading '//' characters are not included in token.Value
@@ -78,12 +109,12 @@ namespace Rhetos.LanguageServices.Server.Parsing
                 if (commentToken.PositionInDslScript > targetPos)
                     break;
 
-                lastTokenBeforeTarget = commentToken;
+                lastCommentTokenBeforeTarget = commentToken;
             }
             // handle situation where position is at the EOL after the comment
-            if (lastTokenBeforeTarget != null)
+            if (lastCommentTokenBeforeTarget != null)
             {
-                var lastTokenLine = textDocument.GetLineChr(lastTokenBeforeTarget.PositionInDslScript).Line;
+                var lastTokenLine = textDocument.GetLineChr(lastCommentTokenBeforeTarget.PositionInDslScript).Line;
                 if (lastTokenLine == result.Line)
                 {
                     result.KeywordToken = null;
@@ -94,13 +125,60 @@ namespace Rhetos.LanguageServices.Server.Parsing
 
         private void OnMemberRead(ITokenReader iTokenReader, IConceptInfo conceptInfo, ConceptMember conceptMember, ValueOrError<object> valueOrError)
         {
+            var tokenReader = (TokenReader)iTokenReader;
+            if (tokenReader.PositionInTokenList > 0 && lastTokenBeforeTarget != null)
+            {
+                var conceptInfoType = conceptInfo.GetType();
+                var lastTokenRead = result.Tokens[tokenReader.PositionInTokenList - 1];
+                // Console.WriteLine($"[OnMemberRead]  LastTokenRead='{lastTokenRead.Value}', LastTokenBeforeTarget='{lastTokenBeforeTarget.Value}'");
+                if (lastTokenRead.PositionInDslScript >= lastTokenBeforeTarget.PositionInDslScript)
+                {
+                    if (result.ValidConcepts.All(valid => valid.GetType() != conceptInfo.GetType())) result.ValidConcepts.Add(conceptInfo);
+                }
+                if (lastTokenRead.PositionInDslScript <= lastTokenBeforeTarget.PositionInDslScript && !valueOrError.IsError)
+                {
+                    // Console.WriteLine($"{conceptInfoType.Name}: {conceptMember.Name}");
+                    result.LastTokenParsed[conceptInfoType] = lastTokenRead;
+                    result.LastMemberReadAttempt[conceptInfoType] = conceptMember;
+                }
+            }
+
+            /*
+            var tokenReader = (TokenReader)iTokenReader;
+            if (tokenReader.PositionInTokenList > 0 && lastTokenBeforeTarget != null)
+            {
+                var lastTokenRead = valueOrError.IsError
+                    ? result.Tokens[tokenReader.PositionInTokenList - 1]
+                    : result.Tokens[tokenReader.PositionInTokenList - 1];
+
+                var nextToken = result.Tokens[tokenReader.PositionInTokenList];
+                // Console.WriteLine($"Next token type: {nextToken.Type}");
+                Console.WriteLine($"\nOnMemberRead: Token='{lastTokenRead.Value}' [{tokenReader.PositionInTokenList}/{result.Tokens.Count}], {conceptInfo.GetType().Name}: {conceptMember.Name} = {valueOrError}");
+                Console.WriteLine($"{conceptInfo.GetType().Name} ==> Last read token: '{lastTokenRead.Value}', Last token before target: '{lastTokenBeforeTarget.Value}', Next token: ({nextToken.Type}) '{nextToken.Value}'");
+                if (lastTokenRead == lastTokenBeforeTarget)
+                {
+                    result.LastMemberReadAttempt[conceptInfo.GetType()] = conceptMember;
+                    if (!result.ValidConcepts.Any(valid => valid.GetType() == conceptInfo.GetType()))
+                    {
+                        var clone = ConceptInfoType.MemberwiseClone(conceptInfo);
+
+                        // OnMemberRead is called before value of current member is set on concept
+                        if (!valueOrError.IsError)
+                            conceptMember.SetMemberValue(clone, valueOrError.Value);
+
+                        result.ValidConcepts.Add(clone);
+                    }
+                }
+            }
+            */
+            return;
+
             // TODO: monkey patching
             if (!valueOrError.IsError)
             {
                 conceptMember.SetMemberValue(conceptInfo, valueOrError.Value);
             }
 
-            var tokenReader = (TokenReader)iTokenReader;
             // if (tokenReader.PositionInTokenList >= tokens.Count) return;
             if (tokenReader.PositionInTokenList == 0) return;
 
@@ -139,6 +217,9 @@ namespace Rhetos.LanguageServices.Server.Parsing
             if (tokenReader.PositionInTokenList >= result.Tokens.Count) return;
 
             var lastToken = result.Tokens[tokenReader.PositionInTokenList];
+            if (keyword == null && tokenReader.PositionInTokenList > 0)
+                lastToken = result.Tokens[tokenReader.PositionInTokenList - 1];
+
             if (lastToken.PositionInDslScript <= targetPos)
             {
                 if (keyword != null)

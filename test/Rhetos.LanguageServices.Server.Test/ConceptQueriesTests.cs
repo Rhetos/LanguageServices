@@ -8,6 +8,7 @@ using Rhetos.Dsl.DefaultConcepts;
 using Rhetos.LanguageServices.Server.Services;
 using Rhetos.LanguageServices.Server.Tools;
 using Microsoft.Extensions.DependencyInjection;
+using Newtonsoft.Json;
 
 namespace Rhetos.LanguageServices.Server.Test
 {
@@ -30,7 +31,7 @@ namespace Rhetos.LanguageServices.Server.Test
             var conceptQueries = serviceProvider.GetService<ConceptQueries>();
             var signatures = conceptQueries.GetSignaturesWithDocumentation("SqlObject");
             Assert.AreEqual(1, signatures.Count);
-            StringAssert.StartsWith(signatures.Single().signature, "SqlObject");
+            StringAssert.StartsWith(signatures.Single().Signature, "SqlObject");
         }
 
         [TestMethod]
@@ -71,6 +72,36 @@ namespace Rhetos.LanguageServices.Server.Test
                 var validTypes = conceptQueries.ValidConceptsForParent(entityInfoType);
                 CollectionAssert.Contains(validTypes, shortStringInfoType);
             }
+        }
+
+
+        [TestMethod]
+        public void RhetosSignatureEntity()
+        {
+            var conceptQueries = serviceProvider.GetService<ConceptQueries>();
+            var signatures = conceptQueries.GetSignaturesWithDocumentation("Entity");
+            Console.WriteLine(JsonConvert.SerializeObject(signatures, Formatting.Indented));
+            
+            Assert.AreEqual(1, signatures.Count);
+            var signature = signatures.Single();
+            StringAssert.Contains(signature.Documentation, "Defined by EntityInfo");
+            Assert.AreEqual("Entity <Module: ModuleInfo>.<Name: String> ", signature.Signature);
+            Assert.AreEqual(signature.ConceptInfoType, typeof(EntityInfo));
+            Assert.AreEqual("Module: ModuleInfo,Name: String", string.Join(",", signature.Parameters.Select(ConceptInfoType.ConceptMemberDescription)));
+        }
+
+        [TestMethod]
+        public void RhetosSignatureReference()
+        {
+            var conceptQueries = serviceProvider.GetService<ConceptQueries>();
+            var signatures = conceptQueries.GetSignaturesWithDocumentation("Reference");
+            Console.WriteLine(JsonConvert.SerializeObject(signatures, Formatting.Indented));
+
+            Assert.AreEqual(2, signatures.Count);
+            var signature = signatures.Single(sig => sig.ConceptInfoType == typeof(ReferencePropertyInfo));
+            StringAssert.Contains(signature.Documentation, "Defined by ReferencePropertyInfo");
+            Assert.AreEqual("Reference <DataStructure: DataStructureInfo>.<Name: String> <Referenced: DataStructureInfo>", signature.Signature);
+            Assert.AreEqual("DataStructure: DataStructureInfo,Name: String,Referenced: DataStructureInfo", string.Join(",", signature.Parameters.Select(ConceptInfoType.ConceptMemberDescription)));
         }
 
         // TODO: Missing assert

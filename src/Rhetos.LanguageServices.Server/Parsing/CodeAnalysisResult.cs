@@ -26,12 +26,56 @@ namespace Rhetos.LanguageServices.Server.Parsing
 
         public Dictionary<string, List<string>> MemberDebug = new Dictionary<string, List<string>>();
         public List<IConceptInfo> ValidConcepts = new List<IConceptInfo>();
+        public Dictionary<Type, ConceptMember> LastMemberReadAttempt = new Dictionary<Type, ConceptMember>();
+        public Dictionary<Type, Token> LastTokenParsed = new Dictionary<Type, Token>();
 
         public CodeAnalysisResult(TextDocument textDocument, int line, int chr)
         {
             this.TextDocument = textDocument;
             this.Line = line;
             this.Chr = chr;
+        }
+
+        /*
+        public List<(IConceptInfo concept, int activeParamater)> GetValidConceptsWithActiveParameter()
+        {
+            var lineChr = new LineChr(Line, Chr);
+            var atParameter = GetTokenAtPosition(lineChr) != null || GetTokenLeftOfPosition(lineChr) != null;
+            var result = new List<(IConceptInfo concept, int activeParamater)>();
+            foreach (var concept in ValidConcepts)
+            {
+                var count = ConceptInfoType.CountNonNullParsableMembers(concept);
+                if (atParameter && count > 0) count--;
+                result.Add((concept, count));
+            }
+
+            return result;
+        }*/
+
+        public List<(IConceptInfo concept, int activeParamater)> GetValidConceptsWithActiveParameter()
+        {
+            var lineChr = new LineChr(Line, Chr);
+            var atParameter = GetTokenAtPosition(lineChr) != null || GetTokenLeftOfPosition(lineChr) != null;
+            var result = new List<(IConceptInfo concept, int activeParamater)>();
+            foreach (var concept in ValidConcepts)
+            {
+                if (!LastTokenParsed.ContainsKey(concept.GetType()))
+                {
+                    result.Add((concept, 0));
+                }
+                else
+                {
+                    var atLastParsed = GetTokenAtPosition(lineChr) == LastTokenParsed[concept.GetType()] || GetTokenLeftOfPosition(lineChr) == LastTokenParsed[concept.GetType()];
+                    var active = ConceptInfoType.IndexOfParameter(concept.GetType(), LastMemberReadAttempt[concept.GetType()]);
+                    if (!atLastParsed || string.Equals(ConceptInfoHelper.GetKeyword(concept.GetType()), LastTokenParsed[concept.GetType()].Value, StringComparison.InvariantCultureIgnoreCase)) 
+                        active++;
+                    //if (!atParameter && active < ConceptInfoType.GetParameters(concept.GetType()).Count - 1) active++;
+                    //if (atParameter && active > 0 && active < ConceptInfoType.GetParameters(concept.GetType()).Count - 1) active--;
+                    result.Add((concept, active));
+                }
+            }
+
+            return result;
         }
 
         public Token GetTokenBeingTypedAtCursor(LineChr lineChr)

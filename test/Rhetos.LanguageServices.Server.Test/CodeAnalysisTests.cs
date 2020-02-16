@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -6,6 +7,7 @@ using Newtonsoft.Json;
 using Rhetos.LanguageServices.Server.Parsing;
 using Rhetos.LanguageServices.Server.Services;
 using Microsoft.Extensions.DependencyInjection;
+using Rhetos.Dsl;
 using Rhetos.LanguageServices.Server.Tools;
 
 namespace Rhetos.LanguageServices.Server.Test
@@ -39,7 +41,7 @@ namespace Rhetos.LanguageServices.Server.Test
     }
     Entity After; 
 }
- ";
+Reference a.b.x p ";
 
         [DataTestMethod]
         [DataRow(0, 0, "Module")]
@@ -54,6 +56,10 @@ namespace Rhetos.LanguageServices.Server.Test
         [DataRow(9, 0, null)]
         [DataRow(11, 16, null)]
         [DataRow(12, 2, null)]
+        [DataRow(13, 0, "Reference")]
+        [DataRow(13, 8, "Reference")]
+        [DataRow(13, 13, "Reference")]
+        [DataRow(13, 20, "Reference")]
         public void CorrectKeywords(int line, int chr, string expectedKeyword)
         {
             Console.WriteLine(script);
@@ -216,6 +222,133 @@ namespace Rhetos.LanguageServices.Server.Test
 
             Assert.AreEqual(expectedKeyword, analysisResult.KeywordToken?.Value);
             Assert.AreEqual(isInsideComment, analysisResult.IsInsideComment);
+        }
+
+
+        [DataTestMethod]
+        [DataRow("Reference", "SimpleReferencePropertyInfo:DataStructure,ReferencePropertyInfo:DataStructure", "")]
+        [DataRow("Reference ", "SimpleReferencePropertyInfo:DataStructure,ReferencePropertyInfo:DataStructure", "")]
+        [DataRow("Reference  ", "SimpleReferencePropertyInfo:DataStructure,ReferencePropertyInfo:DataStructure", "")]
+        [DataRow("Reference  ", "SimpleReferencePropertyInfo:DataStructure,ReferencePropertyInfo:DataStructure", "post")]
+        [DataRow("Reference  ", "SimpleReferencePropertyInfo:DataStructure,ReferencePropertyInfo:DataStructure", "post.x.y")]
+        [DataRow("Reference module", "SimpleReferencePropertyInfo:DataStructure,ReferencePropertyInfo:DataStructure", "")]
+        [DataRow("Reference module ", "SimpleReferencePropertyInfo:DataStructure,ReferencePropertyInfo:DataStructure", "")]
+        [DataRow("Reference module  ", "SimpleReferencePropertyInfo:DataStructure,ReferencePropertyInfo:DataStructure", "")]
+        [DataRow("Reference module  ", "SimpleReferencePropertyInfo:DataStructure,ReferencePropertyInfo:DataStructure", "post")]
+        [DataRow("Reference module  ", "SimpleReferencePropertyInfo:DataStructure,ReferencePropertyInfo:DataStructure", "post.x.y")]
+        [DataRow("Reference module.", "SimpleReferencePropertyInfo:DataStructure,ReferencePropertyInfo:DataStructure", "")]
+        [DataRow("Reference module. ", "SimpleReferencePropertyInfo:DataStructure,ReferencePropertyInfo:DataStructure", "")]
+        [DataRow("Reference module.  ", "SimpleReferencePropertyInfo:DataStructure,ReferencePropertyInfo:DataStructure", "")]
+        [DataRow("Reference module.  ", "SimpleReferencePropertyInfo:DataStructure,ReferencePropertyInfo:DataStructure", "post")]
+        [DataRow("Reference module.  ", "SimpleReferencePropertyInfo:DataStructure,ReferencePropertyInfo:DataStructure", "post.x.y")]
+        [DataRow("Reference module.entity", "SimpleReferencePropertyInfo:DataStructure,ReferencePropertyInfo:DataStructure", "")]
+        [DataRow("Reference module.entity ", "SimpleReferencePropertyInfo:DataStructure,ReferencePropertyInfo:DataStructure", "")]
+        [DataRow("Reference module.entity  ", "SimpleReferencePropertyInfo:Name,ReferencePropertyInfo:Name", "")]
+        [DataRow("Reference module.entity  ", "SimpleReferencePropertyInfo:Name,ReferencePropertyInfo:Name", "post")]
+        [DataRow("Reference module.entity  ", "SimpleReferencePropertyInfo:Name,ReferencePropertyInfo:Name", "post.x.y")]
+        [DataRow("Reference module.entity.", "SimpleReferencePropertyInfo:DataStructure,ReferencePropertyInfo:DataStructure", "")]
+        [DataRow("Reference module.entity. ", "SimpleReferencePropertyInfo:Name,ReferencePropertyInfo:Name", "")]
+        [DataRow("Reference module.entity.  ", "SimpleReferencePropertyInfo:Name,ReferencePropertyInfo:Name", "")]
+        [DataRow("Reference module.entity.  ", "SimpleReferencePropertyInfo:Name,ReferencePropertyInfo:Name", "post")]
+        [DataRow("Reference module.entity.  ", "SimpleReferencePropertyInfo:Name,ReferencePropertyInfo:Name", "post.x.y")]
+        [DataRow("Reference module.entity.name", "SimpleReferencePropertyInfo:Name,ReferencePropertyInfo:Name", "")]
+        [DataRow("Reference module.entity.name ", "SimpleReferencePropertyInfo:Name,ReferencePropertyInfo:Name", "")]
+        [DataRow("Reference module.entity.name  ", "SimpleReferencePropertyInfo:FULL,ReferencePropertyInfo:Referenced", "")]
+        [DataRow("Reference module.entity.name  ", "SimpleReferencePropertyInfo:FULL,ReferencePropertyInfo:Referenced", "post")]
+        [DataRow("Reference module.entity.name  ", "SimpleReferencePropertyInfo:FULL,ReferencePropertyInfo:Referenced", "post.x.y")]
+        [DataRow("Reference module.entity.name ref", "ReferencePropertyInfo:Referenced", "")]
+        [DataRow("Reference module.entity.name ref ", "ReferencePropertyInfo:Referenced", "")]
+        [DataRow("Reference module.entity.name ref  ", "ReferencePropertyInfo:Referenced", "post")]
+        [DataRow("Reference module.entity.name ref.", "ReferencePropertyInfo:Referenced", "")]
+        [DataRow("Reference module.entity.name ref. ", "ReferencePropertyInfo:Referenced", "")]
+        [DataRow("Reference module.entity.name ref.  ", "ReferencePropertyInfo:Referenced", "")]
+        [DataRow("Reference module.entity.name ref.  ", "ReferencePropertyInfo:Referenced", "post")]
+        [DataRow("Reference module.entity.name ref.refname", "ReferencePropertyInfo:Referenced", "")]
+        [DataRow("Reference module.entity.name ref.refname ", "ReferencePropertyInfo:Referenced", "")]
+        [DataRow("Reference module.entity.name ref.refname  ", "ReferencePropertyInfo:FULL", "")]
+        [DataRow("Reference module.entity.name ref.refname  ", "ReferencePropertyInfo:FULL", "post")]
+        [DataRow("Reference module.entity.name ref.refname extraparam", "", "")]
+        [DataRow("Module module1 { Entity entity1 { Reference", "SimpleReferencePropertyInfo:Name,ReferencePropertyInfo:Name", "")]
+        [DataRow("Module module1 { Entity entity1 { Reference ", "SimpleReferencePropertyInfo:Name,ReferencePropertyInfo:Name", "")]
+        [DataRow("Module module1 { Entity entity1 { Reference  ", "SimpleReferencePropertyInfo:Name,ReferencePropertyInfo:Name", "")]
+        [DataRow("Module module1 { Entity entity1 { Reference  ", "SimpleReferencePropertyInfo:Name,ReferencePropertyInfo:Name", "post")]
+        public void ConceptActiveParameter(string script, string expectedActiveParams, string scriptPostfix)
+        {
+            var rhe = rhetosDocumentFactory.CreateNew();
+            rhe.UpdateText(script + scriptPostfix);
+            Console.WriteLine($"Script:\n{rhe.TextDocument.Text}\n");
+            var conceptQueries = serviceProvider.GetService<ConceptQueries>();
+            Console.WriteLine(conceptQueries.GetFullDescription("Reference"));
+            Console.WriteLine();
+
+            var lineChr = rhe.TextDocument.GetLineChr(script.Length - 1);
+            Console.WriteLine(rhe.TextDocument.ShowPosition(lineChr));
+            var analysis = rhe.GetAnalysis(lineChr);
+
+            var withParam = analysis.GetValidConceptsWithActiveParameter();
+            var formattedParams = new List<string>();
+            Console.WriteLine("\n");
+            foreach (var pair in withParam)
+            {
+                var conceptType = pair.concept.GetType();
+                Console.WriteLine($"{conceptType.Name} ==> {ConceptInfoType.SignatureDescription(conceptType)}");
+                //Console.WriteLine($"Last member read: {analysis.LastMemberReadAttempt[conceptType].Name}");
+                var members = ConceptInfoType.GetParameters(pair.concept.GetType());
+                var memberName = pair.activeParamater < members.Count ? members[pair.activeParamater].Name : "FULL";
+                var formatted = $"{conceptType.Name}:{memberName}";
+                formattedParams.Add(formatted);
+            }
+
+            var activeParams = string.Join(",", formattedParams);
+            Console.WriteLine();
+            Console.WriteLine(activeParams);
+            Assert.AreEqual(expectedActiveParams, activeParams);
+        }
+
+        [TestMethod]
+        public void ConceptParameters()
+        {
+            var script = @"
+Module module1
+{
+    Entity entity1
+    {
+        Reference ble x
+    }
+}
+";
+            var conceptQueries = serviceProvider.GetService<ConceptQueries>();
+            var rhe = rhetosDocumentFactory.CreateNew();
+            rhe.UpdateText(script);
+            Console.WriteLine(script);
+
+            var lineChr = new LineChr(5, 18);
+            Console.WriteLine(rhe.TextDocument.ShowPosition(lineChr));
+            var analysis = rhe.GetAnalysis(lineChr);
+
+            var withParam = analysis.GetValidConceptsWithActiveParameter();
+            foreach (var concept in withParam)
+            {
+                var conceptParams = ConceptInfoType.GetParameters(concept.concept.GetType());
+                Console.WriteLine($"{ConceptInfoType.SignatureDescription(concept.concept.GetType())}");
+                var activeParam = ConceptInfoType.ConceptMemberDescription(conceptParams[concept.activeParamater]);
+                Console.WriteLine($"{concept.concept.GetType().Name}: {concept.activeParamater}, {activeParam}");
+            }
+
+            // TODO: implementiraj logiku: ako je token at position ili je leftofposition onda je aktivni parameter zadnji NONNULL
+            // inace je aktivni parameter iduci, tj. prvi null
+            // onda na osnovu toga nadji signature koji fittaju
+            //Console.WriteLine(string.Join("\n", analysis.ValidConcepts.Select(ConceptInfoMembers)));
+            Console.WriteLine($"Typing token: '{analysis.GetTokenAtPosition(lineChr)?.Value}'");
+        }
+
+        private string ConceptInfoMembers(IConceptInfo conceptInfo)
+        {
+            var members = ConceptMembers.Get(conceptInfo)
+                .Where(member => member.IsParsable);
+
+            var membersWithValue = members.Select(member => $"{member.Name}:'{member.GetValue(conceptInfo)}'");
+            return $"{conceptInfo.GetType().Name}: [{string.Join(", ", membersWithValue)}]";
         }
     }
 }
