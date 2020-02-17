@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Rhetos.Dsl;
 using Rhetos.LanguageServices.Server.Tools;
 
@@ -36,26 +34,9 @@ namespace Rhetos.LanguageServices.Server.Parsing
             this.Chr = chr;
         }
 
-        /*
         public List<(IConceptInfo concept, int activeParamater)> GetValidConceptsWithActiveParameter()
         {
             var lineChr = new LineChr(Line, Chr);
-            var atParameter = GetTokenAtPosition(lineChr) != null || GetTokenLeftOfPosition(lineChr) != null;
-            var result = new List<(IConceptInfo concept, int activeParamater)>();
-            foreach (var concept in ValidConcepts)
-            {
-                var count = ConceptInfoType.CountNonNullParsableMembers(concept);
-                if (atParameter && count > 0) count--;
-                result.Add((concept, count));
-            }
-
-            return result;
-        }*/
-
-        public List<(IConceptInfo concept, int activeParamater)> GetValidConceptsWithActiveParameter()
-        {
-            var lineChr = new LineChr(Line, Chr);
-            var atParameter = GetTokenAtPosition(lineChr) != null || GetTokenLeftOfPosition(lineChr) != null;
             var result = new List<(IConceptInfo concept, int activeParamater)>();
             foreach (var concept in ValidConcepts)
             {
@@ -67,15 +48,24 @@ namespace Rhetos.LanguageServices.Server.Parsing
                 {
                     var atLastParsed = GetTokenAtPosition(lineChr) == LastTokenParsed[concept.GetType()] || GetTokenLeftOfPosition(lineChr) == LastTokenParsed[concept.GetType()];
                     var active = ConceptInfoType.IndexOfParameter(concept.GetType(), LastMemberReadAttempt[concept.GetType()]);
-                    if (!atLastParsed || string.Equals(ConceptInfoHelper.GetKeyword(concept.GetType()), LastTokenParsed[concept.GetType()].Value, StringComparison.InvariantCultureIgnoreCase)) 
+                    if (!atLastParsed || string.Equals(ConceptInfoHelper.GetKeyword(concept.GetType()), LastTokenParsed[concept.GetType()].Value, StringComparison.InvariantCultureIgnoreCase))
                         active++;
-                    //if (!atParameter && active < ConceptInfoType.GetParameters(concept.GetType()).Count - 1) active++;
-                    //if (atParameter && active > 0 && active < ConceptInfoType.GetParameters(concept.GetType()).Count - 1) active--;
                     result.Add((concept, active));
                 }
             }
 
             return result;
+        }
+
+        public bool IsAfterAnyErrorPosition(LineChr lineChr)
+        {
+            var pos = TextDocument.GetPosition(lineChr);
+            return AllErrors.Any(error => pos > TextDocument.GetPosition(error.LineChr));
+        }
+
+        public bool IsAfterAnyErrorLine(LineChr lineChr)
+        {
+            return AllErrors.Any(error => lineChr.Line > error.LineChr.Line);
         }
 
         public Token GetTokenBeingTypedAtCursor(LineChr lineChr)
@@ -104,6 +94,5 @@ namespace Rhetos.LanguageServices.Server.Parsing
             if (lineChr.Chr > 0) lineChr = new LineChr(lineChr.Line, lineChr.Chr - 1);
             return GetTokenAtPosition(lineChr);
         }
-
     }
 }

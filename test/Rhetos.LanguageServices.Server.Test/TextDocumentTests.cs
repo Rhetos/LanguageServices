@@ -15,7 +15,7 @@ namespace Rhetos.LanguageServices.Server.Test
     [TestClass]
     public class TextDocumentTests
     {
-        [TestMethod]        
+        [TestMethod]
         public void PositionConversionsLinuxStyle()
         {
             var text = "0123\n" +
@@ -135,7 +135,6 @@ namespace Rhetos.LanguageServices.Server.Test
 
             Assert.AreEqual(LineChr.Zero, doc.GetLineChr(0));
             Assert.AreEqual(LineChr.Zero, doc.GetLineChr(1));
-
         }
 
         [DataTestMethod]

@@ -29,8 +29,8 @@ namespace Rhetos.LanguageServices.Server.Parsing
             if (Text.Length == 0) return 0;
             if (line >= lineStarts.Value.Count) line = lineStarts.Value.Count - 1;
             var pos = lineStarts.Value[line] + chr;
-            
-            if (pos >= Text.Length) 
+
+            if (pos >= Text.Length)
                 pos = Text.Length - 1;
 
             if (line < lineStarts.Value.Count - 1 && lineStarts.Value[line] + chr >= lineStarts.Value[line + 1])
@@ -48,10 +48,9 @@ namespace Rhetos.LanguageServices.Server.Parsing
 
             if (Text[pos] == '\n' && pos > 0 && Text[pos - 1] == '\r') pos--;
 
-            var lineStarts = GetLineStartPositions();
             var line = 0;
-            while (line < lineStarts.Count && lineStarts[line] <= pos) line++;
-            return new LineChr(line - 1, pos - lineStarts[line - 1]);
+            while (line < lineStarts.Value.Count && lineStarts.Value[line] <= pos) line++;
+            return new LineChr(line - 1, pos - lineStarts.Value[line - 1]);
         }
 
         public string ExtractLine(int posOnLine)
@@ -97,8 +96,7 @@ namespace Rhetos.LanguageServices.Server.Parsing
 
         private List<int> GetLineStartPositions()
         {
-            var result = new List<int>();
-            result.Add(0);
+            var result = new List<int>() { 0 };
             for (var i = 0; i < Text.Length; i++)
             {
                 if (Text[i] == '\n')

@@ -3,18 +3,12 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Net;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using Autofac;
 using Microsoft.Extensions.Logging;
-using Rhetos.Deployment;
 using Rhetos.Dsl;
-using Rhetos.Extensibility;
 using Rhetos.LanguageServices.Server.Tools;
 using Rhetos.Logging;
-using Rhetos.Utilities;
 
 namespace Rhetos.LanguageServices.Server.Services
 {
@@ -22,7 +16,7 @@ namespace Rhetos.LanguageServices.Server.Services
     {
         public bool IsInitialized { get; private set; }
         public string RootPath { get; private set; }
-        public Dictionary<string, Type[]> Keywords { get; private set; } = new Dictionary<string, Type[]>();
+        public Dictionary<string, Type[]> Keywords { get; private set; } = new Dictionary<string, Type[]>(StringComparer.InvariantCultureIgnoreCase);
         public Type[] ConceptInfoTypes { get; private set; }
         public IConceptInfo[] ConceptInfoInstances { get; private set; }
 
@@ -82,12 +76,12 @@ namespace Rhetos.LanguageServices.Server.Services
         private void InitializeFromConceptTypes(Type[] conceptInfoTypes)
         {
             this.ConceptInfoTypes = conceptInfoTypes;
-            
+
             this.ConceptInfoInstances = ConceptInfoTypes
                 .Select(Activator.CreateInstance)
                 .Cast<IConceptInfo>()
                 .ToArray();
-                
+
             LoadKeywords();
             IsInitialized = true;
         }
@@ -98,7 +92,7 @@ namespace Rhetos.LanguageServices.Server.Services
                 .Select(type => (keyword: ConceptInfoHelper.GetKeyword(type), type))
                 .Where(info => !string.IsNullOrEmpty(info.keyword))
                 .GroupBy(info => info.keyword)
-                .ToDictionary(group => group.Key, group => group.Select(info => info.type).ToArray());
+                .ToDictionary(group => group.Key, group => group.Select(info => info.type).ToArray(), StringComparer.InvariantCultureIgnoreCase);
         }
 
         // These methods for additional assembly resolving are copied from Rhetos plugin scanner to replicate <probingPath> behavior of Rhetos Apps.

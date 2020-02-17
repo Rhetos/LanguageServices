@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Extensions.Logging;
 using Rhetos.Dsl;
 using Rhetos.LanguageServices.Server.Services;
 using Rhetos.LanguageServices.Server.Tools;
-using Rhetos.Utilities;
 
 namespace Rhetos.LanguageServices.Server.Parsing
 {
@@ -82,15 +80,16 @@ namespace Rhetos.LanguageServices.Server.Parsing
                 .Select(concept => ConceptInfoHelper.GetKeyword(concept))
                 .Where(keyword => keyword != null)
                 .Distinct()
+                .OrderBy(keyword => keyword)
                 .ToList();
 
             return keywords;
         }
-        
+
         public (string description, LineChr startPosition, LineChr endPosition) GetHoverDescriptionAtPosition(LineChr lineChr)
         {
             var analysis = GetAnalysis(lineChr);
-            if (analysis.KeywordToken == null)
+            if (analysis.KeywordToken == null || analysis.IsAfterAnyErrorLine(lineChr))
                 return (null, LineChr.Zero, LineChr.Zero);
 
             var description = conceptQueries.GetFullDescription(analysis.KeywordToken.Value);
@@ -109,11 +108,8 @@ namespace Rhetos.LanguageServices.Server.Parsing
         public (List<RhetosSignature> signatures, int? activeSignature, int? activeParameter) GetSignatureHelpAtPosition(LineChr lineChr)
         {
             var analysis = GetAnalysis(lineChr);
-            if (analysis.KeywordToken == null)
-            {
-                logFactory.CreateLogger<RhetosDocument>().LogInformation("KeywordToken is NULL.");
+            if (analysis.KeywordToken == null || analysis.IsAfterAnyErrorLine(lineChr))
                 return (null, null, null);
-            }
 
             var signaturesWithDocumentation = conceptQueries.GetSignaturesWithDocumentation(analysis.KeywordToken.Value);
             var validConcepts = analysis.GetValidConceptsWithActiveParameter();
@@ -121,36 +117,22 @@ namespace Rhetos.LanguageServices.Server.Parsing
             if (!validConcepts.Any())
                 return (signaturesWithDocumentation, null, null);
 
-            var concept = validConcepts.First();
-            var activeParameter = Math.Min(concept.activeParamater, ConceptInfoType.GetParameters(concept.concept.GetType()).Count - 1);
-            var activeSignature = signaturesWithDocumentation.FindIndex(signature => signature.ConceptInfoType == concept.concept.GetType());
-
-            return (signaturesWithDocumentation, activeSignature, activeParameter);
-        }
-
-        /*
-        public SignaturesInfo GetSignatureHelpAtPosition(LineChr lineChr)
-        {
-            var analysis = GetAnalysis(lineChr);
-            if (analysis.KeywordToken == null)
-                return null;
-
-            var signaturesWithDocumentation = conceptQueries.GetSignaturesWithDocumentation(analysis.KeywordToken.Value);
-
-            var infos = signaturesWithDocumentation.Select(signature =>
-                new SignatureInfo()
-                {
-                    Parameters = ConceptMembers.Get(signature.conceptInfoType)
-                        .Where(member => member.IsParsable)
-                        .Select(member => ConceptInfoType.ConceptMemberDescription(member))
-                        .ToList(),
-                    Signature = signature.signature,
-                    Documentation = signature.documentation
-                })
+            var sortedConcepts = validConcepts
+                .Select(valid =>
+                (
+                    valid.concept,
+                    valid.activeParamater,
+                    parameterCount: ConceptInfoType.GetParameters(valid.concept.GetType()).Count,
+                    documentation: signaturesWithDocumentation.Single(sig => sig.ConceptInfoType == valid.concept.GetType())
+                ))
+                .OrderBy(valid => valid.activeParamater >= valid.parameterCount)
+                .ThenBy(valid => valid.parameterCount)
+                .ThenBy(valid => valid.concept.GetType().Name)
                 .ToList();
 
-            return new SignaturesInfo() { Info = infos };
-        }*/
+            var activeParameter = sortedConcepts.First().activeParamater;
 
+            return (sortedConcepts.Select(sorted => sorted.documentation).ToList(), 0, activeParameter);
+        }
     }
 }

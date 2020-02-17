@@ -56,8 +56,6 @@
     <Compile Include="Parsing\TextDocument.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RhetosTmp\DslParser.cs" />
-    <Compile Include="RhetosTmp\GenericParser.cs" />
     <Compile Include="Services\ConceptQueries.cs" />
     <Compile Include="Services\PublishDiagnosticsRunner.cs" />
     <Compile Include="Services\RhetosAppContext.cs" />

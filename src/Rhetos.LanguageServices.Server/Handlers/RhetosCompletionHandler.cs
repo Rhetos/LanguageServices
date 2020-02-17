@@ -1,16 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 using OmniSharp.Extensions.LanguageServer.Protocol.Models;
 using OmniSharp.Extensions.LanguageServer.Protocol.Server;
-using Rhetos.Dsl;
 using Rhetos.LanguageServices.Server.Services;
-using Rhetos.LanguageServices.Server.Tools;
 
 namespace Rhetos.LanguageServices.Server.Handlers
 {
@@ -34,6 +29,7 @@ namespace Rhetos.LanguageServices.Server.Handlers
             this.rhetosWorkspace = rhetosWorkspace;
             this.conceptQueries = conceptQueries;
         }
+
         public override bool CanResolve(CompletionItem value)
         {
             return true;
@@ -57,7 +53,7 @@ namespace Rhetos.LanguageServices.Server.Handlers
 
             return Task.FromResult(completionList);
         }
-        
+
         public override Task<CompletionItem> Handle(CompletionItem request, CancellationToken cancellationToken)
         {
             return Task.FromResult(request);

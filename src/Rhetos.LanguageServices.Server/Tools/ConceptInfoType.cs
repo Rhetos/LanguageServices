@@ -32,23 +32,6 @@ namespace Rhetos.LanguageServices.Server.Tools
             return $"{conceptMember.Name}: {conceptMember.ValueType.Name}";
         }
 
-        public static List<Type> ConceptInfoKeys(Type type)
-        {
-            var keys = new List<Type>();
-            AddConceptInfoKeysRecursive(keys, type);
-            return keys;
-        }
-
-        public static IConceptInfo MemberwiseClone(IConceptInfo concept)
-        {
-            var members = ConceptMembers.Get(concept);
-            var clone = (IConceptInfo)Activator.CreateInstance(concept.GetType());
-            foreach (var member in members)
-                member.SetMemberValue(clone, member.GetValue(concept));
-
-            return clone;
-        }
-
         public static List<ConceptMember> GetParameters(Type conceptInfoType)
         {
             return ConceptMembers.Get(conceptInfoType)
@@ -56,38 +39,10 @@ namespace Rhetos.LanguageServices.Server.Tools
                 .ToList();
         }
 
-        public static int CountNonNullParsableMembers(IConceptInfo concept)
-        {
-            var count = 0;
-            foreach (var member in GetParameters(concept.GetType()))
-            {
-                if (member.GetValue(concept) == null) break;
-                count++;
-            }
-
-            return count;
-        }
-
         public static int IndexOfParameter(Type conceptInfoType, ConceptMember member)
         {
             var members = GetParameters(conceptInfoType);
             return members.IndexOf(member);
-        }
-
-        private static void AddConceptInfoKeysRecursive(List<Type> keys, Type type)
-        {
-            if (type != typeof(IConceptInfo))
-            {
-                var conceptMembers = ConceptMembers.Get(type);
-                foreach (var conceptMember in conceptMembers)
-                {
-                    if (conceptMember.IsKey && conceptMember.IsConceptInfo && !keys.Contains(conceptMember.ValueType))
-                        AddConceptInfoKeysRecursive(keys, conceptMember.ValueType);
-                }
-            }
-
-            if (type.BaseType != null && type.BaseType != typeof(object)) type = type.BaseType;
-            keys.Add(type);
         }
     }
 }

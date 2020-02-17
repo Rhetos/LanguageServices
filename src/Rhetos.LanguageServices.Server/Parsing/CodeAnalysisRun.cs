@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices;
 using Microsoft.Extensions.Logging;
 using Rhetos.Dsl;
 using Rhetos.LanguageServices.Server.Services;
@@ -13,7 +12,7 @@ namespace Rhetos.LanguageServices.Server.Parsing
 {
     internal class CodeAnalysisRun
     {
-        private CodeAnalysisResult result = null;
+        private CodeAnalysisResult result;
         private readonly RhetosAppContext rhetosAppContext;
         private int targetPos;
         private Token lastTokenBeforeTarget;
@@ -44,7 +43,7 @@ namespace Rhetos.LanguageServices.Server.Parsing
             // run-scoped variables needed for parse and callbacks
             targetPos = textDocument.GetPosition(result.Line, result.Chr);
             lastTokenBeforeTarget = result.Tokens.LastOrDefault(token => token.PositionInDslScript <= targetPos);
-            
+
             ParseAndCaptureErrors();
             ApplyCommentsToResult();
 
@@ -142,58 +141,6 @@ namespace Rhetos.LanguageServices.Server.Parsing
                     result.LastMemberReadAttempt[conceptInfoType] = conceptMember;
                 }
             }
-
-            /*
-            var tokenReader = (TokenReader)iTokenReader;
-            if (tokenReader.PositionInTokenList > 0 && lastTokenBeforeTarget != null)
-            {
-                var lastTokenRead = valueOrError.IsError
-                    ? result.Tokens[tokenReader.PositionInTokenList - 1]
-                    : result.Tokens[tokenReader.PositionInTokenList - 1];
-
-                var nextToken = result.Tokens[tokenReader.PositionInTokenList];
-                // Console.WriteLine($"Next token type: {nextToken.Type}");
-                Console.WriteLine($"\nOnMemberRead: Token='{lastTokenRead.Value}' [{tokenReader.PositionInTokenList}/{result.Tokens.Count}], {conceptInfo.GetType().Name}: {conceptMember.Name} = {valueOrError}");
-                Console.WriteLine($"{conceptInfo.GetType().Name} ==> Last read token: '{lastTokenRead.Value}', Last token before target: '{lastTokenBeforeTarget.Value}', Next token: ({nextToken.Type}) '{nextToken.Value}'");
-                if (lastTokenRead == lastTokenBeforeTarget)
-                {
-                    result.LastMemberReadAttempt[conceptInfo.GetType()] = conceptMember;
-                    if (!result.ValidConcepts.Any(valid => valid.GetType() == conceptInfo.GetType()))
-                    {
-                        var clone = ConceptInfoType.MemberwiseClone(conceptInfo);
-
-                        // OnMemberRead is called before value of current member is set on concept
-                        if (!valueOrError.IsError)
-                            conceptMember.SetMemberValue(clone, valueOrError.Value);
-
-                        result.ValidConcepts.Add(clone);
-                    }
-                }
-            }
-            */
-            return;
-
-            // TODO: monkey patching
-            if (!valueOrError.IsError)
-            {
-                conceptMember.SetMemberValue(conceptInfo, valueOrError.Value);
-            }
-
-            // if (tokenReader.PositionInTokenList >= tokens.Count) return;
-            if (tokenReader.PositionInTokenList == 0) return;
-
-            var lastToken = result.Tokens[tokenReader.PositionInTokenList - 1];
-            if (lastToken.PositionInDslScript > targetPos) return;
-
-            if (!result.ValidConcepts.Contains(conceptInfo)) result.ValidConcepts.Add(conceptInfo);
-
-            var type = conceptInfo.GetType().Name;
-            if (!result.MemberDebug.ContainsKey(type)) result.MemberDebug[type] = new List<string>();
-
-            var value = valueOrError.IsError ? valueOrError.Error : valueOrError.Value.ToString();
-
-            var debugInfo = $"Member: {conceptMember.ValueType.Name}:'{conceptMember.Name}', Value: '{value}'.";
-            result.MemberDebug[type].Add(debugInfo);
         }
 
         private CodeAnalysisError CreateAnalysisError(DslParseSyntaxException e)
@@ -276,10 +223,10 @@ namespace Rhetos.LanguageServices.Server.Parsing
         private (Tokenizer tokenizer, List<CodeAnalysisError> capturedErrors) CreateTokenizerWithCapturedErrors()
         {
             var capturedErrors = new List<CodeAnalysisError>();
-            var tokenizer = new Tokenizer(textDocument, new FilesUtility(rhetosLogProvider));
+            var safeTokenizer = new Tokenizer(textDocument, new FilesUtility(rhetosLogProvider));
             try
             {
-                _ = tokenizer.GetTokens();
+                safeTokenizer.GetTokens();
             }
             catch (DslParseSyntaxException e)
             {
@@ -290,8 +237,7 @@ namespace Rhetos.LanguageServices.Server.Parsing
             {
                 capturedErrors.Add(new CodeAnalysisError() { Message = e.Message });
             }
-            return (tokenizer, capturedErrors);
+            return (safeTokenizer, capturedErrors);
         }
-
     }
 }

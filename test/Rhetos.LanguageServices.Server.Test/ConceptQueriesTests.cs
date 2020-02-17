@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using Microsoft.Extensions.Logging;
@@ -74,14 +75,13 @@ namespace Rhetos.LanguageServices.Server.Test
             }
         }
 
-
         [TestMethod]
         public void RhetosSignatureEntity()
         {
             var conceptQueries = serviceProvider.GetService<ConceptQueries>();
             var signatures = conceptQueries.GetSignaturesWithDocumentation("Entity");
             Console.WriteLine(JsonConvert.SerializeObject(signatures, Formatting.Indented));
-            
+
             Assert.AreEqual(1, signatures.Count);
             var signature = signatures.Single();
             StringAssert.Contains(signature.Documentation, "Defined by EntityInfo");
@@ -104,31 +104,34 @@ namespace Rhetos.LanguageServices.Server.Test
             Assert.AreEqual("DataStructure: DataStructureInfo,Name: String,Referenced: DataStructureInfo", string.Join(",", signature.Parameters.Select(ConceptInfoType.ConceptMemberDescription)));
         }
 
-        // TODO: Missing assert
-        [TestMethod]
-        public void Test()
+        [DataTestMethod]
+        [DataRow("referencE", 2, "ReferencePropertyInfo")]
+        [DataRow("entiTy", 1, "EntityInfo")]
+        [DataRow("allproPerties", 4, "AllProperties <EntityComputedFrom: EntityComputedFromInfo> ")]
+        public void QueriesAreCaseInsensitive(string invariantKeyword, int expectedSignatureCount, string expectedDescriptionSubstring)
         {
-            var conceptQueries = serviceProvider.GetService<ConceptQueries>();
-            var validConcepts = conceptQueries.ValidConceptsForParent(typeof(EntityInfo));
-
-            foreach (var validConcept in validConcepts)
+            var variants = new[]
             {
-                Console.WriteLine(ConceptInfoHelper.GetKeyword(validConcept));
+                invariantKeyword,
+                invariantKeyword.ToLower(),
+                invariantKeyword.ToUpper(),
+                CultureInfo.InvariantCulture.TextInfo.ToTitleCase(invariantKeyword)
+            };
+
+            var conceptQueries = serviceProvider.GetService<ConceptQueries>();
+
+            foreach (var keyword in variants)
+            {
+                var fullDescription = conceptQueries.GetFullDescription(keyword);
+                Console.WriteLine($"\nKeyword variant: '{keyword}'\n\nFull description:\n{fullDescription}\n");
+
+                var signatures = conceptQueries.GetSignaturesWithDocumentation(keyword);
+                Assert.IsNotNull(signatures);
+                Console.WriteLine($"Signature count: {signatures.Count}.");
+                Assert.AreEqual(expectedSignatureCount, signatures.Count);
+
+                StringAssert.Contains(fullDescription, expectedDescriptionSubstring);
             }
-
-            /*
-            var keys = ConceptInfoType.ConceptInfoKeys(type);
-            Console.WriteLine(string.Join(" / ", keys.Select(a => a.Name)));
-            */
-        }
-
-        // TODO: Missing assert
-        [TestMethod]
-        public void Test2()
-        {
-            var type = typeof(SqlDependsOnIDInfo);
-            var keys = ConceptInfoType.ConceptInfoKeys(type);
-            Console.WriteLine(string.Join(" / ", keys.Select(a => a.Name)));
         }
     }
 }

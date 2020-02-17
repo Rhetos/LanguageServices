@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Globalization;
 using System.IO;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
@@ -7,26 +6,23 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using NLog;
 using NLog.Extensions.Logging;
-using OmniSharp.Extensions.LanguageServer.Protocol;
-using OmniSharp.Extensions.LanguageServer.Protocol.Models;
 using OmniSharp.Extensions.LanguageServer.Protocol.Server.Capabilities;
 using OmniSharp.Extensions.LanguageServer.Server;
 using Rhetos.LanguageServices.Server.Handlers;
 using Rhetos.LanguageServices.Server.Services;
 using Rhetos.LanguageServices.Server.Tools;
 using Rhetos.Logging;
+using ILogger = Microsoft.Extensions.Logging.ILogger;
 using LogLevel = Microsoft.Extensions.Logging.LogLevel;
 
 namespace Rhetos.LanguageServices.Server
 {
     public static class Program
     {
-        private static Guid processGuid;
         public static async Task Main(string[] args)
         {
-            processGuid = Guid.NewGuid();
             var programLogger = LogManager.GetLogger("Program");
-            programLogger.Info($"Program START {processGuid}");
+            programLogger.Info($"SERVER START");
 
             try
             {
@@ -41,7 +37,7 @@ namespace Rhetos.LanguageServices.Server
                 programLogger.Error($"Exception running language server: {e}");
             }
 
-            programLogger.Info($"Program END {processGuid}");
+            programLogger.Info($"SERVER END");
             LogManager.Flush();
         }
 
@@ -58,13 +54,13 @@ namespace Rhetos.LanguageServices.Server
 
             server.Shutdown.Subscribe(next =>
             {
-                programLogger.Info($"SHUTDOWN SUBSCRIBE {next}");
+                programLogger.Info($"Shutdown requested: {next}");
                 Task.Delay(500).Wait();
             });
 
             server.Exit.Subscribe(next =>
             {
-                programLogger.Info($"EXIT SUBSCRIBE {next}");
+                programLogger.Info($"Exit requested: {next}");
             });
 
             await server.WaitForExit;
@@ -93,28 +89,19 @@ namespace Rhetos.LanguageServices.Server
                         services.AddSingleton<ILogProvider, RhetosNetCoreLogProvider>();
                         services.AddSingleton<PublishDiagnosticsRunner>();
                         services.AddSingleton<ConceptQueries>();
-                        /*
-                        services.AddSingleton<Foo>(provider => 
-                        {
-                            var loggerFactory = provider.GetService<ILoggerFactory>();
-                            var logger = loggerFactory.CreateLogger<Foo>();
-
-                            logger.LogInformation("Configuring");
-
-                            return new Foo(logger);
-                        
-                        });*/
                     })
-                    .OnInitialized((srv, request, response) =>
+                    .OnInitialize((languageServer, request) =>
+                    {
+                        var log = languageServer.Services.GetRequiredService<ILoggerFactory>().CreateLogger("Init");
+                        log.LogInformation($"Received Init message from client. Logging client capabilities to Debug log.");
+                        log.LogDebug(JsonConvert.SerializeObject(request, Formatting.Indented));
+                        return Task.CompletedTask;
+                    })
+                    .OnInitialized((languageServer, request, response) =>
                     {
                         response.Capabilities.TextDocumentSync.Kind = TextDocumentSyncKind.Full;
                         response.Capabilities.TextDocumentSync.Options.Change = TextDocumentSyncKind.Full;
-                        srv.Services.GetService<PublishDiagnosticsRunner>().Start();
-                        return Task.CompletedTask;
-                    })
-                    .OnInitialize((s, request) =>
-                    {
-                        LogManager.GetLogger("Init").Info(JsonConvert.SerializeObject(request, Formatting.Indented));
+                        languageServer.Services.GetService<PublishDiagnosticsRunner>().Start();
                         return Task.CompletedTask;
                     })
             );

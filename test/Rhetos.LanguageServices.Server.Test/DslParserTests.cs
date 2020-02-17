@@ -20,6 +20,7 @@ namespace Rhetos.LanguageServices.Server.Test
     {
         private readonly IServiceProvider serviceProvider;
         private readonly RhetosAppContext rhetosAppContext;
+
         public DslParserTests()
         {
             Assembly.Load("Rhetos.Dsl.DefaultConcepts");

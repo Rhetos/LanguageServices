@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
-using OmniSharp.Extensions.LanguageServer.Server;
 using Rhetos.LanguageServices.Server.Services;
 
 namespace Rhetos.LanguageServices.Server.Handlers
@@ -34,6 +29,5 @@ namespace Rhetos.LanguageServices.Server.Handlers
 
             return initializeTask;
         }
-
     }
 }

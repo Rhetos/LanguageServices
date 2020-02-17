@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using OmniSharp.Extensions.LanguageServer.Protocol.Models;
@@ -34,7 +30,7 @@ namespace Rhetos.LanguageServices.Server.Handlers
 
             var response = new Hover()
             {
-                Range = new Range(descInfo.startPosition.ToPosition(), descInfo.endPosition.ToPosition()), 
+                Range = new Range(descInfo.startPosition.ToPosition(), descInfo.endPosition.ToPosition()),
                 Contents = new MarkedStringsOrMarkupContent(descInfo.description)
             };
             return Task.FromResult(response);

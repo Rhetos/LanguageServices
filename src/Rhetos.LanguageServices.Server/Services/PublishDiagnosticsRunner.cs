@@ -19,12 +19,14 @@ namespace Rhetos.LanguageServices.Server.Services
         private readonly ILogger<PublishDiagnosticsRunner> log;
 
         private DateTime lastPublishTime = DateTime.MinValue;
+        private readonly RhetosAppContext rhetosAppContext;
 
-        public PublishDiagnosticsRunner(RhetosWorkspace rhetosWorkspace, ILanguageServer languageServer, ILogger<PublishDiagnosticsRunner> log)
+        public PublishDiagnosticsRunner(RhetosWorkspace rhetosWorkspace, RhetosAppContext rhetosAppContext, ILanguageServer languageServer, ILogger<PublishDiagnosticsRunner> log)
         {
             this.rhetosWorkspace = rhetosWorkspace;
             this.languageServer = languageServer;
             this.log = log;
+            this.rhetosAppContext = rhetosAppContext;
         }
 
         public void Start()
@@ -52,12 +54,15 @@ namespace Rhetos.LanguageServices.Server.Services
 
         private void LoopCycle()
         {
+            if (!rhetosAppContext.IsInitialized) 
+                return;
+
             var sw = Stopwatch.StartNew();
 
             var startPublishCheckTime = DateTime.Now;
             var updatedDocumentIds = rhetosWorkspace.DocumentChangeTimes
-                .Where(a => a.Value > lastPublishTime)
-                .Select(a => a.Key)
+                .Where(changed => changed.Value > lastPublishTime)
+                .Select(changed => changed.Key)
                 .ToList();
 
             if (!updatedDocumentIds.Any())

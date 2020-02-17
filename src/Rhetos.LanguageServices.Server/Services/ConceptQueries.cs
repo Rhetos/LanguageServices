@@ -24,7 +24,7 @@ namespace Rhetos.LanguageServices.Server.Services
         {
             var signatures = GetSignaturesWithDocumentation(keyword);
             if (signatures == null) return null;
-                
+
             var fullDescription = string.Join("\n\n", signatures.Select(sig => $"{sig.Signature}\n{sig.Documentation}"));
             return fullDescription;
         }
@@ -70,19 +70,6 @@ namespace Rhetos.LanguageServices.Server.Services
             }
 
             return result;
-        }
-        
-        // TODO: SqlDependsOnID??, method obsolete?
-        private bool StartsWithEquivalentConceptTypes(List<Type> list, List<Type> subList)
-        {
-            if (subList.Count > list.Count) return false;
-
-            for (var i = 0; i < subList.Count; i++)
-            {
-                if (list[i] != subList[i]) return false;
-            }
-
-            return true;
         }
     }
 }

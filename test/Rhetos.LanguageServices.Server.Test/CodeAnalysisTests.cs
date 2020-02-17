@@ -8,6 +8,7 @@ using Rhetos.LanguageServices.Server.Parsing;
 using Rhetos.LanguageServices.Server.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Rhetos.Dsl;
+using Rhetos.Dsl.DefaultConcepts;
 using Rhetos.LanguageServices.Server.Tools;
 
 namespace Rhetos.LanguageServices.Server.Test
@@ -111,6 +112,7 @@ Reference a.b.x p ";
     error
 }
 ";
+
         [DataTestMethod]
         [DataRow(2, 0, "M")]
         [DataRow(4, 0, "M / M.E")]
@@ -129,7 +131,7 @@ Reference a.b.x p ";
 
             Assert.IsTrue(analysisResult.AllErrors.Any());
             Console.WriteLine(string.Join("\n", analysisResult.AllErrors));
-            
+
             var contextDesc = string.Join(" / ", analysisResult.ConceptContext);
             Console.WriteLine($"Context at cursor ({line}, {chr}): {contextDesc}");
             Assert.AreEqual(expectedContext, contextDesc);
@@ -180,6 +182,7 @@ Reference a.b.x p ";
     }
 // s
 }";
+
         [DataTestMethod]
         [DataRow(0, 14, "Module", false)]
         [DataRow(0, 15, null, true)]
@@ -223,7 +226,6 @@ Reference a.b.x p ";
             Assert.AreEqual(expectedKeyword, analysisResult.KeywordToken?.Value);
             Assert.AreEqual(isInsideComment, analysisResult.IsInsideComment);
         }
-
 
         [DataTestMethod]
         [DataRow("Reference", "SimpleReferencePropertyInfo:DataStructure,ReferencePropertyInfo:DataStructure", "")]
@@ -306,49 +308,42 @@ Reference a.b.x p ";
         }
 
         [TestMethod]
-        public void ConceptParameters()
+        public void ConceptSignatureHelpSortOrder()
         {
-            var script = @"
-Module module1
+            var script = @"// <rhetosRootPath=""c:\SomeFolder"" />
+
+Reference a.b.xpa     
+Module sasa
 {
-    Entity entity1
-    {
-        Reference ble x
-    }
+	Entity pero
+	{
+	}
 }
 ";
-            var conceptQueries = serviceProvider.GetService<ConceptQueries>();
             var rhe = rhetosDocumentFactory.CreateNew();
             rhe.UpdateText(script);
-            Console.WriteLine(script);
+            Console.WriteLine($"Script:\n{rhe.TextDocument.Text}\n");
+            var conceptQueries = serviceProvider.GetService<ConceptQueries>();
+            Console.WriteLine(conceptQueries.GetFullDescription("Reference"));
+            Console.WriteLine();
 
-            var lineChr = new LineChr(5, 18);
-            Console.WriteLine(rhe.TextDocument.ShowPosition(lineChr));
-            var analysis = rhe.GetAnalysis(lineChr);
-
-            var withParam = analysis.GetValidConceptsWithActiveParameter();
-            foreach (var concept in withParam)
             {
-                var conceptParams = ConceptInfoType.GetParameters(concept.concept.GetType());
-                Console.WriteLine($"{ConceptInfoType.SignatureDescription(concept.concept.GetType())}");
-                var activeParam = ConceptInfoType.ConceptMemberDescription(conceptParams[concept.activeParamater]);
-                Console.WriteLine($"{concept.concept.GetType().Name}: {concept.activeParamater}, {activeParam}");
+                var lineChr = new LineChr(2, 20);
+                Console.WriteLine(rhe.TextDocument.ShowPosition(lineChr));
+                var signatureHelp = rhe.GetSignatureHelpAtPosition(lineChr);
+                Console.WriteLine($"Chosen signature: {signatureHelp.signatures[0].Signature}\nActive parameter: {signatureHelp.activeParameter}\n");
+                Assert.AreEqual(typeof(ReferencePropertyInfo), signatureHelp.signatures[0].ConceptInfoType);
+                Assert.AreEqual(2, signatureHelp.activeParameter);
             }
 
-            // TODO: implementiraj logiku: ako je token at position ili je leftofposition onda je aktivni parameter zadnji NONNULL
-            // inace je aktivni parameter iduci, tj. prvi null
-            // onda na osnovu toga nadji signature koji fittaju
-            //Console.WriteLine(string.Join("\n", analysis.ValidConcepts.Select(ConceptInfoMembers)));
-            Console.WriteLine($"Typing token: '{analysis.GetTokenAtPosition(lineChr)?.Value}'");
-        }
-
-        private string ConceptInfoMembers(IConceptInfo conceptInfo)
-        {
-            var members = ConceptMembers.Get(conceptInfo)
-                .Where(member => member.IsParsable);
-
-            var membersWithValue = members.Select(member => $"{member.Name}:'{member.GetValue(conceptInfo)}'");
-            return $"{conceptInfo.GetType().Name}: [{string.Join(", ", membersWithValue)}]";
+            {
+                var lineChr = new LineChr(2, 17);
+                Console.WriteLine(rhe.TextDocument.ShowPosition(lineChr));
+                var signatureHelp = rhe.GetSignatureHelpAtPosition(lineChr);
+                Console.WriteLine($"Chosen signature: {signatureHelp.signatures[0].Signature}\nActive parameter: {signatureHelp.activeParameter}\n");
+                Assert.AreEqual(typeof(SimpleReferencePropertyInfo), signatureHelp.signatures[0].ConceptInfoType);
+                Assert.AreEqual(1, signatureHelp.activeParameter);
+            }
         }
     }
 }

@@ -1,48 +1,38 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 using OmniSharp.Extensions.LanguageServer.Protocol;
 using OmniSharp.Extensions.LanguageServer.Protocol.Client.Capabilities;
 using OmniSharp.Extensions.LanguageServer.Protocol.Models;
 using OmniSharp.Extensions.LanguageServer.Protocol.Server;
 using OmniSharp.Extensions.LanguageServer.Protocol.Server.Capabilities;
-using Rhetos.LanguageServices.Server.Parsing;
 using Rhetos.LanguageServices.Server.Services;
-using Rhetos.Logging;
 
 namespace Rhetos.LanguageServices.Server.Handlers
 {
     public class TextDocumentHandler : ITextDocumentSyncHandler
     {
         public static DocumentSelector RhetosDocumentSelector = DocumentSelector.ForLanguage("rhetos-dsl");
+
         public static TextDocumentRegistrationOptions RhetosTextDocumentRegistrationOptions = new TextDocumentRegistrationOptions()
         {
             DocumentSelector = RhetosDocumentSelector
         };
 
         private readonly ILogger<TextDocumentHandler> log;
-        private readonly ILanguageServer server;
         private readonly RhetosWorkspace rhetosWorkspace;
         private readonly ServerEventHandler serverEventsHandler;
-        private readonly RhetosAppContext rhetosAppContext;
 
-        public TextDocumentHandler(ILogger<TextDocumentHandler> log, ILanguageServer server, RhetosWorkspace rhetosWorkspace, 
-            RhetosAppContext rhetosAppContext, ServerEventHandler serverEventsHandler)
+        public TextDocumentHandler(ILogger<TextDocumentHandler> log, RhetosWorkspace rhetosWorkspace, ServerEventHandler serverEventsHandler)
         {
             this.log = log;
             log.LogInformation("Initialized");
-            this.server = server;
             this.rhetosWorkspace = rhetosWorkspace;
             this.serverEventsHandler = serverEventsHandler;
-            this.rhetosAppContext = rhetosAppContext;
         }
 
         public TextDocumentChangeRegistrationOptions GetRegistrationOptions() =>
@@ -90,7 +80,7 @@ namespace Rhetos.LanguageServices.Server.Handlers
         {
             return Unit.Task;
         }
-        
+
         public TextDocumentAttributes GetTextDocumentAttributes(Uri uri)
         {
             return new TextDocumentAttributes(uri, "rhetos-dsl");
