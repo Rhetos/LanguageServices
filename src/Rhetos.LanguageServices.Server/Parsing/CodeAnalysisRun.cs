@@ -35,7 +35,8 @@ namespace Rhetos.LanguageServices.Server.Parsing
 
         public CodeAnalysisResult RunForPosition(LineChr? lineChr)
         {
-            if (!rhetosAppContext.IsInitialized) throw new InvalidOperationException($"Attempted CodeAnalysisRun before RhetosAppContext was initialized.");
+            if (!rhetosAppContext.IsInitialized) 
+                throw new InvalidOperationException($"Attempted CodeAnalysisRun before RhetosAppContext was initialized.");
 
             InitializeResult(lineChr);
             InitializeTokenizers();
@@ -53,7 +54,8 @@ namespace Rhetos.LanguageServices.Server.Parsing
 
         private void InitializeResult(LineChr? lineChr)
         {
-            if (result != null) throw new InvalidOperationException("Analysis already run.");
+            if (result != null) 
+                throw new InvalidOperationException("Analysis already run.");
 
             if (lineChr == null)
                 textDocument = fullTextDocument;
@@ -77,9 +79,15 @@ namespace Rhetos.LanguageServices.Server.Parsing
 
         private void ParseAndCaptureErrors()
         {
-            var dslParser = new DslParser(tokenizer, rhetosAppContext.ConceptInfoInstances, rhetosLogProvider);
             try
             {
+#pragma warning disable CS0618 // Type or member is obsolete
+                var configurationProvider = new ConfigurationBuilder().Build();
+                var configuration = new Utilities.Configuration(configurationProvider);
+#pragma warning restore CS0618 // Type or member is obsolete
+
+                var dslParser = new DslParser(tokenizer, rhetosAppContext.ConceptInfoInstances, rhetosLogProvider, configuration);
+
                 dslParser.ParseConceptsWithCallbacks(OnKeyword, OnMemberRead, OnUpdateContext);
             }
             catch (DslParseSyntaxException e)
@@ -125,22 +133,22 @@ namespace Rhetos.LanguageServices.Server.Parsing
         private void OnMemberRead(ITokenReader iTokenReader, IConceptInfo conceptInfo, ConceptMember conceptMember, ValueOrError<object> valueOrError)
         {
             var tokenReader = (TokenReader)iTokenReader;
-            if (tokenReader.PositionInTokenList > 0 && lastTokenBeforeTarget != null)
+            if (tokenReader.PositionInTokenList <= 0 || lastTokenBeforeTarget == null)
+                return;
+
+            var conceptType = conceptInfo.GetType();
+            var lastTokenRead = result.Tokens[tokenReader.PositionInTokenList - 1];
+            
+            // track last tokens/members parsed before or at target
+            if (lastTokenRead.PositionInDslScript <= lastTokenBeforeTarget.PositionInDslScript && !valueOrError.IsError)
             {
-                var conceptInfoType = conceptInfo.GetType();
-                var lastTokenRead = result.Tokens[tokenReader.PositionInTokenList - 1];
-                // Console.WriteLine($"[OnMemberRead]  LastTokenRead='{lastTokenRead.Value}', LastTokenBeforeTarget='{lastTokenBeforeTarget.Value}'");
-                if (lastTokenRead.PositionInDslScript >= lastTokenBeforeTarget.PositionInDslScript)
-                {
-                    if (result.ValidConcepts.All(valid => valid.GetType() != conceptInfo.GetType())) result.ValidConcepts.Add(conceptInfo);
-                }
-                if (lastTokenRead.PositionInDslScript <= lastTokenBeforeTarget.PositionInDslScript && !valueOrError.IsError)
-                {
-                    // Console.WriteLine($"{conceptInfoType.Name}: {conceptMember.Name}");
-                    result.LastTokenParsed[conceptInfoType] = lastTokenRead;
-                    result.LastMemberReadAttempt[conceptInfoType] = conceptMember;
-                }
+                result.LastTokenParsed[conceptType] = lastTokenRead;
+                result.LastMemberReadAttempt[conceptType] = conceptMember;
             }
+
+            // we are interested in those concepts whose member parsing stops at or after target position
+            if (lastTokenRead.PositionInDslScript >= lastTokenBeforeTarget.PositionInDslScript && !result.ActiveConceptValidTypes.Contains(conceptType)) 
+                result.ActiveConceptValidTypes.Add(conceptType);
         }
 
         private CodeAnalysisError CreateAnalysisError(DslParseSyntaxException e)
@@ -172,8 +180,7 @@ namespace Rhetos.LanguageServices.Server.Parsing
                 if (keyword != null)
                 {
                     result.KeywordToken = lastToken;
-                    result.MemberDebug = new Dictionary<string, List<string>>();
-                    result.ValidConcepts = new List<IConceptInfo>();
+                    result.ActiveConceptValidTypes.Clear();
                 }
                 else
                 {

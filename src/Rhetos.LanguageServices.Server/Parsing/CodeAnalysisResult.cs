@@ -22,10 +22,9 @@ namespace Rhetos.LanguageServices.Server.Parsing
         public List<CodeAnalysisError> DslParserErrors { get; } = new List<CodeAnalysisError>();
         public IEnumerable<CodeAnalysisError> AllErrors => TokenizerErrors.Concat(DslParserErrors);
 
-        public Dictionary<string, List<string>> MemberDebug = new Dictionary<string, List<string>>();
-        public List<IConceptInfo> ValidConcepts = new List<IConceptInfo>();
-        public Dictionary<Type, ConceptMember> LastMemberReadAttempt = new Dictionary<Type, ConceptMember>();
-        public Dictionary<Type, Token> LastTokenParsed = new Dictionary<Type, Token>();
+        public List<Type> ActiveConceptValidTypes { get; } = new List<Type>();
+        public Dictionary<Type, ConceptMember> LastMemberReadAttempt { get; } = new Dictionary<Type, ConceptMember>();
+        public Dictionary<Type, Token> LastTokenParsed { get; } = new Dictionary<Type, Token>();
 
         public CodeAnalysisResult(TextDocument textDocument, int line, int chr)
         {
@@ -34,27 +33,32 @@ namespace Rhetos.LanguageServices.Server.Parsing
             this.Chr = chr;
         }
 
-        public List<(IConceptInfo concept, int activeParamater)> GetValidConceptsWithActiveParameter()
+        public List<(Type conceptType, int activeParamater)> GetValidConceptsWithActiveParameter()
         {
-            var lineChr = new LineChr(Line, Chr);
-            var result = new List<(IConceptInfo concept, int activeParamater)>();
-            foreach (var concept in ValidConcepts)
+            return ActiveConceptValidTypes
+                .Select(conceptType => (conceptType, GetActiveParameterForValidConcept(conceptType)))
+                .ToList();
+        }
+
+        private int GetActiveParameterForValidConcept(Type conceptType)
+        {
+            var activeParameter = 0;
+
+            // we have parsed some members successfully for this concept type
+            if (LastTokenParsed.ContainsKey(conceptType))
             {
-                if (!LastTokenParsed.ContainsKey(concept.GetType()))
-                {
-                    result.Add((concept, 0));
-                }
-                else
-                {
-                    var atLastParsed = GetTokenAtPosition(lineChr) == LastTokenParsed[concept.GetType()] || GetTokenLeftOfPosition(lineChr) == LastTokenParsed[concept.GetType()];
-                    var active = ConceptInfoType.IndexOfParameter(concept.GetType(), LastMemberReadAttempt[concept.GetType()]);
-                    if (!atLastParsed || string.Equals(ConceptInfoHelper.GetKeyword(concept.GetType()), LastTokenParsed[concept.GetType()].Value, StringComparison.InvariantCultureIgnoreCase))
-                        active++;
-                    result.Add((concept, active));
-                }
+                activeParameter = ConceptInfoType.IndexOfParameter(conceptType, LastMemberReadAttempt[conceptType]);
+
+                // if we have just typed a keyword OR have stopped typing a parameter (by pressing space, etc.), we need to advance to next parameter
+                // keyword scenario is possible in nested concepts, where we already have valid parameters and are just typing a keyword
+                var lineChr = new LineChr(Line, Chr);
+                var atLastParsed = GetTokenAtPosition(lineChr) == LastTokenParsed[conceptType] || GetTokenLeftOfPosition(lineChr) == LastTokenParsed[conceptType];
+                var atKeyword = string.Equals(ConceptInfoHelper.GetKeyword(conceptType), LastTokenParsed[conceptType].Value, StringComparison.InvariantCultureIgnoreCase);
+                if (atKeyword || !atLastParsed)
+                    activeParameter++;
             }
 
-            return result;
+            return activeParameter;
         }
 
         public bool IsAfterAnyErrorPosition(LineChr lineChr)

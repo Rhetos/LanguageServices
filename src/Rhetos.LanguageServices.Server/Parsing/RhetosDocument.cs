@@ -120,14 +120,14 @@ namespace Rhetos.LanguageServices.Server.Parsing
             var sortedConcepts = validConcepts
                 .Select(valid =>
                 (
-                    valid.concept,
+                    valid.conceptType,
                     valid.activeParamater,
-                    parameterCount: ConceptInfoType.GetParameters(valid.concept.GetType()).Count,
-                    documentation: signaturesWithDocumentation.Single(sig => sig.ConceptInfoType == valid.concept.GetType())
+                    parameterCount: ConceptInfoType.GetParameters(valid.conceptType).Count,
+                    documentation: signaturesWithDocumentation.Single(sig => sig.ConceptInfoType == valid.conceptType)
                 ))
                 .OrderBy(valid => valid.activeParamater >= valid.parameterCount)
                 .ThenBy(valid => valid.parameterCount)
-                .ThenBy(valid => valid.concept.GetType().Name)
+                .ThenBy(valid => valid.conceptType.Name)
                 .ToList();
 
             var activeParameter = sortedConcepts.First().activeParamater;

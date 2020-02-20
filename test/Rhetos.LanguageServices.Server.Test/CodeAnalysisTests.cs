@@ -4,10 +4,8 @@ using System.Linq;
 using System.Reflection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json;
-using Rhetos.LanguageServices.Server.Parsing;
 using Rhetos.LanguageServices.Server.Services;
 using Microsoft.Extensions.DependencyInjection;
-using Rhetos.Dsl;
 using Rhetos.Dsl.DefaultConcepts;
 using Rhetos.LanguageServices.Server.Tools;
 
@@ -292,10 +290,9 @@ Reference a.b.x p ";
             Console.WriteLine("\n");
             foreach (var pair in withParam)
             {
-                var conceptType = pair.concept.GetType();
+                var conceptType = pair.conceptType;
                 Console.WriteLine($"{conceptType.Name} ==> {ConceptInfoType.SignatureDescription(conceptType)}");
-                //Console.WriteLine($"Last member read: {analysis.LastMemberReadAttempt[conceptType].Name}");
-                var members = ConceptInfoType.GetParameters(pair.concept.GetType());
+                var members = ConceptInfoType.GetParameters(pair.conceptType);
                 var memberName = pair.activeParamater < members.Count ? members[pair.activeParamater].Name : "FULL";
                 var formatted = $"{conceptType.Name}:{memberName}";
                 formattedParams.Add(formatted);
