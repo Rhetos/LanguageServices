@@ -54,7 +54,8 @@ namespace Rhetos.LanguageServices.Server
 
             server.Shutdown.Subscribe(next =>
             {
-                programLogger.Info($"Shutdown requested: {next}");
+                programLogger.Debug($"Shutdown requested: {next}");
+                server.Services.GetRequiredService<PublishDiagnosticsRunner>().Stop();
                 Task.Delay(500).Wait();
             });
 

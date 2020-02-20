@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using OmniSharp.Extensions.LanguageServer.Protocol;
@@ -20,6 +21,8 @@ namespace Rhetos.LanguageServices.Server.Services
 
         private DateTime lastPublishTime = DateTime.MinValue;
         private readonly RhetosAppContext rhetosAppContext;
+        private readonly CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
+        private Task publishLoopTask;
 
         public PublishDiagnosticsRunner(RhetosWorkspace rhetosWorkspace, RhetosAppContext rhetosAppContext, ILanguageServer languageServer, ILogger<PublishDiagnosticsRunner> log)
         {
@@ -27,19 +30,40 @@ namespace Rhetos.LanguageServices.Server.Services
             this.languageServer = languageServer;
             this.log = log;
             this.rhetosAppContext = rhetosAppContext;
+
         }
 
         public void Start()
         {
+            if (cancellationTokenSource.IsCancellationRequested)
+                return;
+
             log.LogInformation($"Starting {nameof(PublishDiagnosticsRunner)}.");
-            Task.Factory.StartNew(PublishLoop, TaskCreationOptions.LongRunning);
+            publishLoopTask = Task.Factory.StartNew(() => PublishLoop(cancellationTokenSource.Token), TaskCreationOptions.LongRunning);
         }
 
-        private void PublishLoop()
+        public void Stop()
+        {
+            try
+            {
+                log.LogDebug($"Stopping {nameof(PublishLoop)}.");
+                cancellationTokenSource.Cancel();
+                publishLoopTask?.Wait();
+            }
+            catch (Exception e)
+            {
+                if (e is AggregateException aggregateException && aggregateException.InnerExceptions.Any(inner => !(inner is TaskCanceledException)))
+                    log.LogDebug($"{nameof(PublishLoop)} successfully cancelled.");
+                else
+                    log.LogDebug($"{nameof(PublishLoop)} faulted while waiting to cancel: {publishLoopTask?.Exception}");
+            }
+        }
+
+        private void PublishLoop(CancellationToken cancellationToken)
         {
             while (true)
             {
-                Task.Delay(300).Wait();
+                Task.Delay(300, cancellationToken).Wait(cancellationToken);
 
                 try
                 {
