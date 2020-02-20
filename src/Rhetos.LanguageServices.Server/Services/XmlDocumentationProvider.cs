@@ -38,7 +38,7 @@ namespace Rhetos.LanguageServices.Server.Services
         {
             try
             {
-                var codebase = new Uri(type.Assembly.CodeBase).AbsolutePath;
+                var codebase = new Uri(type.Assembly.CodeBase).LocalPath;
                 var xDocument = assemblyDocuments.GetOrAdd(codebase, key => new Lazy<XDocument>(() => LoadXmlDocumentForAssembly(key)));
 
                 var typeKey = $"T:{type.FullName}";

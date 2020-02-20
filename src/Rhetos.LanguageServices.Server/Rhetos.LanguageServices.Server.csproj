@@ -68,6 +68,8 @@
     <Compile Include="Tools\PositionExtensions.cs" />
     <Compile Include="Tools\RhetosNetCoreLogger.cs" />
     <Compile Include="Tools\RhetosNetCoreLogProvider.cs" />
+    <Compile Include="Tools\RootPathConfiguration.cs" />
+    <Compile Include="Tools\RootPathConfigurationType.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

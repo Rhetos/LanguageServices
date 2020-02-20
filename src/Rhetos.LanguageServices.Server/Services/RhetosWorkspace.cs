@@ -2,14 +2,17 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using NLog;
 using Rhetos.LanguageServices.Server.Parsing;
 using Rhetos.LanguageServices.Server.Tools;
 using Rhetos.Logging;
+using Rhetos.Utilities.ApplicationConfiguration;
 using ILogger = Microsoft.Extensions.Logging.ILogger;
 
 namespace Rhetos.LanguageServices.Server.Services
@@ -55,35 +58,47 @@ namespace Rhetos.LanguageServices.Server.Services
             return rhetosDocument;
         }
 
-        /*
-        private void PendingProcessLoop()
+        public RootPathConfiguration GetRhetosAppRootPath(Uri documentUri)
         {
-            log.LogTrace($"New ProcessLoop started.");
-            while (documentTextUpdates.Any())
-            {
-                Task.Delay(100).Wait();
-                var elapsed = DateTime.Now - lastDocumentChangeTime;
-                if (elapsed < TimeSpan.FromMilliseconds(300)) continue;
-                
-                RunAnalysis();
-            }
-            log.LogTrace($"ProcessLoop completed.");
+            var rhetosDocument = GetRhetosDocument(documentUri);
+            if (rhetosDocument == null)
+                throw new InvalidOperationException($"No document with id='{documentUri}' found.");
+
+            var fromDirective = GetRhetosAppRootPathFromText(rhetosDocument.TextDocument.Text);
+            if (fromDirective != null)
+                return new RootPathConfiguration(fromDirective, RootPathConfigurationType.SourceDirective, documentUri.LocalPath);
+            
+            var fromDetected = FindRhetosAppRootPathInParentFolders(Path.GetDirectoryName(documentUri.LocalPath));
+
+            return fromDetected;
         }
 
-        private void RunAnalysis()
+        private string GetRhetosAppRootPathFromText(string text)
         {
-            log.LogInformation($"Running document analysis.");
-            var documentsToProcess = documentTextUpdates.Keys.ToList();
-            foreach (var documentUri in documentsToProcess)
+            log.LogInformation($"Checking for 'rhetosAppRootPath' directive in document source.");
+            var pathMatch = Regex.Match(text, @"^\s*//\s*<rhetosAppRootPath=""(.+)""\s*/>");
+            var rootPath = pathMatch.Success
+                ? pathMatch.Groups[1].Value
+                : null;
+
+            return rootPath;
+        }
+
+        private RootPathConfiguration FindRhetosAppRootPathInParentFolders(string startingFolder)
+        {
+            var folder = Path.GetFullPath(startingFolder);
+            while (Directory.Exists(folder))
             {
-                if (documentTextUpdates.TryRemove(documentUri, out var text))
-                {
-                    var rhetosDocument = rhetosDocumentFactory.CreateNew();
-                    rhetosDocument.UpdateText(text);
-                    rhetosDocuments[documentUri] = rhetosDocument;
-                }
+                log.LogInformation($"Checking '{folder}' for RhetosAppRoot.");
+                if (RhetosAppEnvironmentProvider.IsRhetosApplicationRootFolder(folder))
+                    return new RootPathConfiguration(folder, RootPathConfigurationType.DetectedRhetosApp, folder);
+
+                var parent = Path.GetFullPath(Path.Combine(folder, ".."));
+                if (parent == folder) break;
+                folder = parent;
             }
-            log.LogInformation($"Document analysis COMPLETE.");
-        }*/
+
+            return null;
+        }
     }
 }
