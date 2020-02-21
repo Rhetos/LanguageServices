@@ -1,104 +1,74 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
 using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
-using NLog;
 using Rhetos.LanguageServices.Server.Parsing;
-using Rhetos.LanguageServices.Server.Tools;
-using Rhetos.Logging;
-using Rhetos.Utilities.ApplicationConfiguration;
-using ILogger = Microsoft.Extensions.Logging.ILogger;
 
 namespace Rhetos.LanguageServices.Server.Services
 {
     public class RhetosWorkspace
     {
-        public Dictionary<string, DateTime> DocumentChangeTimes { get; } = new Dictionary<string, DateTime>();
 
-        private readonly Dictionary<string, RhetosDocument> rhetosDocuments = new Dictionary<string, RhetosDocument>();
+        private readonly Dictionary<Uri, RhetosDocument> rhetosDocuments = new Dictionary<Uri, RhetosDocument>();
+        private readonly Dictionary<Uri, DateTime> documentChangeTimes = new Dictionary<Uri, DateTime>();
         private readonly ILogger<RhetosWorkspace> log;
         private readonly RhetosDocumentFactory rhetosDocumentFactory;
+        private readonly RhetosAppContext rhetosAppContext;
 
-        public RhetosWorkspace(RhetosDocumentFactory rhetosDocumentFactory, ILogger<RhetosWorkspace> log)
+        public RhetosWorkspace(RhetosDocumentFactory rhetosDocumentFactory, RhetosAppContext rhetosAppContext, ILogger<RhetosWorkspace> log)
         {
             this.log = log;
             this.rhetosDocumentFactory = rhetosDocumentFactory;
+            this.rhetosAppContext = rhetosAppContext;
+        }
+
+        public List<Uri> GetUpdatedDocuments(DateTime sinceTime)
+        {
+            // if context has been changed in the meantime, report all documents as changed
+            if (rhetosAppContext.LastContextUpdateTime > sinceTime)
+                return rhetosDocuments.Keys.ToList();
+
+            return rhetosDocuments
+                .Where(document => documentChangeTimes[document.Key] > sinceTime)
+                .Select(document => document.Key)
+                .ToList();
+        }
+
+        public List<Uri> GetClosedDocuments(DateTime sinceTime)
+        {
+            return documentChangeTimes
+                .Where(document => document.Value > sinceTime)
+                .Where(document => !rhetosDocuments.ContainsKey(document.Key))
+                .Select(document => document.Key)
+                .ToList();
         }
 
         public void UpdateDocumentText(Uri documentUri, string text)
-            => UpdateDocumentText(documentUri.AbsoluteUri, text);
-
-        public void UpdateDocumentText(string id, string text)
         {
-            var rhetosDocument = GetRhetosDocument(id);
-            if (rhetosDocument == null)
+            if (!rhetosDocuments.TryGetValue(documentUri, out var rhetosDocument))
             {
-                rhetosDocument = rhetosDocumentFactory.CreateNew();
-                rhetosDocuments.Add(id, rhetosDocument);
+                rhetosDocument = rhetosDocumentFactory.CreateNew(documentUri);
+                rhetosDocuments.Add(documentUri, rhetosDocument);
             }
 
             rhetosDocument.UpdateText(text);
-            DocumentChangeTimes[id] = DateTime.Now;
+            documentChangeTimes[documentUri] = DateTime.Now;
+        }
+
+        public void CloseDocument(Uri documentUri)
+        {
+            documentChangeTimes[documentUri] = DateTime.Now;
+
+            if (rhetosDocuments.ContainsKey(documentUri))
+                rhetosDocuments.Remove(documentUri);
         }
 
         public RhetosDocument GetRhetosDocument(Uri documentUri)
-            => GetRhetosDocument(documentUri.AbsoluteUri);
-
-        public RhetosDocument GetRhetosDocument(string id)
         {
-            if (!rhetosDocuments.TryGetValue(id, out var rhetosDocument))
-                return null;
+            if (!rhetosDocuments.TryGetValue(documentUri, out var rhetosDocument))
+                throw new InvalidOperationException($"No document with uri '{documentUri}' found in workspace.");
 
             return rhetosDocument;
-        }
-
-        public RootPathConfiguration GetRhetosAppRootPath(Uri documentUri)
-        {
-            var rhetosDocument = GetRhetosDocument(documentUri);
-            if (rhetosDocument == null)
-                throw new InvalidOperationException($"No document with id='{documentUri}' found.");
-
-            var fromDirective = GetRhetosAppRootPathFromText(rhetosDocument.TextDocument.Text);
-            if (fromDirective != null)
-                return new RootPathConfiguration(fromDirective, RootPathConfigurationType.SourceDirective, documentUri.LocalPath);
-            
-            var fromDetected = FindRhetosAppRootPathInParentFolders(Path.GetDirectoryName(documentUri.LocalPath));
-
-            return fromDetected;
-        }
-
-        private string GetRhetosAppRootPathFromText(string text)
-        {
-            log.LogInformation($"Checking for 'rhetosAppRootPath' directive in document source.");
-            var pathMatch = Regex.Match(text, @"^\s*//\s*<rhetosAppRootPath=""(.+)""\s*/>");
-            var rootPath = pathMatch.Success
-                ? pathMatch.Groups[1].Value
-                : null;
-
-            return rootPath;
-        }
-
-        private RootPathConfiguration FindRhetosAppRootPathInParentFolders(string startingFolder)
-        {
-            var folder = Path.GetFullPath(startingFolder);
-            while (Directory.Exists(folder))
-            {
-                log.LogInformation($"Checking '{folder}' for RhetosAppRoot.");
-                if (RhetosAppEnvironmentProvider.IsRhetosApplicationRootFolder(folder))
-                    return new RootPathConfiguration(folder, RootPathConfigurationType.DetectedRhetosApp, folder);
-
-                var parent = Path.GetFullPath(Path.Combine(folder, ".."));
-                if (parent == folder) break;
-                folder = parent;
-            }
-
-            return null;
         }
     }
 }

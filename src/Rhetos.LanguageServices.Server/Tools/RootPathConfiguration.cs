@@ -10,13 +10,13 @@ namespace Rhetos.LanguageServices.Server.Tools
     {
         public string RootPath { get; }
         public RootPathConfigurationType ConfigurationType { get; }
-        public string Source { get; }
+        public string Context { get; }
 
-        public RootPathConfiguration(string rootPath, RootPathConfigurationType configurationType, string source)
+        public RootPathConfiguration(string rootPath, RootPathConfigurationType configurationType, string context)
         {
             this.RootPath = rootPath;
             this.ConfigurationType = configurationType;
-            this.Source = source;
+            this.Context = context;
         }
     }
 }

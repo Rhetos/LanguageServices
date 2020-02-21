@@ -63,7 +63,7 @@ Reference a.b.x p ";
         {
             Console.WriteLine(script);
             var lineChr = new LineChr(line, chr);
-            var rhe = rhetosDocumentFactory.CreateNew();
+            var rhe = rhetosDocumentFactory.CreateWithTestUri();
             rhe.UpdateText(script);
 
             Console.WriteLine(rhe.TextDocument.ShowPosition(lineChr));
@@ -89,7 +89,7 @@ Reference a.b.x p ";
         {
             Console.WriteLine(script);
             var lineChr = new LineChr(line, chr);
-            var rhe = rhetosDocumentFactory.CreateNew();
+            var rhe = rhetosDocumentFactory.CreateWithTestUri();
             rhe.UpdateText(script);
 
             Console.WriteLine(rhe.TextDocument.ShowPosition(lineChr));
@@ -120,7 +120,7 @@ Reference a.b.x p ";
         {
             Console.WriteLine(scriptErrors);
             var lineChr = new LineChr(line, chr);
-            var rhe = rhetosDocumentFactory.CreateNew();
+            var rhe = rhetosDocumentFactory.CreateWithTestUri();
             rhe.UpdateText(scriptErrors);
 
             Console.WriteLine(rhe.TextDocument.ShowPosition(lineChr));
@@ -148,7 +148,7 @@ Reference a.b.x p ";
         public void HandleTokenError()
         {
             Console.WriteLine(scriptTokenError);
-            var rhe = rhetosDocumentFactory.CreateNew();
+            var rhe = rhetosDocumentFactory.CreateWithTestUri();
             rhe.UpdateText(scriptTokenError);
             var analysisResult = rhe.GetAnalysis();
             Assert.AreEqual(1, analysisResult.TokenizerErrors.Count);
@@ -164,10 +164,12 @@ Reference a.b.x p ";
             var documentFactory = newProvider.GetService<RhetosDocumentFactory>();
 
             {
-                var document = documentFactory.CreateNew();
+                var document = documentFactory.CreateWithTestUri();
                 var analysisResult = document.GetAnalysis();
-                Assert.AreEqual(0, analysisResult.AllErrors.Count());
+                Assert.AreEqual(1, analysisResult.AllErrors.Count());
                 Assert.IsFalse(analysisResult.SuccessfulRun);
+                Console.WriteLine(analysisResult.AllErrors.First().Message);
+                StringAssert.Contains(analysisResult.AllErrors.First().Message, "No valid RhetosAppRoothPath configuration was found");
             }
         }
 
@@ -201,7 +203,7 @@ Reference a.b.x p ";
         [DataRow(6, 10, null, true)]
         public void CorrectKeywordsWithComments(int line, int chr, string expectedKeyword, bool isInsideComment)
         {
-            var rhe = rhetosDocumentFactory.CreateNew();
+            var rhe = rhetosDocumentFactory.CreateWithTestUri();
             rhe.UpdateText(commentScript);
             Console.WriteLine(commentScript);
             Console.WriteLine();
@@ -274,7 +276,7 @@ Reference a.b.x p ";
         [DataRow("Module module1 { Entity entity1 { Reference  ", "SimpleReferencePropertyInfo:Name,ReferencePropertyInfo:Name", "post")]
         public void ConceptActiveParameter(string script, string expectedActiveParams, string scriptPostfix)
         {
-            var rhe = rhetosDocumentFactory.CreateNew();
+            var rhe = rhetosDocumentFactory.CreateWithTestUri();
             rhe.UpdateText(script + scriptPostfix);
             Console.WriteLine($"Script:\n{rhe.TextDocument.Text}\n");
             var conceptQueries = serviceProvider.GetService<ConceptQueries>();
@@ -317,7 +319,7 @@ Module sasa
 	}
 }
 ";
-            var rhe = rhetosDocumentFactory.CreateNew();
+            var rhe = rhetosDocumentFactory.CreateWithTestUri();
             rhe.UpdateText(script);
             Console.WriteLine($"Script:\n{rhe.TextDocument.Text}\n");
             var conceptQueries = serviceProvider.GetService<ConceptQueries>();

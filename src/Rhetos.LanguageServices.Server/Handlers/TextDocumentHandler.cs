@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
@@ -30,7 +29,6 @@ namespace Rhetos.LanguageServices.Server.Handlers
         public TextDocumentHandler(ILogger<TextDocumentHandler> log, RhetosWorkspace rhetosWorkspace, ServerEventHandler serverEventsHandler)
         {
             this.log = log;
-            log.LogInformation("Initialized");
             this.rhetosWorkspace = rhetosWorkspace;
             this.serverEventsHandler = serverEventsHandler;
         }
@@ -59,20 +57,16 @@ namespace Rhetos.LanguageServices.Server.Handlers
             var text = notification.TextDocument.Text;
             var uri = notification.TextDocument.Uri;
 
-            log.LogInformation($"Document opened: {uri}.");
+            log.LogDebug($"Document opened: {uri}.");
             rhetosWorkspace.UpdateDocumentText(uri, text);
-
-            var pathMatch = Regex.Match(text, @"^\s*//\s*<rhetosRootPath=""(.+)""\s*/>");
-            var rootPath = pathMatch.Success
-                ? pathMatch.Groups[1].Value
-                : null;
-            serverEventsHandler.InitializeRhetosContext(rootPath);
 
             return Unit.Task;
         }
 
         public Task<Unit> Handle(DidCloseTextDocumentParams notification, CancellationToken token)
         {
+            log.LogDebug($"Document closed: {notification.TextDocument.Uri}.");
+            rhetosWorkspace.CloseDocument(notification.TextDocument.Uri);
             return Unit.Task;
         }
 

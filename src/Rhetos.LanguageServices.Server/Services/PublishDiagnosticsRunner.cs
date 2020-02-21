@@ -20,17 +20,14 @@ namespace Rhetos.LanguageServices.Server.Services
         private readonly ILogger<PublishDiagnosticsRunner> log;
 
         private DateTime lastPublishTime = DateTime.MinValue;
-        private readonly RhetosAppContext rhetosAppContext;
         private readonly CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
         private Task publishLoopTask;
 
-        public PublishDiagnosticsRunner(RhetosWorkspace rhetosWorkspace, RhetosAppContext rhetosAppContext, ILanguageServer languageServer, ILogger<PublishDiagnosticsRunner> log)
+        public PublishDiagnosticsRunner(RhetosWorkspace rhetosWorkspace, ILanguageServer languageServer, ILogger<PublishDiagnosticsRunner> log)
         {
             this.rhetosWorkspace = rhetosWorkspace;
             this.languageServer = languageServer;
             this.log = log;
-            this.rhetosAppContext = rhetosAppContext;
-
         }
 
         public void Start()
@@ -78,42 +75,48 @@ namespace Rhetos.LanguageServices.Server.Services
 
         private void LoopCycle()
         {
-            if (!rhetosAppContext.IsInitialized) 
-                return;
-
             var sw = Stopwatch.StartNew();
-
             var startPublishCheckTime = DateTime.Now;
-            var updatedDocumentIds = rhetosWorkspace.DocumentChangeTimes
-                .Where(changed => changed.Value > lastPublishTime)
-                .Select(changed => changed.Key)
+            var publishTasks = new List<Task>();
+
+            var publishDiagnosticsChanged = rhetosWorkspace.GetUpdatedDocuments(lastPublishTime)
+                .Select(DiagnosticParamsFromRhetosDocument);
+
+            var publishDiagnosticsRemoved = rhetosWorkspace.GetClosedDocuments(lastPublishTime)
+                .Select(documentUri => new PublishDiagnosticsParams() {Uri = documentUri, Diagnostics = new Container<Diagnostic>()});
+
+            var allPublishDiagnostics = publishDiagnosticsChanged
+                .Concat(publishDiagnosticsRemoved)
                 .ToList();
 
-            if (!updatedDocumentIds.Any())
+            if (!allPublishDiagnostics.Any())
                 return;
 
-            var publishTasks = new List<Task>();
-            foreach (var documentId in updatedDocumentIds)
+            foreach (var diagnostics in allPublishDiagnostics)
             {
-                var rhetosDocument = rhetosWorkspace.GetRhetosDocument(documentId);
-                var analysisResult = rhetosDocument.GetAnalysis();
-
-                var diagnostics = analysisResult.AllErrors
-                    .Select(error => DiagnosticFromAnalysisError(analysisResult, error));
-
-                var publishDiagnostics = new PublishDiagnosticsParams()
-                {
-                    Diagnostics = new Container<Diagnostic>(diagnostics),
-                    Uri = new Uri(documentId)
-                };
-                log.LogDebug($"Publish new diagnostics for '{documentId}'.");
-                var publishTask = languageServer.SendRequest(DocumentNames.PublishDiagnostics, publishDiagnostics);
+                log.LogDebug($"Publish new diagnostics for '{diagnostics.Uri}'.");
+                var publishTask = languageServer.SendRequest(DocumentNames.PublishDiagnostics, diagnostics);
                 publishTasks.Add(publishTask);
             }
 
             Task.WaitAll(publishTasks.ToArray());
             log.LogInformation($"Publish diagnostics complete for {publishTasks.Count} documents in {sw.Elapsed.TotalMilliseconds:0.00} ms.");
             lastPublishTime = startPublishCheckTime;
+        }
+
+        private PublishDiagnosticsParams DiagnosticParamsFromRhetosDocument(Uri documentUri)
+        {
+            var rhetosDocument = rhetosWorkspace.GetRhetosDocument(documentUri);
+            var analysisResult = rhetosDocument.GetAnalysis();
+
+            var diagnostics = analysisResult.AllErrors
+                .Select(error => DiagnosticFromAnalysisError(analysisResult, error));
+
+            return new PublishDiagnosticsParams()
+            {
+                Diagnostics = new Container<Diagnostic>(diagnostics),
+                Uri = documentUri
+            };
         }
 
         private Diagnostic DiagnosticFromAnalysisError(CodeAnalysisResult analysisResult, CodeAnalysisError error)
@@ -134,7 +137,7 @@ namespace Rhetos.LanguageServices.Server.Services
 
             return new Diagnostic()
             {
-                Severity = DiagnosticSeverity.Error,
+                Severity = error.Severity == CodeAnalysisError.ErrorSeverity.Error ? DiagnosticSeverity.Error : DiagnosticSeverity.Warning,
                 Message = error.Message,
                 Range = new Range(start, end),
             };

@@ -12,8 +12,8 @@ namespace Rhetos.LanguageServices.Server.Parsing
         public int Chr { get; }
         public TextDocument TextDocument { get; }
         public bool SuccessfulRun { get; set; }
-        public List<Token> Tokens { get; set; }
-        public List<Token> CommentTokens { get; set; }
+        public List<Token> Tokens { get; set; } = new List<Token>();
+        public List<Token> CommentTokens { get; set; } = new List<Token>();
         public List<IConceptInfo> ConceptContext { get; set; } = new List<IConceptInfo>();
         public Token KeywordToken { get; set; }
         public bool IsInsideComment { get; set; }

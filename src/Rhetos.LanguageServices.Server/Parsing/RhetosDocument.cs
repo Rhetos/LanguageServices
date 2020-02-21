@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Extensions.Logging;
 using Rhetos.Dsl;
@@ -10,17 +11,20 @@ namespace Rhetos.LanguageServices.Server.Parsing
     public class RhetosDocument
     {
         public TextDocument TextDocument { get; private set; }
+        public Uri DocumentUri { get; }
+        public RootPathConfiguration RootPathConfiguration { get; private set; }
         private readonly RhetosAppContext rhetosAppContext;
         private static readonly object _syncAnalysis = new object(); // don't rely on Rhetos parsing infrastructure to be thread-safe
         private readonly ILoggerFactory logFactory;
         private readonly ConceptQueries conceptQueries;
         private readonly Dictionary<int, CodeAnalysisResult> cachedAnalysisResults = new Dictionary<int, CodeAnalysisResult>();
 
-        public RhetosDocument(RhetosAppContext rhetosAppContext, ConceptQueries conceptQueries, ILoggerFactory logFactory)
+        public RhetosDocument(RhetosAppContext rhetosAppContext, ConceptQueries conceptQueries, ILoggerFactory logFactory, Uri documentUri)
         {
             this.rhetosAppContext = rhetosAppContext;
-            this.logFactory = logFactory;
             this.conceptQueries = conceptQueries;
+            this.logFactory = logFactory;
+            this.DocumentUri = documentUri;
             UpdateText("");
         }
 
@@ -30,6 +34,30 @@ namespace Rhetos.LanguageServices.Server.Parsing
             {
                 TextDocument = new TextDocument(text);
                 cachedAnalysisResults.Clear();
+
+                UpdateRootPathConfiguration();
+
+                if (RootPathConfiguration?.RootPath != null && !rhetosAppContext.IsInitialized)
+                    rhetosAppContext.InitializeFromAppPath(RootPathConfiguration.RootPath);
+            }
+        }
+
+        private void UpdateRootPathConfiguration()
+        {
+            var directiveConfiguration = rhetosAppContext.GetRhetosAppRootPath(this, true);
+            var deletedDirective = RootPathConfiguration?.ConfigurationType == RootPathConfigurationType.SourceDirective
+                                   && directiveConfiguration.ConfigurationType == RootPathConfigurationType.None;
+
+            // run full configuration scan if we have just deleted a source directive
+            // OR we have never ran a full configuration for this document
+            if (RootPathConfiguration == null || deletedDirective)
+            {
+                RootPathConfiguration = rhetosAppContext.GetRhetosAppRootPath(this);
+            }
+            // else just update directive configuration if present
+            else if (directiveConfiguration.ConfigurationType == RootPathConfigurationType.SourceDirective)
+            {
+                RootPathConfiguration = directiveConfiguration;
             }
         }
 
@@ -49,8 +77,8 @@ namespace Rhetos.LanguageServices.Server.Parsing
 
                 lock (_syncAnalysis)
                 {
-                    // gracefully return empty analysis if RhetosAppContext is not yet initialized
-                    if (!rhetosAppContext.IsInitialized) return new CodeAnalysisResult(TextDocument, 0, 0);
+                    var blockedAnalysisResult = BlockedAnalysisResult();
+                    if (blockedAnalysisResult != null) return blockedAnalysisResult;
 
                     var analysisRun = new CodeAnalysisRun(TextDocument, rhetosAppContext, logFactory);
                     var result = analysisRun.RunForPosition(lineChr);
@@ -58,6 +86,51 @@ namespace Rhetos.LanguageServices.Server.Parsing
                     return result;
                 }
             }
+        }
+
+        private CodeAnalysisResult BlockedAnalysisResult()
+        {
+            // we will check document root path configuration only if appContext is not initialized from current domain
+            // this allows for integration scenarios such as unit testing
+            if (!rhetosAppContext.IsInitializedFromCurrentDomain)
+            {
+                var analysisResult = new CodeAnalysisResult(TextDocument, 0, 0);
+
+                // if we have a failed initialization attempt, add it to error list
+                if (rhetosAppContext.LastInitializeError != null)
+                    analysisResult.DslParserErrors.Add(rhetosAppContext.LastInitializeError);
+
+                // document doesn't have a valid root path configured
+                if (string.IsNullOrEmpty(RootPathConfiguration?.RootPath))
+                {
+                    var error = string.IsNullOrEmpty(RootPathConfiguration?.Context)
+                        ? ""
+                        : $" ({RootPathConfiguration.Context})";
+                    var message = $"No valid RhetosAppRoothPath configuration was found for this document{error}. "
+                                  + "If document is in folder subtree of Rhetos application, it must be built at least once. "
+                                  + "Otherwise, explicit paths may be set via '// <rhetosAppRootPath=\"PATH\" />' source code directive or "
+                                  + "by using 'rhetos-language-services.settings.json' configuration file.";
+
+                    analysisResult.DslParserErrors.Add(new CodeAnalysisError() { Message = message, Severity = CodeAnalysisError.ErrorSeverity.Warning });
+                }
+                // document's root path is different than path used to initialize RhetosAppContext
+                else if (rhetosAppContext.IsInitialized && rhetosAppContext.RootPath != RootPathConfiguration?.RootPath)
+                {
+                    var message = $"Language Services have been initialized with Rhetos app at '{rhetosAppContext.RootPath}'. "
+                                  + $"This document is configured to use different Rhetos app at '{RootPathConfiguration.RootPath}'. No code analysis will be performed. "
+                                  + "Restart Visual Studio if you want to use a different Rhetos app.";
+                    analysisResult.DslParserErrors.Add(new CodeAnalysisError() { Message = message, Severity = CodeAnalysisError.ErrorSeverity.Warning });
+                }
+
+                return analysisResult.AllErrors.Any() 
+                    ? analysisResult 
+                    : null;
+            }
+
+            // gracefully return empty analysis if RhetosAppContext is not yet initialized
+            if (!rhetosAppContext.IsInitialized) return new CodeAnalysisResult(TextDocument, 0, 0);
+
+            return null;
         }
 
         public List<string> GetCompletionKeywordsAtPosition(LineChr lineChr)

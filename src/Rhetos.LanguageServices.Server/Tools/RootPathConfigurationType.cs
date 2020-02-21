@@ -8,6 +8,7 @@ namespace Rhetos.LanguageServices.Server.Tools
 {
     public enum RootPathConfigurationType
     {
+        None,
         DetectedRhetosApp,
         ConfigurationFile,
         SourceDirective

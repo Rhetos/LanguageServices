@@ -39,7 +39,7 @@ Module module1
         [TestMethod]
         public void AnalysisCache()
         {
-            var rhetosDocument = rhetosDocumentFactory.CreateNew();
+            var rhetosDocument = rhetosDocumentFactory.CreateWithTestUri();
             rhetosDocument.UpdateText(scriptSimple);
             var halfPos = rhetosDocument.TextDocument.GetLineChr(scriptSimple.Length / 2); // force errors
 
@@ -64,7 +64,7 @@ Module module1
             Console.WriteLine(scriptSimple);
             var script = string.Join("\n", Enumerable.Range(0, scriptRepeats).Select(_ => scriptSimple));
             Console.WriteLine($"Total script length: {script.Length}.");
-            var rhetosDocument = rhetosDocumentFactory.CreateNew();
+            var rhetosDocument = rhetosDocumentFactory.CreateWithTestUri();
             rhetosDocument.UpdateText(script);
             var halfPos = rhetosDocument.TextDocument.GetLineChr(script.Length / 2 + scriptSimple.Length / 2); // force errors
 
@@ -95,7 +95,7 @@ Module module1
             foreach (var script in new [] { scriptCase.ToLower(), scriptCase.ToUpper() })
             {
                 Console.WriteLine(script);
-                var rhetosDocument = rhetosDocumentFactory.CreateNew();
+                var rhetosDocument = rhetosDocumentFactory.CreateWithTestUri();
                 rhetosDocument.UpdateText(script);
                 var analysis = rhetosDocument.GetAnalysis();
                 Assert.IsTrue(analysis.SuccessfulRun);
@@ -141,7 +141,7 @@ Module module1 // comment
     error '
 }";
             Console.WriteLine(script);
-            var rhetosDocument = rhetosDocumentFactory.CreateNew();
+            var rhetosDocument = rhetosDocumentFactory.CreateWithTestUri();
             rhetosDocument.UpdateText(script);
             var lineChr = new LineChr(line, chr);
             var positionText = rhetosDocument.TextDocument.ShowPosition(lineChr);
@@ -192,7 +192,7 @@ Module module1
     error '
 }";
             Console.WriteLine(script);
-            var rhetosDocument = rhetosDocumentFactory.CreateNew();
+            var rhetosDocument = rhetosDocumentFactory.CreateWithTestUri();
             rhetosDocument.UpdateText(script);
             var lineChr = new LineChr(line, chr);
             var positionText = rhetosDocument.TextDocument.ShowPosition(lineChr);
@@ -248,7 +248,7 @@ Module module1
 }";
 
             Console.WriteLine(script);
-            var rhetosDocument = rhetosDocumentFactory.CreateNew();
+            var rhetosDocument = rhetosDocumentFactory.CreateWithTestUri();
             rhetosDocument.UpdateText(script);
             var lineChr = new LineChr(line, chr);
             var positionText = rhetosDocument.TextDocument.ShowPosition(lineChr);

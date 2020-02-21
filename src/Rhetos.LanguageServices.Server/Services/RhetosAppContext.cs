@@ -4,21 +4,30 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text.RegularExpressions;
 using Autofac;
 using Microsoft.Extensions.Logging;
 using Rhetos.Dsl;
+using Rhetos.LanguageServices.Server.Parsing;
 using Rhetos.LanguageServices.Server.Tools;
 using Rhetos.Logging;
+using Rhetos.Utilities.ApplicationConfiguration;
 
 namespace Rhetos.LanguageServices.Server.Services
 {
     public class RhetosAppContext
     {
+        private static readonly string _configurationFilename = "rhetos-language-services.settings.json";
+        private static readonly string _rhetosAppRootPathConfigurationKey = "RhetosAppRootPath";
+
         public bool IsInitialized { get; private set; }
+        public bool IsInitializedFromCurrentDomain { get; private set; }
         public string RootPath { get; private set; }
         public Dictionary<string, Type[]> Keywords { get; private set; } = new Dictionary<string, Type[]>(StringComparer.InvariantCultureIgnoreCase);
-        public Type[] ConceptInfoTypes { get; private set; }
-        public IConceptInfo[] ConceptInfoInstances { get; private set; }
+        public Type[] ConceptInfoTypes { get; private set; } = new Type[0];
+        public IConceptInfo[] ConceptInfoInstances { get; private set; } = new IConceptInfo[0];
+        public CodeAnalysisError LastInitializeError { get; private set; }
+        public DateTime LastContextUpdateTime { get; private set; }
 
         private readonly ILogger<RhetosAppContext> log;
         private readonly ILogProvider rhetosLogProvider;
@@ -31,6 +40,9 @@ namespace Rhetos.LanguageServices.Server.Services
 
         public void InitializeFromCurrentDomain()
         {
+            if (IsInitialized)
+                throw new InvalidOperationException($"{nameof(RhetosAppContext)} has already been initialized.");
+
             var conceptInfoTypes = AppDomain.CurrentDomain
                 .GetAssemblies()
                 .SelectMany(a => a.GetTypes())
@@ -38,15 +50,40 @@ namespace Rhetos.LanguageServices.Server.Services
                 .ToArray();
 
             InitializeFromConceptTypes(conceptInfoTypes);
+            IsInitializedFromCurrentDomain = true;
             RootPath = null;
         }
 
         public void InitializeFromAppPath(string rootPath)
         {
-            var sw = Stopwatch.StartNew();
+            if (IsInitialized)
+                throw new InvalidOperationException($"{nameof(RhetosAppContext)} has already been initialized.");
+
             if (string.IsNullOrEmpty(rootPath))
                 throw new ArgumentException($"Error initializing rhetos app, specified rootPath '{rootPath}' is not valid!", rootPath);
 
+            try
+            {
+                var sw = Stopwatch.StartNew();
+                InitializeFromAppPathInternal(rootPath);
+                log.LogInformation($"Found IConceptInfo: {ConceptInfoTypes.Length} in {sw.ElapsedMilliseconds} ms.");
+                LastInitializeError = null;
+            }
+            catch (Exception e)
+            {
+                LastInitializeError = new CodeAnalysisError()
+                {
+                    Message =
+                        $"Failed to initialize Language Services from Rhetos app at '{rootPath}'. Either the path is not a valid Rhetos app path or Rhetos app has not been built yet. (Error: {e.Message})",
+                    Severity = CodeAnalysisError.ErrorSeverity.Warning
+                };
+            }
+
+        }
+
+        private void InitializeFromAppPathInternal(string rootPath)
+        {
+            rootPath = Path.GetFullPath(rootPath);
             var configurationProvider = new ConfigurationBuilder()
                 .AddRhetosAppConfiguration(rootPath)
                 .Build();
@@ -63,13 +100,90 @@ namespace Rhetos.LanguageServices.Server.Services
                 var scanner = builder.GetPluginScanner();
                 var conceptInfoTypes = scanner.FindPlugins(typeof(IConceptInfo)).Select(a => a.Type).ToArray();
                 InitializeFromConceptTypes(conceptInfoTypes);
-
-                log.LogInformation($"Found IConceptInfo: {conceptInfoTypes.Length} in {sw.ElapsedMilliseconds} ms.");
                 RootPath = rootPath;
             }
             finally
             {
                 AppDomain.CurrentDomain.AssemblyResolve -= resolveDelegate;
+            }
+        }
+
+        public RootPathConfiguration GetRhetosAppRootPath(RhetosDocument rhetosDocument, bool directiveOnly = false)
+        {
+            try
+            {
+                var fromDirective = GetRootPathFromText(rhetosDocument.TextDocument.Text);
+                if (fromDirective != null)
+                    return new RootPathConfiguration(fromDirective, RootPathConfigurationType.SourceDirective, rhetosDocument.DocumentUri.LocalPath);
+
+                if (!directiveOnly)
+                {
+                    var fromConfiguration = GetRootPathFromConfigurationInParentFolders(Path.GetDirectoryName(rhetosDocument.DocumentUri.LocalPath));
+                    if (fromConfiguration.rootPath != null)
+                        return new RootPathConfiguration(fromConfiguration.rootPath, RootPathConfigurationType.ConfigurationFile, fromConfiguration.configurationPath);
+
+                    var fromDetected = GetRootPathInParentFolders(Path.GetDirectoryName(rhetosDocument.DocumentUri.LocalPath));
+                    if (fromDetected != null)
+                        return new RootPathConfiguration(fromDetected, RootPathConfigurationType.DetectedRhetosApp, fromDetected);
+                }
+            }
+            catch (Exception e)
+            {
+                return new RootPathConfiguration(null, RootPathConfigurationType.None, e.Message);
+            }
+
+            return new RootPathConfiguration(null, RootPathConfigurationType.None, null);
+        }
+
+        private string GetRootPathFromText(string text)
+        {
+            var pathMatch = Regex.Match(text, @"^\s*//\s*<rhetosAppRootPath=""(.+)""\s*/>");
+            var rootPath = pathMatch.Success
+                ? Path.GetFullPath(pathMatch.Groups[1].Value)
+                : null;
+
+            return rootPath;
+        }
+
+        private string GetRootPathInParentFolders(string startingFolder)
+        {
+            var rhetosAppRootFolder = EnumerateParentFolders(startingFolder)
+                .FirstOrDefault(RhetosAppEnvironmentProvider.IsRhetosApplicationRootFolder);
+
+            return rhetosAppRootFolder;
+        }
+
+        private (string rootPath, string configurationPath) GetRootPathFromConfigurationInParentFolders(string startingFolder)
+        {
+            var configurationFile = EnumerateParentFolders(startingFolder)
+                .Select(folder => Path.Combine(folder, _configurationFilename))
+                .FirstOrDefault(filename => File.Exists(filename));
+
+            if (configurationFile == null)
+                return (null, null);
+
+            var configurationProvider = new ConfigurationBuilder()
+                .AddJsonFile(configurationFile)
+                .Build();
+
+            var rhetosAppRootPath = configurationProvider.GetValue<string>(_rhetosAppRootPathConfigurationKey);
+            if (string.IsNullOrEmpty(rhetosAppRootPath))
+                throw new InvalidOperationException($"Configuration file '{configurationFile}' does not contain valid configuration key {_rhetosAppRootPathConfigurationKey}.");
+
+            return (Path.GetFullPath(rhetosAppRootPath), Path.GetFullPath(configurationFile));
+        }
+
+        private IEnumerable<string> EnumerateParentFolders(string startingFolder)
+        {
+            if (string.IsNullOrEmpty(startingFolder)) yield break;
+            var folder = Path.GetFullPath(startingFolder);
+            while (Directory.Exists(folder))
+            {
+                yield return folder;
+
+                var parent = Path.GetFullPath(Path.Combine(folder, ".."));
+                if (parent == folder) yield break;
+                folder = parent;
             }
         }
 
@@ -84,6 +198,7 @@ namespace Rhetos.LanguageServices.Server.Services
 
             LoadKeywords();
             IsInitialized = true;
+            LastContextUpdateTime = DateTime.Now;
         }
 
         private void LoadKeywords()

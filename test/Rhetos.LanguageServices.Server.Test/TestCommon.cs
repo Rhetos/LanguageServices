@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.NetworkInformation;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Rhetos.LanguageServices.Server.Parsing;
 using Rhetos.LanguageServices.Server.Services;
 using Rhetos.LanguageServices.Server.Tools;
 using Rhetos.Logging;
@@ -25,6 +27,11 @@ namespace Rhetos.LanguageServices.Server.Test
                 .AddLogging(cfg => cfg.AddConsole());
 
             return services.BuildServiceProvider();
+        }
+
+        public static RhetosDocument CreateWithTestUri(this RhetosDocumentFactory rhetosDocumentFactory)
+        {
+            return rhetosDocumentFactory.CreateNew(new Uri($"file://{Guid.NewGuid()}"));
         }
 
         public static string ToEndings(this string text, EndingsStyle endingsStyle)

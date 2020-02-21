@@ -11,6 +11,7 @@ namespace Rhetos.LanguageServices.Server.Test
     /// Second line documentation
     /// </summary>
     [TestClass]
+    [DeploymentItem("Rhetos.LanguageServices.Server.Test.xml")]
     public class XmlDocumentationProviderTests
     {
         private readonly ILoggerFactory logFactory;

@@ -21,9 +21,9 @@ namespace Rhetos.LanguageServices.Server.Services
             this.logFactory = logFactory;
         }
 
-        public RhetosDocument CreateNew()
+        public RhetosDocument CreateNew(Uri documentUri)
         {
-            return new RhetosDocument(rhetosAppContext, conceptQueries, logFactory);
+            return new RhetosDocument(rhetosAppContext, conceptQueries, logFactory, documentUri);
         }
     }
 }
