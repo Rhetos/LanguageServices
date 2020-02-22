@@ -171,18 +171,19 @@ namespace Rhetos.LanguageServices.Server.Test
         }
 
         [DataTestMethod]
-        [DataRow(0, 0, "\n")]
-        [DataRow(1, 0, "// comment\n")]
-        [DataRow(4, 0, "\n\n")]
-        [DataRow(4, 1, "\n\n")]
-        [DataRow(4, 2, "\n\n")]
-        [DataRow(6, 0, "{\n")]
-        [DataRow(6, 10, "{\n")]
-        [DataRow(9, 0, "}\n")]
-        [DataRow(10, 0, "\n\n")]
-        [DataRow(11, 0, "\n\n")]
+        [DataRow(0, 0, "\\n")]
+        [DataRow(1, 0, "// comment\\n")]
+        [DataRow(4, 0, "\\n\\n")]
+        [DataRow(4, 1, "\\n\\n")]
+        [DataRow(4, 2, "\\n\\n")]
+        [DataRow(6, 0, "{\\n")]
+        [DataRow(6, 10, "{\\n")]
+        [DataRow(9, 0, "}\\n")]
+        [DataRow(10, 0, "\\n\\n")]
+        [DataRow(11, 0, "\\n\\n")]
         public void CorrectlyTruncates(int line, int chr, string expectedEndsWith)
         {
+            expectedEndsWith = expectedEndsWith.Replace("\\n", "\n");
             var testText =
 @"
 // comment
