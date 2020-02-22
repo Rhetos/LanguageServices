@@ -1,18 +1,41 @@
-﻿using System;
+﻿/*
+    Copyright (C) 2014 Omega software d.o.o.
+
+    This file is part of Rhetos.
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as
+    published by the Free Software Foundation, either version 3 of the
+    License, or (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+
+using System;
 using System.IO;
+using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using NLog;
 using NLog.Extensions.Logging;
+using NLog.Targets;
+using NLog.Targets.Wrappers;
 using OmniSharp.Extensions.LanguageServer.Protocol.Server.Capabilities;
 using OmniSharp.Extensions.LanguageServer.Server;
 using Rhetos.LanguageServices.Server.Handlers;
 using Rhetos.LanguageServices.Server.Services;
 using Rhetos.LanguageServices.Server.Tools;
 using Rhetos.Logging;
-using ILogger = Microsoft.Extensions.Logging.ILogger;
 using LogLevel = Microsoft.Extensions.Logging.LogLevel;
 
 namespace Rhetos.LanguageServices.Server
@@ -77,9 +100,7 @@ namespace Rhetos.LanguageServices.Server
                     .WithHandler<TextDocumentHandler>()
                     .WithHandler<RhetosHoverHandler>()
                     .WithHandler<RhetosSignatureHelpHandler>()
-                    //.WithReciever(new DebugReceiver())
                     .WithHandler<RhetosCompletionHandler>()
-                    //.WithHandler<DidChangeWatchedFilesHandler>()
                     .WithServices(services =>
                     {
                         services.AddTransient<ServerEventHandler>();
@@ -94,7 +115,14 @@ namespace Rhetos.LanguageServices.Server
                     .OnInitialize((languageServer, request) =>
                     {
                         var log = languageServer.Services.GetRequiredService<ILoggerFactory>().CreateLogger("Init");
-                        log.LogInformation($"Received Init message from client. Logging client capabilities to Debug log.");
+                        var logFileMessage = GetLogFilePath();
+                        if (string.IsNullOrEmpty(logFileMessage))
+                            logFileMessage = "No log file configuration found. Edit 'NLog.config' to add log file target.";
+                        else
+                            logFileMessage = $"Log file '{logFileMessage}'.";
+
+                        var localPath = new Uri(Assembly.GetExecutingAssembly().CodeBase).LocalPath;
+                        log.LogInformation($"Initialized. Running server '{localPath}'. {logFileMessage}");
                         log.LogDebug(JsonConvert.SerializeObject(request, Formatting.Indented));
                         return Task.CompletedTask;
                     })
@@ -108,6 +136,23 @@ namespace Rhetos.LanguageServices.Server
             );
 
             return server;
+        }
+
+        private static string GetLogFilePath()
+        {
+            var fileTarget = LogManager.Configuration.LoggingRules
+                .SelectMany(rule => rule.Targets)
+                .Select(target => (target is AsyncTargetWrapper wrapper) ? wrapper.WrappedTarget : target)
+                .OfType<FileTarget>()
+                .FirstOrDefault();
+
+            if (fileTarget == null)
+                return null;
+
+            var logEventInfo = new LogEventInfo { TimeStamp = DateTime.Now };
+            var fileName = fileTarget.FileName.Render(logEventInfo);
+
+            return fileName;
         }
     }
 }
