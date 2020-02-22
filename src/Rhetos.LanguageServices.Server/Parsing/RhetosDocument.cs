@@ -14,7 +14,8 @@ namespace Rhetos.LanguageServices.Server.Parsing
         public Uri DocumentUri { get; }
         public RootPathConfiguration RootPathConfiguration { get; private set; }
         private readonly RhetosAppContext rhetosAppContext;
-        private static readonly object _syncAnalysis = new object(); // don't rely on Rhetos parsing infrastructure to be thread-safe
+        // we don't want to run analysis during document text change and also rely on Rhetos parsing infrastructure to be thread-safe
+        private static readonly object _syncAnalysis = new object(); 
         private readonly ILoggerFactory logFactory;
         private readonly ConceptQueries conceptQueries;
         private readonly Dictionary<int, CodeAnalysisResult> cachedAnalysisResults = new Dictionary<int, CodeAnalysisResult>();
@@ -30,7 +31,7 @@ namespace Rhetos.LanguageServices.Server.Parsing
 
         public void UpdateText(string text)
         {
-            lock (cachedAnalysisResults)
+            lock (_syncAnalysis)
             {
                 TextDocument = new TextDocument(text);
                 cachedAnalysisResults.Clear();
@@ -66,7 +67,7 @@ namespace Rhetos.LanguageServices.Server.Parsing
 
         public CodeAnalysisResult GetAnalysis(LineChr? lineChr)
         {
-            lock (cachedAnalysisResults)
+            lock (_syncAnalysis)
             {
                 var cacheKey = lineChr == null
                     ? -1
@@ -75,16 +76,13 @@ namespace Rhetos.LanguageServices.Server.Parsing
                 if (cachedAnalysisResults.TryGetValue(cacheKey, out var cachedResult))
                     return cachedResult;
 
-                lock (_syncAnalysis)
-                {
-                    var blockedAnalysisResult = BlockedAnalysisResult();
-                    if (blockedAnalysisResult != null) return blockedAnalysisResult;
+                var blockedAnalysisResult = BlockedAnalysisResult();
+                if (blockedAnalysisResult != null) return blockedAnalysisResult;
 
-                    var analysisRun = new CodeAnalysisRun(TextDocument, rhetosAppContext, logFactory);
-                    var result = analysisRun.RunForPosition(lineChr);
-                    cachedAnalysisResults[cacheKey] = result;
-                    return result;
-                }
+                var analysisRun = new CodeAnalysisRun(TextDocument, rhetosAppContext, logFactory);
+                var result = analysisRun.RunForPosition(lineChr);
+                cachedAnalysisResults[cacheKey] = result;
+                return result;
             }
         }
 
@@ -114,7 +112,7 @@ namespace Rhetos.LanguageServices.Server.Parsing
                     analysisResult.DslParserErrors.Add(new CodeAnalysisError() { Message = message, Severity = CodeAnalysisError.ErrorSeverity.Warning });
                 }
                 // document's root path is different than path used to initialize RhetosAppContext
-                else if (rhetosAppContext.IsInitialized && rhetosAppContext.RootPath != RootPathConfiguration?.RootPath)
+                else if (rhetosAppContext.IsInitialized && !string.Equals(rhetosAppContext.RootPath, RootPathConfiguration?.RootPath, StringComparison.InvariantCultureIgnoreCase))
                 {
                     var message = $"Language Services have been initialized with Rhetos app at '{rhetosAppContext.RootPath}'. "
                                   + $"This document is configured to use different Rhetos app at '{RootPathConfiguration.RootPath}'. No code analysis will be performed. "

@@ -16,6 +16,8 @@ namespace Rhetos.LanguageServices.VisualStudioExtension
     [Export(typeof(ILanguageClient))]
     public class LanguageClient : ILanguageClient
     {
+        // allow redirection of LSP server to another path for integration, debugging and testing purposes
+        private static readonly string _languageSeverPathConfigurationFilename = "rhetos.lsp-server.local.json";
         public class RhetosLspServerOptions
         {
             public string ServerPath { get; set; }
@@ -38,26 +40,64 @@ namespace Rhetos.LanguageServices.VisualStudioExtension
         {
             await Task.Yield();
 
-            var options = JsonConvert.DeserializeObject<RhetosLspServerOptions>(File.ReadAllText("rhetos.lsp-server.local.json"));
-            Trace.WriteLine($"Loaded server path from options: '{options.ServerPath}'.");
+            try
+            {
+                var serverProcess = StartLanguageServer();
+                if (serverProcess != null)
+                    return new Connection(serverProcess.StandardOutput.BaseStream, serverProcess.StandardInput.BaseStream);
+
+                return null;
+            }
+            catch (Exception e)
+            {
+                Trace.WriteLine($"Error activating Language Server Process. {e}");
+                throw;
+            }
+        }
+
+        private Process StartLanguageServer()
+        {
+            var languageServerPath = GetLanguageServerPath();
+            Trace.WriteLine($"Starting language server at: '{languageServerPath}'.");
 
             var info = new ProcessStartInfo
             {
-                FileName = options.ServerPath,
+                FileName = languageServerPath,
                 RedirectStandardInput = true,
                 RedirectStandardOutput = true,
                 UseShellExecute = false,
                 CreateNoWindow = true
             };
 
-            var process = new Process {StartInfo = info};
+            var process = new Process { StartInfo = info };
 
             if (process.Start())
-            {
-                return new Connection(process.StandardOutput.BaseStream, process.StandardInput.BaseStream);
-            }
+                return process;
 
             return null;
+        }
+
+        private string GetLanguageServerPath()
+        {
+            var languageServerPath = TryReadPathConfigurationFile()?.ServerPath;
+
+            if (!string.IsNullOrEmpty(languageServerPath))
+                return languageServerPath;
+
+            var codebaseLocalPath = new Uri(System.Reflection.Assembly.GetExecutingAssembly().CodeBase).LocalPath;
+            var extensionFolder = Path.GetDirectoryName(codebaseLocalPath);
+            languageServerPath = Path.Combine(extensionFolder, "Rhetos.LanguageServices.Server.exe");
+            return languageServerPath;
+        }
+
+        private RhetosLspServerOptions TryReadPathConfigurationFile()
+        {
+            if (!File.Exists(_languageSeverPathConfigurationFilename)) 
+                return null;
+            
+            var options = JsonConvert.DeserializeObject<RhetosLspServerOptions>(File.ReadAllText(_languageSeverPathConfigurationFilename));
+            Trace.WriteLine($"Loaded server path from path configuration file: '{options.ServerPath}'.");
+            return options;
         }
 
         public async Task OnLoadedAsync()

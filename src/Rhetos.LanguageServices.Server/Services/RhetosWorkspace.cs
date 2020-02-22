@@ -24,51 +24,66 @@ namespace Rhetos.LanguageServices.Server.Services
 
         public List<Uri> GetUpdatedDocuments(DateTime sinceTime)
         {
-            // if context has been changed in the meantime, report all documents as changed
-            if (rhetosAppContext.LastContextUpdateTime > sinceTime)
-                return rhetosDocuments.Keys.ToList();
+            lock (rhetosDocuments)
+            {
+                // if context has been changed in the meantime, report all documents as changed
+                if (rhetosAppContext.LastContextUpdateTime > sinceTime)
+                    return rhetosDocuments.Keys.ToList();
 
-            return rhetosDocuments
-                .Where(document => documentChangeTimes[document.Key] > sinceTime)
-                .Select(document => document.Key)
-                .ToList();
+                return rhetosDocuments
+                    .Where(document => documentChangeTimes[document.Key] > sinceTime)
+                    .Select(document => document.Key)
+                    .ToList();
+            }
         }
 
         public List<Uri> GetClosedDocuments(DateTime sinceTime)
         {
-            return documentChangeTimes
-                .Where(document => document.Value > sinceTime)
-                .Where(document => !rhetosDocuments.ContainsKey(document.Key))
-                .Select(document => document.Key)
-                .ToList();
+            lock (rhetosDocuments)
+            {
+                return documentChangeTimes
+                    .Where(document => document.Value > sinceTime)
+                    .Where(document => !rhetosDocuments.ContainsKey(document.Key))
+                    .Select(document => document.Key)
+                    .ToList();
+            }
         }
 
         public void UpdateDocumentText(Uri documentUri, string text)
         {
-            if (!rhetosDocuments.TryGetValue(documentUri, out var rhetosDocument))
+            lock (rhetosDocuments)
             {
-                rhetosDocument = rhetosDocumentFactory.CreateNew(documentUri);
-                rhetosDocuments.Add(documentUri, rhetosDocument);
-            }
+                if (!rhetosDocuments.TryGetValue(documentUri, out var rhetosDocument))
+                {
+                    rhetosDocument = rhetosDocumentFactory.CreateNew(documentUri);
+                    rhetosDocuments.Add(documentUri, rhetosDocument);
+                }
 
-            rhetosDocument.UpdateText(text);
-            documentChangeTimes[documentUri] = DateTime.Now;
+                rhetosDocument.UpdateText(text);
+                documentChangeTimes[documentUri] = DateTime.Now;
+            }
         }
 
         public void CloseDocument(Uri documentUri)
         {
-            documentChangeTimes[documentUri] = DateTime.Now;
+            lock (rhetosDocuments)
+            {
+                documentChangeTimes[documentUri] = DateTime.Now;
 
-            if (rhetosDocuments.ContainsKey(documentUri))
-                rhetosDocuments.Remove(documentUri);
+                if (rhetosDocuments.ContainsKey(documentUri))
+                    rhetosDocuments.Remove(documentUri);
+            }
         }
 
         public RhetosDocument GetRhetosDocument(Uri documentUri)
         {
-            if (!rhetosDocuments.TryGetValue(documentUri, out var rhetosDocument))
-                throw new InvalidOperationException($"No document with uri '{documentUri}' found in workspace.");
+            lock (rhetosDocuments)
+            {
+                if (!rhetosDocuments.TryGetValue(documentUri, out var rhetosDocument))
+                    throw new InvalidOperationException($"No document with uri '{documentUri}' found in workspace.");
 
-            return rhetosDocument;
+                return rhetosDocument;
+            }
         }
     }
 }
