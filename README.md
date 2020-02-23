@@ -2,11 +2,11 @@
 
 ## Introduction
 
-This project is a [Language Server Protocol](https://microsoft.github.io/language-server-protocol/) implementation for Rhetos DSL. It also includes a corresponding Visual Studio Extension.
+This project is a [Language Server Protocol](https://microsoft.github.io/language-server-protocol/) implementation for Rhetos DSL. It includes a language server and a corresponding Visual Studio extension.
 
 ## Building the project
 
-Build the project using `build.bat`. This will produce `.vsix` in the folder `dist`. It is a Visual Studio extension containing both the extension code and LSP server binaries needed to run it.
+Build the project using `build.bat`. This will produce `.vsix` file in the `./dist` folder. It is a Visual Studio extension containing both the extension code and LSP server binaries needed to run it.
 
 Install the `.vsix` as you would install any other Visual Studio extension.
 
@@ -22,11 +22,13 @@ Install the `.vsix` as you would install any other Visual Studio extension.
 
 Rhetos Language Services will activate whenever `.rhe` file is opened within Visual Studio. An attempt to detect a corresponding Rhetos application is made and if successful, the system will provide intellisense and other features to the editor.
 
+**If your `.rhe` document resides in the directory tree inside your Rhetos application, it will automatically be detected by rule (3), so no additional configuration is needed.**
+
 For a `.rhe` document, the following rules are applied in order to find the location of corresponding Rhetos application:
 
-1. Source file is checked for explicit directive pointing to folder which contains Rhetos application in the form of: `// <rhetosAppRootPath="c:\some\path\to\rhetosapp" />`. It must be placed on the first line of the source file.
+1. Document is checked for explicit directive pointing to a folder which contains Rhetos application in the form of: `// <rhetosAppRootPath="c:\some\path\to\rhetosapp" />`. It must be placed on the first line of the file.
 
-2. Source file folder and all parent folders are checked for `rhetos-language-services.settings.json` configuration file specifying the Rhetos application path. File format should be: 
+2. Document folder and all parent folders are checked for `rhetos-language-services.settings.json` configuration file specifying the Rhetos application path. File format should be:
 
     ``` json
     {
@@ -34,9 +36,7 @@ For a `.rhe` document, the following rules are applied in order to find the loca
     }
     ```
 
-3. Source file folder and all parent folders are checked for a valid Rhetos application root path. This generally means that folders are checked for existance of the `RhetosAppEnvironment.json` file which is produced by building the Rhetos application.
-
-**If your `.rhe` document resides in the directory tree inside your Rhetos application, it will automatically be detected by rule (3), so no additional configuration is needed.**
+3. Document folder and all parent folders are checked for a valid Rhetos application root path. This generally means that folders are checked for existance of the `RhetosAppEnvironment.json` file which is produced by building the Rhetos application.
 
 Use rules (1) and (2) as means to override this default behavior.
 
@@ -52,7 +52,17 @@ Initializating language services server with specific Rhetos application causes 
 
 Syntax highlighting has a fixed set of keywords being recognized, independent of the Rhetos application currently used.
 
+### Documents analyzed
+
+Language services will analyze and report errors only on **currently opened documents** in the IDE.
+
 ## Troubleshooting
+
+### Rhetos application not detected after opening `.rhe` file
+
+Make sure you have built Rhetos application at least once.
+
+### Advanced troubleshooting
 
 If the Rhetos Language Services server starts correctly (after opening any `.rhe` file) it will log some basic information in the Visual Studio output window under `Rhetos DSL Language Extension` source. This log will display the location from where server is running as well as log filename with detailed logging (if configured).
 
