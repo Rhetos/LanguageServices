@@ -9,7 +9,9 @@ CALL Tools\CheckLicenceInSourceFiles.bat || GOTO Error0
 REM NuGet Automatic Package Restore requires "NuGet.exe restore" to be executed before the command-line build.
 WHERE /Q NuGet.exe || ECHO ERROR: Please download the NuGet.exe command line tool. && GOTO Error0
 NuGet.exe restore "Rhetos.LanguageServices.sln" -NonInteractive || GOTO Error0
-MSBuild.exe "Rhetos.LanguageServices.sln" /target:rebuild /p:Configuration=%Config% /verbosity:minimal /fileLogger /p:NoWarn=CS1591 || GOTO Error0
+MSBuild.exe "Rhetos.LanguageServices.sln" /target:rebuild /p:Configuration=%Config% /verbosity:minimal /fileLogger || GOTO Error0
+
+COPY src\Rhetos.LanguageServices.VisualStudioExtension\bin\%Config%\Rhetos.LanguageServices.VisualStudioExtension.vsix dist
 
 @REM ================================================
 
