@@ -17,26 +17,10 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-
 using System;
-using System.IO;
-using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 using NLog;
-using NLog.Extensions.Logging;
-using NLog.Targets;
-using NLog.Targets.Wrappers;
-using OmniSharp.Extensions.LanguageServer.Protocol.Server.Capabilities;
-using OmniSharp.Extensions.LanguageServer.Server;
-using Rhetos.LanguageServices.Server.Handlers;
-using Rhetos.LanguageServices.Server.Services;
-using Rhetos.LanguageServices.Server.Tools;
-using Rhetos.Logging;
-using LogLevel = Microsoft.Extensions.Logging.LogLevel;
 
 namespace Rhetos.LanguageServices.Server
 {
@@ -44,115 +28,32 @@ namespace Rhetos.LanguageServices.Server
     {
         public static async Task Main(string[] args)
         {
-            var programLogger = LogManager.GetLogger("Program");
-            programLogger.Info($"SERVER START");
-
-            try
+            if (AppDomain.CurrentDomain.IsDefaultAppDomain())
             {
-                using (var input = Console.OpenStandardInput())
-                using (var output = Console.OpenStandardOutput())
+                var setup = new AppDomainSetup();
+                setup.ShadowCopyFiles = "true";
+
+                var domain = AppDomain.CreateDomain("Rhetos.LanguageServices.Server SubDomain", AppDomain.CurrentDomain.Evidence, setup);
+
+                try
                 {
-                    await RunAndWaitExit(programLogger, input, output);
+                    domain.ExecuteAssembly(Assembly.GetExecutingAssembly().Location, args);
+                }
+                finally
+                {
+                    AppDomain.Unload(domain);
                 }
             }
-            catch (Exception e)
+            else
             {
-                programLogger.Error($"Exception running language server: {e}");
+                var programLogger = LogManager.GetLogger("Program");
+
+                var rhetosLanguageServer = new RhetosLanguageServer(programLogger);
+
+                await rhetosLanguageServer.Run();
+
+                LogManager.Flush();
             }
-
-            programLogger.Info($"SERVER END");
-            LogManager.Flush();
-        }
-
-        public static async Task RunAndWaitExit(Logger programLogger, Stream input, Stream output)
-        {
-            var server = await BuildLanguageServer(input, output,
-                builder => builder
-                    .AddNLog()
-                    .AddLanguageServer(LogLevel.Information)
-                    .SetMinimumLevel(LogLevel.Debug)
-            );
-
-            programLogger.Info("Language Server built and started.");
-
-            server.Shutdown.Subscribe(next =>
-            {
-                programLogger.Debug($"Shutdown requested: {next}");
-                server.Services.GetRequiredService<PublishDiagnosticsRunner>().Stop();
-                Task.Delay(500).Wait();
-            });
-
-            server.Exit.Subscribe(next =>
-            {
-                programLogger.Info($"Exit requested: {next}");
-            });
-
-            await server.WaitForExit;
-        }
-
-        public static async Task<ILanguageServer> BuildLanguageServer(Stream inputStream, Stream outputStream, Action<ILoggingBuilder> logBuilderAction)
-        {
-            var server = await LanguageServer.From(options =>
-                options
-                    .WithInput(inputStream)
-                    .WithOutput(outputStream)
-                    .ConfigureLogging(logBuilderAction)
-                    .WithHandler<TextDocumentHandler>()
-                    .WithHandler<RhetosHoverHandler>()
-                    .WithHandler<RhetosSignatureHelpHandler>()
-                    .WithHandler<RhetosCompletionHandler>()
-                    .WithServices(services =>
-                    {
-                        services.AddTransient<ServerEventHandler>();
-                        services.AddSingleton<RhetosWorkspace>();
-                        services.AddTransient<RhetosDocumentFactory>();
-                        services.AddSingleton<RhetosAppContext>();
-                        services.AddSingleton<XmlDocumentationProvider>();
-                        services.AddSingleton<ILogProvider, RhetosNetCoreLogProvider>();
-                        services.AddSingleton<PublishDiagnosticsRunner>();
-                        services.AddSingleton<ConceptQueries>();
-                    })
-                    .OnInitialize((languageServer, request) =>
-                    {
-                        var log = languageServer.Services.GetRequiredService<ILoggerFactory>().CreateLogger("Init");
-                        var logFileMessage = GetLogFilePath();
-                        if (string.IsNullOrEmpty(logFileMessage))
-                            logFileMessage = "No log file configuration found. Edit 'NLog.config' to add log file target.";
-                        else
-                            logFileMessage = $"Log file '{logFileMessage}'.";
-
-                        var localPath = new Uri(Assembly.GetExecutingAssembly().CodeBase).LocalPath;
-                        log.LogInformation($"Initialized. Running server '{localPath}'. {logFileMessage}");
-                        log.LogDebug(JsonConvert.SerializeObject(request, Formatting.Indented));
-                        return Task.CompletedTask;
-                    })
-                    .OnInitialized((languageServer, request, response) =>
-                    {
-                        response.Capabilities.TextDocumentSync.Kind = TextDocumentSyncKind.Full;
-                        response.Capabilities.TextDocumentSync.Options.Change = TextDocumentSyncKind.Full;
-                        languageServer.Services.GetService<PublishDiagnosticsRunner>().Start();
-                        return Task.CompletedTask;
-                    })
-            );
-
-            return server;
-        }
-
-        private static string GetLogFilePath()
-        {
-            var fileTarget = LogManager.Configuration.LoggingRules
-                .SelectMany(rule => rule.Targets)
-                .Select(target => (target is AsyncTargetWrapper wrapper) ? wrapper.WrappedTarget : target)
-                .OfType<FileTarget>()
-                .FirstOrDefault();
-
-            if (fileTarget == null)
-                return null;
-
-            var logEventInfo = new LogEventInfo { TimeStamp = DateTime.Now };
-            var fileName = fileTarget.FileName.Render(logEventInfo);
-
-            return fileName;
         }
     }
 }

@@ -90,7 +90,7 @@
       <Version>0.14.1</Version>
     </PackageReference>
     <PackageReference Include="Rhetos.CommonConcepts">
-      <Version>4.0.0-dev2002201532db599c</Version>
+      <Version>4.0.0</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>

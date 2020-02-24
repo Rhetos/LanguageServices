@@ -58,6 +58,7 @@ namespace Rhetos.LanguageServices.Server.Test
  
     }
     Entity After; 
+    Entity SameLine  {  }
 }
 Reference a.b.x p ";
 
@@ -73,11 +74,15 @@ Reference a.b.x p ";
         [DataRow(5, 18, "Reference")]
         [DataRow(9, 0, null)]
         [DataRow(11, 16, null)]
-        [DataRow(12, 2, null)]
-        [DataRow(13, 0, "Reference")]
-        [DataRow(13, 8, "Reference")]
-        [DataRow(13, 13, "Reference")]
-        [DataRow(13, 20, "Reference")]
+        [DataRow(13, 2, null)]
+        [DataRow(12, 8, "Entity")]
+        [DataRow(12, 18, "Entity")]
+        [DataRow(12, 20, "Entity")]
+        [DataRow(12, 22, null)]
+        [DataRow(14, 0, "Reference")]
+        [DataRow(14, 8, "Reference")]
+        [DataRow(14, 13, "Reference")]
+        [DataRow(14, 20, "Reference")]
         public void CorrectKeywords(int line, int chr, string expectedKeyword)
         {
             Console.WriteLine(script);
@@ -103,7 +108,8 @@ Reference a.b.x p ";
         [DataRow(6, 4, "TestModule / TestModule.Pero")]
         [DataRow(6, 5, "TestModule")]
         [DataRow(9, 0, "TestModule / TestModule.Empty")]
-        [DataRow(13, 0, "")]
+        [DataRow(12, 22, "TestModule / TestModule.SameLine")]
+        [DataRow(14, 0, "")]
         public void CorrectConceptContexts(int line, int chr, string expectedContext)
         {
             Console.WriteLine(script);
@@ -162,6 +168,28 @@ Reference a.b.x p ";
     }
 }
 ";
+
+        [TestMethod]
+        public void SameLineVsNewLineBraces()
+        {
+            foreach (var data in new []
+            {
+                ("Module module1 {   }", new LineChr(0, 17)), 
+                ("Module module2\n{\n\n}\n", new LineChr(2, 0))
+            })
+            {
+                var rhe = rhetosDocumentFactory.CreateWithTestUri();
+                rhe.UpdateText(data.Item1);
+                Console.WriteLine(rhe.TextDocument.ShowPosition(data.Item2));
+                var analysisResult = rhe.GetAnalysis(data.Item2);
+                for (var i = 0; i < analysisResult.Tokens.Count; i++)
+                {
+                    Console.WriteLine($"[{i}] ({analysisResult.Tokens[i].Type}): '{analysisResult.Tokens[i].Value}'");
+                }
+                Console.WriteLine($"Keyword at pos: '{analysisResult.KeywordToken?.Value}'\n\n");
+                Assert.IsNull(analysisResult.KeywordToken);
+            }
+        }
 
         [TestMethod]
         public void HandleTokenError()

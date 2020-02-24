@@ -154,7 +154,7 @@ namespace Rhetos.LanguageServices.Server.Parsing
         {
             var analysisResult = GetAnalysis(lineChr);
 
-            if (analysisResult.IsInsideComment)
+            if (analysisResult.IsInsideComment || analysisResult.IsAfterAnyErrorPosition(lineChr))
                 return new List<string>();
 
             var typingToken = analysisResult.GetTokenBeingTypedAtCursor(lineChr);

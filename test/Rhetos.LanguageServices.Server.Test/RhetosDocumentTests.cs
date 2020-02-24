@@ -132,13 +132,18 @@ Module module1
         [DataRow(2, 22, null)]
         [DataRow(3, 0, null)]
         [DataRow(4, 0, null)]
-        [DataRow(4, 10, "by EntityInfo")]
-        [DataRow(4, 20, "by EntityInfo")]
-        [DataRow(5, 0, "by EntityInfo")]
-        [DataRow(9, 20, "by SimpleReferencePropertyInfo")]
-        [DataRow(9, 30, "by SimpleReferencePropertyInfo")]
-        [DataRow(10, 0, null)]
-        [DataRow(11, 8, null)]
+        [DataRow(4, 21, null)]
+        [DataRow(4, 18, "by EntityInfo")]
+        [DataRow(4, 19, "by EntityInfo")]
+        [DataRow(5, 0, null)]
+        [DataRow(5, 10, "by EntityInfo")]
+        [DataRow(5, 20, "by EntityInfo")]
+        [DataRow(6, 0, "by EntityInfo")]
+        [DataRow(6, 20, null)]
+        [DataRow(10, 20, "by SimpleReferencePropertyInfo")]
+        [DataRow(10, 30, "by SimpleReferencePropertyInfo")]
+        [DataRow(11, 0, null)]
+        [DataRow(12, 8, null)]
         [DataRow(14, 7, null)]
         [DataRow(15, 0, null)]
         public void HoverDocumentation(int line, int chr, string expectedSubstring)
@@ -147,6 +152,7 @@ Module module1
 
 Module module1 // comment
 {
+    Entity SameLine {  }
     Entity entity1
     {
         Logging
@@ -180,6 +186,7 @@ Module module1 // comment
 
 
         [DataTestMethod]
+        
         [DataRow(1, 0, 169, null, null)]
         [DataRow(1, 8, 0, null, null)]
         [DataRow(1, 10, 0, null, null)]
@@ -189,10 +196,11 @@ Module module1 // comment
         [DataRow(8, 30, 9, "AllProperties", "Logging")]
         [DataRow(11, 0, 66, "Logging", "AllProperties")]
         [DataRow(2, 30, 0, null, null)]
-        [DataRow(2, 30, 0, null, null)]
-        [DataRow(13, 30, 0, null, null)]
-        [DataRow(14, 0, 0, null, null)]
+        [DataRow(13, 19, 0, null, null)]
+        [DataRow(13, 21, 66, "Logging", "AllProperties")]
         [DataRow(14, 30, 0, null, null)]
+        [DataRow(15, 0, 0, null, null)]
+        [DataRow(15, 30, 0, null, null)]
         public void CompletionContext(int line, int chr, int validKeywordCount, string shouldContainKeyword, string shouldNotContainKeyword)
         {
             var script = @"
@@ -208,6 +216,7 @@ Module module1
         }
 
     }
+    Entity SameLine {}
     error '
 }";
             Console.WriteLine(script);

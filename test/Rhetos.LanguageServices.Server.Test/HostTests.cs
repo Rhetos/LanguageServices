@@ -43,7 +43,7 @@ namespace Rhetos.LanguageServices.Server.Test
             var languageClient = new LanguageClient(logFactory, serverProcess);
             var clientInit = languageClient.Initialize("/");
 
-            var serverInit = Program.BuildLanguageServer(serverProcess.ClientOutputStream, serverProcess.ClientInputStream, builder => builder.AddNLog().AddLanguageServer().AddConsole());
+            var serverInit = RhetosLanguageServer.BuildLanguageServer(serverProcess.ClientOutputStream, serverProcess.ClientInputStream, builder => builder.AddNLog().AddLanguageServer().AddConsole());
 
             Task.WaitAll(clientInit, serverInit);
 

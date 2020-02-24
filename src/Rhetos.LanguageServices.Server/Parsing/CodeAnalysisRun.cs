@@ -182,7 +182,10 @@ namespace Rhetos.LanguageServices.Server.Parsing
             var lastToken = result.Tokens[tokenReader.PositionInTokenList - 1];
             var contextPos = lastToken.PositionInDslScript + lastToken.Value.Length;
             if (contextPos <= targetPos)
+            {
                 result.ConceptContext = context.Reverse().ToList();
+                result.KeywordToken = null;
+            }
         }
 
         private void OnKeyword(ITokenReader iTokenReader, string keyword)
@@ -191,6 +194,7 @@ namespace Rhetos.LanguageServices.Server.Parsing
             if (tokenReader.PositionInTokenList >= result.Tokens.Count) return;
 
             var lastToken = result.Tokens[tokenReader.PositionInTokenList];
+
             if (keyword == null && tokenReader.PositionInTokenList > 0)
                 lastToken = result.Tokens[tokenReader.PositionInTokenList - 1];
 
