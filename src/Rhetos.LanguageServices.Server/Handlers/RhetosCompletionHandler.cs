@@ -68,7 +68,7 @@ namespace Rhetos.LanguageServices.Server.Handlers
                 .ToList();
 
             var completionList = new CompletionList(completionItems);
-            log.LogInformation($"End handle completion in {sw.ElapsedMilliseconds} ms.");
+            log.LogDebug($"End handle completion in {sw.ElapsedMilliseconds} ms. {completionList.Count()} valid items.");
 
             return Task.FromResult(completionList);
         }

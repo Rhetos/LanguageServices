@@ -198,9 +198,11 @@ Module module1 // comment
         [DataRow(2, 30, 0, null, null)]
         [DataRow(13, 19, 0, null, null)]
         [DataRow(13, 21, 66, "Logging", "AllProperties")]
-        [DataRow(14, 30, 0, null, null)]
-        [DataRow(15, 0, 0, null, null)]
-        [DataRow(15, 30, 0, null, null)]
+        [DataRow(14, 7, 30, "Entity", "Reference")]
+        [DataRow(15, 9, 0, null, null)] // shouldn't work after errorline
+        [DataRow(16, 30, 0, null, null)]
+        [DataRow(17, 0, 0, null, null)]
+        [DataRow(17, 30, 0, null, null)]
         public void CompletionContext(int line, int chr, int validKeywordCount, string shouldContainKeyword, string shouldNotContainKeyword)
         {
             var script = @"
@@ -217,6 +219,8 @@ Module module1
 
     }
     Entity SameLine {}
+    Ent 
+    Entit 
     error '
 }";
             Console.WriteLine(script);
