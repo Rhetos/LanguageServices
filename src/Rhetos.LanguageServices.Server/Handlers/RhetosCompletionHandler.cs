@@ -38,7 +38,6 @@ namespace Rhetos.LanguageServices.Server.Handlers
         {
             DocumentSelector = TextDocumentHandler.RhetosDocumentSelector,
             ResolveProvider = true,
-            //TriggerCharacters = new Container<string>(" ")
         };
 
         public RhetosCompletionHandler(RhetosWorkspace rhetosWorkspace, ConceptQueries conceptQueries, ILogger<RhetosCompletionHandler> log)
@@ -57,6 +56,7 @@ namespace Rhetos.LanguageServices.Server.Handlers
         public override Task<CompletionList> Handle(CompletionParams request, CancellationToken cancellationToken)
         {
             var sw = Stopwatch.StartNew();
+
             var document = rhetosWorkspace.GetRhetosDocument(request.TextDocument.Uri);
             if (document == null)
                 return Task.FromResult<CompletionList>(null);

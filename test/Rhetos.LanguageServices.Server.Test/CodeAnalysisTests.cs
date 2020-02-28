@@ -45,7 +45,7 @@ namespace Rhetos.LanguageServices.Server.Test
             rhetosDocumentFactory = serviceProvider.GetService<RhetosDocumentFactory>();
         }
 
-        private readonly string script =
+        private readonly string complexScript =
 @"Module TestModule
 { 
     Entity Pero
@@ -66,14 +66,17 @@ Reference a.b.x p ";
         [DataRow(0, 0, "Module")]
         [DataRow(0, 1, "Module")]
         [DataRow(0, 10, "Module")]
-        [DataRow(1, 0, null)]
+        [DataRow(1, 0, "Module")]
+        [DataRow(1, 1, null)]
         [DataRow(2, 3, null)]
         [DataRow(2, 5, "Entity")]
         [DataRow(4, 8, "Logging")]
-        [DataRow(4, 15, null)]
+        [DataRow(4, 15, "Logging")]
+        [DataRow(4, 16, null)]
         [DataRow(5, 18, "Reference")]
         [DataRow(9, 0, null)]
-        [DataRow(11, 16, null)]
+        [DataRow(11, 16, "Entity")]
+        [DataRow(11, 17, null)]
         [DataRow(13, 2, null)]
         [DataRow(12, 8, "Entity")]
         [DataRow(12, 18, "Entity")]
@@ -85,10 +88,10 @@ Reference a.b.x p ";
         [DataRow(14, 20, "Reference")]
         public void CorrectKeywords(int line, int chr, string expectedKeyword)
         {
-            Console.WriteLine(script);
+            Console.WriteLine(complexScript);
             var lineChr = new LineChr(line, chr);
             var rhe = rhetosDocumentFactory.CreateWithTestUri();
-            rhe.UpdateText(script);
+            rhe.UpdateText(complexScript);
 
             Console.WriteLine(rhe.TextDocument.ShowPosition(lineChr));
             var keywordToken = rhe.GetAnalysis(lineChr).KeywordToken;
@@ -112,10 +115,10 @@ Reference a.b.x p ";
         [DataRow(14, 0, "")]
         public void CorrectConceptContexts(int line, int chr, string expectedContext)
         {
-            Console.WriteLine(script);
+            Console.WriteLine(complexScript);
             var lineChr = new LineChr(line, chr);
             var rhe = rhetosDocumentFactory.CreateWithTestUri();
-            rhe.UpdateText(script);
+            rhe.UpdateText(complexScript);
 
             Console.WriteLine(rhe.TextDocument.ShowPosition(lineChr));
             var analysis = rhe.GetAnalysis(lineChr);
@@ -126,7 +129,14 @@ Reference a.b.x p ";
             Assert.AreEqual(expectedContext, contextDesc);
         }
 
-        private readonly string scriptErrors =
+        [DataTestMethod]
+        [DataRow(2, 0, "M")]
+        [DataRow(4, 0, "M / M.E")]
+        [DataRow(4, 5, "M")]
+        [DataRow(5, 4, "M")]
+        public void CorrectParsingWithErrors(int line, int chr, string expectedContext)
+        {
+            var scriptErrors =
 @"Module M
 { 
     Entity E
@@ -136,13 +146,6 @@ Reference a.b.x p ";
 }
 ";
 
-        [DataTestMethod]
-        [DataRow(2, 0, "M")]
-        [DataRow(4, 0, "M / M.E")]
-        [DataRow(4, 5, "M")]
-        [DataRow(5, 4, "M")]
-        public void CorrectParsingWithErrors(int line, int chr, string expectedContext)
-        {
             Console.WriteLine(scriptErrors);
             var lineChr = new LineChr(line, chr);
             var rhe = rhetosDocumentFactory.CreateWithTestUri();
@@ -159,15 +162,6 @@ Reference a.b.x p ";
             Console.WriteLine($"Context at cursor ({line}, {chr}): {contextDesc}");
             Assert.AreEqual(expectedContext, contextDesc);
         }
-
-        private readonly string scriptTokenError =
-@"Module 'M
-{ 
-    Entity E
-    {
-    }
-}
-";
 
         [TestMethod]
         public void SameLineVsNewLineBraces()
@@ -194,6 +188,14 @@ Reference a.b.x p ";
         [TestMethod]
         public void HandleTokenError()
         {
+            var scriptTokenError =
+@"Module 'M
+{ 
+    Entity E
+    {
+    }
+}
+";
             Console.WriteLine(scriptTokenError);
             var rhe = rhetosDocumentFactory.CreateWithTestUri();
             rhe.UpdateText(scriptTokenError);
@@ -220,23 +222,13 @@ Reference a.b.x p ";
             }
         }
 
-        private readonly string commentScript =
-@"Module module1 // comment 1
-{
-    Entity entity1
-// comment 2
-    {
-    }
-// s
-}";
-
         [DataTestMethod]
         [DataRow(0, 14, "Module", false)]
         [DataRow(0, 15, null, true)]
         [DataRow(0, 25, null, true)]
         [DataRow(0, 26, null, true)]
         [DataRow(0, 27, null, true)]
-        [DataRow(1, 0, null, false)]
+        [DataRow(1, 0, "Module", false)]
         [DataRow(1, 1, null, false)]
         [DataRow(2, 3, null, false)]
         [DataRow(2, 4, "Entity", false)]
@@ -246,10 +238,20 @@ Reference a.b.x p ";
         [DataRow(3, 20, null, true)]
         [DataRow(4, 0, "Entity", false)]
         [DataRow(4, 3, "Entity", false)]
-        [DataRow(4, 4, null, false)]
+        [DataRow(4, 4, "Entity", false)]
         [DataRow(6, 10, null, true)]
         public void CorrectKeywordsWithComments(int line, int chr, string expectedKeyword, bool isInsideComment)
         {
+            var commentScript =
+@"Module module1 // comment 1
+{
+    Entity entity1
+// comment 2
+    {
+    }
+// s
+}";
+
             var rhe = rhetosDocumentFactory.CreateWithTestUri();
             rhe.UpdateText(commentScript);
             Console.WriteLine(commentScript);
@@ -390,6 +392,27 @@ Module sasa
                 Assert.AreEqual(typeof(SimpleReferencePropertyInfo), signatureHelp.signatures[0].ConceptInfoType);
                 Assert.AreEqual(1, signatureHelp.activeParameter);
             }
+        }
+
+        [DataTestMethod]
+        [DataRow("token", 0, 0, null)]
+        [DataRow("token", 0, 4, null)]
+        [DataRow("token", 0, 5, "token")]
+        [DataRow("token", 0, 6, null)] // this is ambiguous, but we will keep convention that it is null
+        [DataRow("token\na", 1, 0, null)]
+        [DataRow("token\na", 1, 1, "a")]
+        [DataRow("token\na", 1, 2, null)]
+        public void TokenBeingTyped(string script, int line, int chr, string expectedToken)
+        {
+            var rhe = rhetosDocumentFactory.CreateWithTestUri();
+            rhe.UpdateText(script);
+            Console.WriteLine($"Script:\n{rhe.TextDocument.Text}\n");
+
+            var lineChr = new LineChr(line, chr);
+            Console.WriteLine(rhe.TextDocument.ShowPosition(lineChr));
+            var analysisResult = rhe.GetAnalysis(new LineChr(line, chr));
+            var tokenTyped = analysisResult.GetTokenBeingTypedAtCursor(new LineChr(line, chr));
+            Assert.AreEqual(expectedToken, tokenTyped?.Value);
         }
     }
 }

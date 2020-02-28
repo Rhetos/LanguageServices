@@ -46,17 +46,16 @@ namespace Rhetos.LanguageServices.Server.Parsing
         public int GetPosition(int line, int chr)
         {
             if (Text.Length == 0) return 0;
-            if (line >= lineStarts.Value.Count) line = lineStarts.Value.Count - 1;
-            var pos = lineStarts.Value[line] + chr;
+            if (line >= lineStarts.Value.Count) return Text.Length;
 
-            if (pos >= Text.Length)
-                pos = Text.Length - 1;
+            var pos = lineStarts.Value[line] + chr;
 
             if (line < lineStarts.Value.Count - 1 && lineStarts.Value[line] + chr >= lineStarts.Value[line + 1])
                 pos = lineStarts.Value[line + 1] - 1;
 
-            if (Text[pos] == '\n' && pos > 0 && Text[pos - 1] == '\r') pos--;
+            if (pos >= Text.Length) return Text.Length;
 
+            if (pos > 0 && Text[pos] == '\n' && Text[pos - 1] == '\r') pos--;
             return pos;
         }
 
@@ -86,12 +85,14 @@ namespace Rhetos.LanguageServices.Server.Parsing
 
         public static string ShowPositionOnLine(string line, int pos)
         {
-            line = line.Replace('\t', ' ');
-            if (pos >= line.Length) pos = line.Length - 1;
-            if (line[pos] == '\n' && pos > 0 && line[pos - 1] == '\r') pos--;
+            line = line
+                .Replace('\t', ' ')
+                .Replace("\r\n", "")
+                .Replace("\n", "");
+
+            if (pos > line.Length) pos = line.Length;
             var posIndicator = "^".PadLeft(pos + 1, ' ');
-            if (!line.EndsWith("\n")) line += "\n";
-            return line + posIndicator;
+            return $"{line}\n{posIndicator}";
         }
 
         public string ShowPosition(LineChr lineChr)

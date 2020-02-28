@@ -62,7 +62,7 @@ namespace Rhetos.LanguageServices.Server.Parsing
 
             // run-scoped variables needed for parse and callbacks
             targetPos = textDocument.GetPosition(result.Line, result.Chr);
-            lastTokenBeforeTarget = result.Tokens.LastOrDefault(token => token.PositionInDslScript <= targetPos);
+            lastTokenBeforeTarget = result.Tokens.LastOrDefault(token => token.PositionInDslScript <= targetPos - 1);
 
             ParseAndCaptureErrors();
             ApplyCommentsToResult();
@@ -137,6 +137,7 @@ namespace Rhetos.LanguageServices.Server.Parsing
 
                 lastCommentTokenBeforeTarget = commentToken;
             }
+
             // handle situation where position is at the EOL after the comment
             if (lastCommentTokenBeforeTarget != null)
             {
@@ -205,7 +206,7 @@ namespace Rhetos.LanguageServices.Server.Parsing
                     result.KeywordToken = lastToken;
                     result.ActiveConceptValidTypes.Clear();
                 }
-                else
+                else if (targetPos > lastToken.PositionInDslScript)
                 {
                     result.KeywordToken = null;
                 }

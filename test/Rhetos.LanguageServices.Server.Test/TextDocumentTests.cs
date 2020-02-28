@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Net.Mime;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Rhetos.LanguageServices.Server.Parsing;
 using Rhetos.LanguageServices.Server.Tools;
@@ -47,7 +48,7 @@ namespace Rhetos.LanguageServices.Server.Test
             Assert.AreEqual(8, doc.GetPosition(3, 0));
             Assert.AreEqual(8, doc.GetPosition(3, 1));
             Assert.AreEqual(8, doc.GetPosition(3, 2));
-            Assert.AreEqual(text.Length - 1, doc.GetPosition(6, 3));
+            Assert.AreEqual(text.Length, doc.GetPosition(6, 3));
 
             Assert.AreEqual(new LineChr(0, 0), doc.GetLineChr(0));
             Assert.AreEqual(new LineChr(0, 3), doc.GetLineChr(3));
@@ -78,7 +79,7 @@ namespace Rhetos.LanguageServices.Server.Test
             Assert.AreEqual(11, doc.GetPosition(3, 0));
             Assert.AreEqual(11, doc.GetPosition(3, 1));
             Assert.AreEqual(11, doc.GetPosition(3, 2));
-            Assert.AreEqual(text.Length - 2, doc.GetPosition(6, 3));
+            Assert.AreEqual(text.Length, doc.GetPosition(6, 3));
 
             Assert.AreEqual(new LineChr(0, 0), doc.GetLineChr(0));
             Assert.AreEqual(new LineChr(0, 3), doc.GetLineChr(3));
@@ -100,8 +101,8 @@ namespace Rhetos.LanguageServices.Server.Test
             var doc = new TextDocument(text);
 
             Assert.AreEqual(5, doc.GetPosition(1, 0));
-            Assert.AreEqual(5, doc.GetPosition(2, 0));
-            Assert.AreEqual(5, doc.GetPosition(1, 1));
+            Assert.AreEqual(6, doc.GetPosition(2, 0));
+            Assert.AreEqual(6, doc.GetPosition(1, 1));
             Assert.AreEqual(new LineChr(1, 0), doc.GetLineChr(text.Length - 1));
         }
 
@@ -124,19 +125,68 @@ namespace Rhetos.LanguageServices.Server.Test
         [DataTestMethod]
         [DataRow(EndingsStyle.Linux, DisplayName = "Linux")]
         [DataRow(EndingsStyle.Windows, DisplayName = "Windows")]
-        public void ShowPosition(EndingsStyle endingsStyle)
+        public void ShowPositionOnLine(EndingsStyle endingsStyle)
         {
-            var line = "Line test ble\n";
-            line = line.ToEndings(endingsStyle);
+            var rawLine = "Line test ble\n";
+            Console.WriteLine($"Script:\n{rawLine}");
+
+            var line = rawLine.ToEndings(endingsStyle);
             Func<int, string> leadSpaces = spaces => "^".PadLeft(spaces + 1);
-            Assert.AreEqual(line + leadSpaces(0), TextDocument.ShowPositionOnLine(line, 0));
-            Assert.AreEqual(line + leadSpaces(4), TextDocument.ShowPositionOnLine(line, 4));
-            Assert.AreEqual(line + leadSpaces(13), TextDocument.ShowPositionOnLine(line, 13));
-            Assert.AreEqual(line + leadSpaces(13), TextDocument.ShowPositionOnLine(line, 14));
+
+            string GetAndPrint(string lineStr, int chr)
+            {
+                var posOnLine = TextDocument.ShowPositionOnLine(lineStr, chr);
+                Console.WriteLine(posOnLine);
+                return posOnLine;
+            }
+
+            Assert.AreEqual(rawLine + leadSpaces(0), GetAndPrint(line, 0));
+            Assert.AreEqual(rawLine + leadSpaces(4), GetAndPrint(line, 4));
+            Assert.AreEqual(rawLine + leadSpaces(13), GetAndPrint(line, 13));
+            Assert.AreEqual(rawLine + leadSpaces(13), GetAndPrint(line, 14));
+            Assert.AreEqual(rawLine + leadSpaces(13), GetAndPrint(line, 20));
         }
 
         [TestMethod]
-        public void EmptyDocument()
+        public void EmptyDocumentShowPosition()
+        {
+            var textDocument = new TextDocument("");
+            
+            string GetAndPrint(int line, int chr)
+            {
+                var pos = textDocument.ShowPosition(new LineChr(line, chr));
+                Console.WriteLine(pos);
+                return pos;
+            }
+
+            Assert.AreEqual("\n^", GetAndPrint(0, 0));
+            Assert.AreEqual("\n^", GetAndPrint(0, 1));
+            Assert.AreEqual("\n^", GetAndPrint(0, 10));
+            Assert.AreEqual("\n^", GetAndPrint(1, 0));
+        }
+
+        [TestMethod]
+        public void ShowPositionPastEof()
+        {
+            var textDocument = new TextDocument("en");
+
+            string GetAndPrint(int line, int chr)
+            {
+                var pos = textDocument.ShowPosition(new LineChr(line, chr));
+                Console.WriteLine(pos);
+                return pos;
+            }
+
+            Assert.AreEqual("en\n^", GetAndPrint(0, 0));
+            Assert.AreEqual("en\n ^", GetAndPrint(0, 1));
+            Assert.AreEqual("en\n  ^", GetAndPrint(0, 2));
+            Assert.AreEqual("en\n  ^", GetAndPrint(0, 10));
+            Assert.AreEqual("en\n^", GetAndPrint(1, 0));
+            Assert.AreEqual("en\n  ^", GetAndPrint(1, 10));
+        }
+
+        [TestMethod]
+        public void EmptyDocumentPositions()
         {
             var doc = new TextDocument("");
 
@@ -158,11 +208,12 @@ namespace Rhetos.LanguageServices.Server.Test
             text = text.ToEndings(endingsStyle);
             var doc = new TextDocument(text);
 
+            var eol = endingsStyle == EndingsStyle.Linux ? 1 : 2;
             Assert.AreEqual(0, doc.GetPosition(0, 1));
             Assert.AreEqual(0, doc.GetPosition(0, 5));
-            Assert.AreEqual(0, doc.GetPosition(1, 1));
-            Assert.AreEqual(0, doc.GetPosition(1, 5));
-            Assert.AreEqual(0, doc.GetPosition(2, 5));
+            Assert.AreEqual(eol, doc.GetPosition(1, 1));
+            Assert.AreEqual(eol, doc.GetPosition(1, 5));
+            Assert.AreEqual(eol, doc.GetPosition(2, 5));
 
             Assert.AreEqual(LineChr.Zero, doc.GetLineChr(0));
             Assert.AreEqual(LineChr.Zero, doc.GetLineChr(1));

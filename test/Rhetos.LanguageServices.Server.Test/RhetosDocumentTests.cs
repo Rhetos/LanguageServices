@@ -130,7 +130,7 @@ Module module1
         [DataRow(2, 15, null)]
         [DataRow(2, 17, null)]
         [DataRow(2, 22, null)]
-        [DataRow(3, 0, null)]
+        [DataRow(3, 0, "by ModuleInfo")]
         [DataRow(4, 0, null)]
         [DataRow(4, 21, null)]
         [DataRow(4, 18, "by EntityInfo")]
@@ -248,10 +248,43 @@ Module module1
             }
         }
 
+        [TestMethod]
+        public void CompletionAtEof()
+        {
+            var script = @"Ent";
+
+            Console.WriteLine(script);
+            var rhetosDocument = rhetosDocumentFactory.CreateWithTestUri();
+            rhetosDocument.UpdateText(script);
+            var lineChr = new LineChr(0, 3);
+            var positionText = rhetosDocument.TextDocument.ShowPosition(lineChr);
+            Console.WriteLine($"\n{positionText}\n");
+
+            var completion = rhetosDocument.GetCompletionKeywordsAtPosition(lineChr);
+            Console.WriteLine($"Keywords: [{completion.Count}] {string.Join(",", completion)}");
+            Assert.AreEqual(169, completion.Count);
+        }
+
+        [TestMethod]
+        public void CompletionEmptyFile()
+        {
+            var rhetosDocument = rhetosDocumentFactory.CreateWithTestUri();
+            rhetosDocument.UpdateText("");
+            var lineChr = new LineChr(0, 3);
+
+            var completion = rhetosDocument.GetCompletionKeywordsAtPosition(lineChr);
+            Console.WriteLine($"Keywords: [{completion.Count}] {string.Join(",", completion)}");
+            Assert.AreEqual(169, completion.Count);
+        }
+
         [DataTestMethod]
         [DataRow(1, 9, 2, typeof(SimpleReferencePropertyInfo), 0)]
         [DataRow(1, 26, 2, typeof(SimpleReferencePropertyInfo), 1)]
         [DataRow(1, 33, 1, typeof(ReferencePropertyInfo), 2)]
+        [DataRow(1, 36, 1, typeof(ReferencePropertyInfo), 2)]
+        [DataRow(1, 37, 1, typeof(ReferencePropertyInfo), 2)]
+        [DataRow(1, 40, 1, typeof(ReferencePropertyInfo), 2)]
+        [DataRow(1, 41, 1, typeof(ReferencePropertyInfo), 2)]
         [DataRow(6, 17, 2, typeof(SimpleReferencePropertyInfo), 1)]
         [DataRow(6, 18, 2, typeof(SimpleReferencePropertyInfo), 1)]
         [DataRow(6, 23, 2, typeof(SimpleReferencePropertyInfo), 1)]
@@ -260,7 +293,7 @@ Module module1
         [DataRow(6, 35, 0, null, 0)]
         [DataRow(7, 0, 2, typeof(ReferencePropertyInfo), 2)]
         [DataRow(7, 10, 2, typeof(SimpleReferencePropertyInfo), null)] // weird one, but difficult to get around this
-        [DataRow(3, 0, 0, null, 0)]
+        [DataRow(3, 0, 1, typeof(ModuleInfo), 1)]
         [DataRow(4, 0, 0, null, 0)]
         [DataRow(8, 0, 0, null, 0)]
         [DataRow(8, 30, 0, null, 0)]
@@ -305,6 +338,56 @@ Module module1
 
             Console.WriteLine($"Active parameter: {signatureHelp.activeParameter}");
             Assert.AreEqual(signatureHelp.activeParameter, activeParameter);
+        }
+
+        [TestMethod]
+        public void SignatureAfterLastParameter()
+        {
+            var script = "Entity module.entity;\n";
+
+            Console.WriteLine(script);
+            var rhetosDocument = rhetosDocumentFactory.CreateWithTestUri();
+            rhetosDocument.UpdateText(script);
+
+            {
+                var lineChr = new LineChr(0, 20);
+                var positionText = rhetosDocument.TextDocument.ShowPosition(lineChr);
+                Console.WriteLine($"\n{positionText}\n");
+
+                var signatureHelp = rhetosDocument.GetSignatureHelpAtPosition(lineChr);
+                Console.WriteLine($"Signature count: {signatureHelp.signatures?.Count}, active parameter: {signatureHelp.activeParameter}");
+                Assert.AreEqual(1, signatureHelp.signatures?.Count);
+                Assert.AreEqual(2, signatureHelp.activeParameter);
+            }
+            {
+                var lineChr = new LineChr(0, 21);
+                var positionText = rhetosDocument.TextDocument.ShowPosition(lineChr);
+                Console.WriteLine($"\n{positionText}\n");
+
+                var signatureHelp = rhetosDocument.GetSignatureHelpAtPosition(lineChr);
+                Assert.IsNull(signatureHelp.signatures);
+            }
+        }
+
+        [TestMethod]
+        public void SignatureAtEof()
+        {
+            var script = "Entity module.entit";
+
+            Console.WriteLine(script);
+            var rhetosDocument = rhetosDocumentFactory.CreateWithTestUri();
+            rhetosDocument.UpdateText(script);
+
+            {
+                var lineChr = new LineChr(0, 20);
+                var positionText = rhetosDocument.TextDocument.ShowPosition(lineChr);
+                Console.WriteLine($"\n{positionText}\n");
+
+                var signatureHelp = rhetosDocument.GetSignatureHelpAtPosition(lineChr);
+                Console.WriteLine($"Signature count: {signatureHelp.signatures?.Count}, active parameter: {signatureHelp.activeParameter}");
+                Assert.AreEqual(1, signatureHelp.signatures?.Count);
+                Assert.AreEqual(2, signatureHelp.activeParameter);
+            }
         }
     }
 }
