@@ -146,7 +146,7 @@ namespace Rhetos.LanguageServices.Server.Services
 
             if (tokenAtPosition != null)
             {
-                var lineChr = analysisResult.TextDocument.GetLineChr(tokenAtPosition.PositionInDslScript + tokenAtPosition.Value.Length);
+                var lineChr = analysisResult.TextDocument.GetLineChr(tokenAtPosition.PositionEndInDslScript);
                 end = lineChr.ToPosition();
             }
             else

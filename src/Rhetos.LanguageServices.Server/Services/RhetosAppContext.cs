@@ -90,6 +90,7 @@ namespace Rhetos.LanguageServices.Server.Services
             }
             catch (Exception e)
             {
+                log.LogDebug($"Exception while trying to initialize Rhetos app at '{rootPath}': {e}");
                 LastInitializeError = new CodeAnalysisError()
                 {
                     Message =
@@ -97,18 +98,23 @@ namespace Rhetos.LanguageServices.Server.Services
                     Severity = CodeAnalysisError.ErrorSeverity.Warning
                 };
             }
+
+            log.LogTrace($"{nameof(InitializeFromAppPath)} complete.");
         }
 
         private void InitializeFromAppPathInternal(string rootPath)
         {
+            log.LogDebug($"Starting Rhetos app initialization at '{rootPath}'.");
             rootPath = Path.GetFullPath(rootPath);
             var configurationProvider = new ConfigurationBuilder()
                 .AddRhetosAppConfiguration(rootPath)
                 .Build();
 
             var listAssemblies = LegacyUtilities.GetListAssembliesDelegate(configurationProvider);
+            var assemblyList = listAssemblies().ToList();
+            log.LogDebug($"Rhetos configuration reported {assemblyList.Count} assemblies to check for plugins.");
 
-            var resolveDelegate = CreateAssemblyResolveDelegate(listAssemblies().ToList());
+            var resolveDelegate = CreateAssemblyResolveDelegate(assemblyList);
 
             try
             {
@@ -117,6 +123,7 @@ namespace Rhetos.LanguageServices.Server.Services
                 var builder = new RhetosContainerBuilder(configurationProvider, rhetosLogProvider, listAssemblies);
                 var scanner = builder.GetPluginScanner();
                 var conceptInfoTypes = scanner.FindPlugins(typeof(IConceptInfo)).Select(a => a.Type).ToArray();
+                log.LogDebug($"Plugin scanner found {conceptInfoTypes.Length} IConceptInfo types.");
                 InitializeFromConceptTypes(conceptInfoTypes);
                 RootPath = rootPath;
             }

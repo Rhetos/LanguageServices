@@ -79,7 +79,7 @@ namespace Rhetos.LanguageServices.Server.Parsing
             if (lineChr == null)
                 textDocument = fullTextDocument;
             else
-                textDocument = new TextDocument(fullTextDocument.GetTruncatedAtNextEndOfLine(lineChr.Value));
+                textDocument = new TextDocument(fullTextDocument.GetTruncatedAtNextEndOfLine(lineChr.Value), fullTextDocument.Uri);
 
             result = lineChr == null
                 ? new CodeAnalysisResult(textDocument, 0, 0)
@@ -124,8 +124,7 @@ namespace Rhetos.LanguageServices.Server.Parsing
             Token lastCommentTokenBeforeTarget = null;
             foreach (var commentToken in result.CommentTokens)
             {
-                // leading '//' characters are not included in token.Value
-                if (targetPos >= commentToken.PositionInDslScript && targetPos < commentToken.PositionInDslScript + commentToken.Value.Length + 2)
+                if (targetPos >= commentToken.PositionInDslScript && targetPos <= commentToken.PositionEndInDslScript)
                 {
                     result.KeywordToken = null;
                     result.IsInsideComment = true;
@@ -152,13 +151,17 @@ namespace Rhetos.LanguageServices.Server.Parsing
 
         private void OnMemberRead(ITokenReader iTokenReader, IConceptInfo conceptInfo, ConceptMember conceptMember, ValueOrError<object> valueOrError)
         {
+            // have we reached a new keyword after target pos? if so, prevent further member parsing
+            if (result.NextKeywordToken != null) 
+                return;
+
             var tokenReader = (TokenReader)iTokenReader;
             if (tokenReader.PositionInTokenList <= 0 || lastTokenBeforeTarget == null)
                 return;
 
             var conceptType = conceptInfo.GetType();
             var lastTokenRead = result.Tokens[tokenReader.PositionInTokenList - 1];
-            
+
             // track last tokens/members parsed before or at target
             if (lastTokenRead.PositionInDslScript <= lastTokenBeforeTarget.PositionInDslScript && !valueOrError.IsError)
             {
@@ -167,7 +170,7 @@ namespace Rhetos.LanguageServices.Server.Parsing
             }
 
             // we are interested in those concepts whose member parsing stops at or after target position
-            if (lastTokenRead.PositionInDslScript >= lastTokenBeforeTarget.PositionInDslScript && !result.ActiveConceptValidTypes.Contains(conceptType)) 
+            if (lastTokenRead.PositionInDslScript >= lastTokenBeforeTarget.PositionInDslScript && !result.ActiveConceptValidTypes.Contains(conceptType))
                 result.ActiveConceptValidTypes.Add(conceptType);
         }
 
@@ -181,7 +184,7 @@ namespace Rhetos.LanguageServices.Server.Parsing
         {
             var tokenReader = (TokenReader)iTokenReader;
             var lastToken = result.Tokens[tokenReader.PositionInTokenList - 1];
-            var contextPos = lastToken.PositionInDslScript + lastToken.Value.Length;
+            var contextPos = lastToken.PositionEndInDslScript + 1;
             if (contextPos <= targetPos)
             {
                 result.ConceptContext = context.Reverse().ToList();
@@ -205,6 +208,8 @@ namespace Rhetos.LanguageServices.Server.Parsing
                 {
                     result.KeywordToken = lastToken;
                     result.ActiveConceptValidTypes.Clear();
+                    result.LastTokenParsed.Clear();
+                    result.LastMemberReadAttempt.Clear();
                 }
                 else if (targetPos > lastToken.PositionInDslScript)
                 {

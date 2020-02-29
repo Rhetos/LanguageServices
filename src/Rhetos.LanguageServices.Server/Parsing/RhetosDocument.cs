@@ -52,7 +52,7 @@ namespace Rhetos.LanguageServices.Server.Parsing
         {
             lock (_syncAnalysis)
             {
-                TextDocument = new TextDocument(text);
+                TextDocument = new TextDocument(text, DocumentUri);
                 cachedAnalysisResults.Clear();
 
                 UpdateRootPathConfiguration();

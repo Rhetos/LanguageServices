@@ -106,6 +106,9 @@
     <None Include="RhetosAppFolder\EmptyFolder\directive.rhe">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="RhetosAppFolder\EmptyFolder\fileinclude.rhe">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="RhetosAppFolder\FolderWithApp\doc.rhe">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -131,7 +134,11 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Content Include="RhetosAppFolder\EmptyFolder\include.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
   <ItemGroup>
     <None Include="RhetosAppFolder\FolderWithApp\RhetosAppEnvironment.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

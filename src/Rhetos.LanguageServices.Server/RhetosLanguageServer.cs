@@ -75,7 +75,7 @@ namespace Rhetos.LanguageServices.Server
                 builder => builder
                     .AddNLog()
                     .AddLanguageServer(LogLevel.Information)
-                    .SetMinimumLevel(LogLevel.Debug)
+                    .SetMinimumLevel(LogLevel.Trace)
             );
 
             log.Info("Language Server built and started.");

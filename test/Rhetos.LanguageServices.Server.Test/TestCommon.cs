@@ -29,6 +29,8 @@ namespace Rhetos.LanguageServices.Server.Test
 {
     public static class TestCommon
     {
+        public static Uri UriMock => new Uri("file://\\stub.txt");
+
         public static IServiceProvider CreateTestServiceProvider()
         {
             var services = new ServiceCollection()
@@ -43,9 +45,22 @@ namespace Rhetos.LanguageServices.Server.Test
             return services.BuildServiceProvider();
         }
 
-        public static RhetosDocument CreateWithTestUri(this RhetosDocumentFactory rhetosDocumentFactory)
+        public static RhetosDocument CreateWithTestUri(this RhetosDocumentFactory rhetosDocumentFactory, string text = null, LineChr? showPosition = null)
         {
-            return rhetosDocumentFactory.CreateNew(new Uri($"file://{Guid.NewGuid()}"));
+            var rhetosDocument = rhetosDocumentFactory.CreateNew(new Uri($"file://\\{Guid.NewGuid()}"));
+            if (text != null)
+            {
+                rhetosDocument.UpdateText(text);
+                Console.WriteLine($"Initialized document: {rhetosDocument.DocumentUri} with text:\n{text}<< END DOCUMENT >>\n\n");
+            }
+
+            if (showPosition != null)
+            {
+                var positionText = rhetosDocument.TextDocument.ShowPosition(showPosition.Value);
+                Console.WriteLine($"\n{positionText}\n");
+            }
+
+            return rhetosDocument;
         }
 
         public static string ToEndings(this string text, EndingsStyle endingsStyle)

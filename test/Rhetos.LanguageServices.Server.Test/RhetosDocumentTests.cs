@@ -19,6 +19,7 @@
 
 using System;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
@@ -32,13 +33,12 @@ namespace Rhetos.LanguageServices.Server.Test
     [TestClass]
     public class RhetosDocumentTests
     {
-        private readonly IServiceProvider serviceProvider;
         private readonly RhetosDocumentFactory rhetosDocumentFactory;
 
         public RhetosDocumentTests()
         {
             Assembly.Load("Rhetos.Dsl.DefaultConcepts");
-            serviceProvider = TestCommon.CreateTestServiceProvider();
+            var serviceProvider = TestCommon.CreateTestServiceProvider();
             serviceProvider.GetService<RhetosAppContext>().InitializeFromCurrentDomain();
             rhetosDocumentFactory = serviceProvider.GetService<RhetosDocumentFactory>();
         }
@@ -58,8 +58,7 @@ Module module1
         [TestMethod]
         public void AnalysisCache()
         {
-            var rhetosDocument = rhetosDocumentFactory.CreateWithTestUri();
-            rhetosDocument.UpdateText(scriptSimple);
+            var rhetosDocument = rhetosDocumentFactory.CreateWithTestUri(scriptSimple);
             var halfPos = rhetosDocument.TextDocument.GetLineChr(scriptSimple.Length / 2); // force errors
 
             var result = rhetosDocument.GetAnalysis(halfPos);
@@ -113,9 +112,7 @@ Module module1
 ";
             foreach (var script in new [] { scriptCase.ToLower(), scriptCase.ToUpper() })
             {
-                Console.WriteLine(script);
-                var rhetosDocument = rhetosDocumentFactory.CreateWithTestUri();
-                rhetosDocument.UpdateText(script);
+                var rhetosDocument = rhetosDocumentFactory.CreateWithTestUri(script);
                 var analysis = rhetosDocument.GetAnalysis();
                 Assert.IsTrue(analysis.SuccessfulRun);
                 Console.WriteLine($"Errors: {analysis.AllErrors.Count()}\n\n");
@@ -165,12 +162,9 @@ Module module1 // comment
     }
     error '
 }";
-            Console.WriteLine(script);
-            var rhetosDocument = rhetosDocumentFactory.CreateWithTestUri();
-            rhetosDocument.UpdateText(script);
+
             var lineChr = new LineChr(line, chr);
-            var positionText = rhetosDocument.TextDocument.ShowPosition(lineChr);
-            Console.WriteLine($"\n{positionText}\n");
+            var rhetosDocument = rhetosDocumentFactory.CreateWithTestUri(script, lineChr);
 
             var hoverDocumentation = rhetosDocument.GetHoverDescriptionAtPosition(lineChr);
             Console.WriteLine($"Documentation:\n{hoverDocumentation.description}\n");
@@ -223,12 +217,8 @@ Module module1
     Entit 
     error '
 }";
-            Console.WriteLine(script);
-            var rhetosDocument = rhetosDocumentFactory.CreateWithTestUri();
-            rhetosDocument.UpdateText(script);
             var lineChr = new LineChr(line, chr);
-            var positionText = rhetosDocument.TextDocument.ShowPosition(lineChr);
-            Console.WriteLine($"\n{positionText}\n");
+            var rhetosDocument = rhetosDocumentFactory.CreateWithTestUri(script, lineChr);
 
             var completion = rhetosDocument.GetCompletionKeywordsAtPosition(lineChr);
             Console.WriteLine($"Keywords: [{completion.Count}] {string.Join(",", completion)}");
@@ -251,14 +241,8 @@ Module module1
         [TestMethod]
         public void CompletionAtEof()
         {
-            var script = @"Ent";
-
-            Console.WriteLine(script);
-            var rhetosDocument = rhetosDocumentFactory.CreateWithTestUri();
-            rhetosDocument.UpdateText(script);
             var lineChr = new LineChr(0, 3);
-            var positionText = rhetosDocument.TextDocument.ShowPosition(lineChr);
-            Console.WriteLine($"\n{positionText}\n");
+            var rhetosDocument = rhetosDocumentFactory.CreateWithTestUri("Ent", lineChr);
 
             var completion = rhetosDocument.GetCompletionKeywordsAtPosition(lineChr);
             Console.WriteLine($"Keywords: [{completion.Count}] {string.Join(",", completion)}");
@@ -268,8 +252,7 @@ Module module1
         [TestMethod]
         public void CompletionEmptyFile()
         {
-            var rhetosDocument = rhetosDocumentFactory.CreateWithTestUri();
-            rhetosDocument.UpdateText("");
+            var rhetosDocument = rhetosDocumentFactory.CreateWithTestUri("");
             var lineChr = new LineChr(0, 3);
 
             var completion = rhetosDocument.GetCompletionKeywordsAtPosition(lineChr);
@@ -312,12 +295,8 @@ Module module1
     }
 }";
 
-            Console.WriteLine(script);
-            var rhetosDocument = rhetosDocumentFactory.CreateWithTestUri();
-            rhetosDocument.UpdateText(script);
             var lineChr = new LineChr(line, chr);
-            var positionText = rhetosDocument.TextDocument.ShowPosition(lineChr);
-            Console.WriteLine($"\n{positionText}\n");
+            var rhetosDocument = rhetosDocumentFactory.CreateWithTestUri(script, lineChr);
 
             var signatureHelp = rhetosDocument.GetSignatureHelpAtPosition(lineChr);
             if (totalValidSignatures == 0)
@@ -340,19 +319,58 @@ Module module1
             Assert.AreEqual(signatureHelp.activeParameter, activeParameter);
         }
 
+
+        [DataTestMethod]
+        [DataRow("Module module1 { Entity", 10, 1, typeof(ModuleInfo), 0)]
+        [DataRow("Module module1 { Entity entity1; }", 10, 1, typeof(ModuleInfo), 0)]
+        [DataRow("Module module1 { Entity", 15, 1, typeof(ModuleInfo), 1)]
+        [DataRow("Module module1 { Entity", 16, 0, null, 0)]
+        [DataRow("Module module1 { Entity", 18, 1, typeof(EntityInfo), 1)]
+        [DataRow("Module module1 { Entity entity1 { ShortString Code { AutoCode; } } }", 18, 1, typeof(EntityInfo), 1)]
+        [DataRow("Module module1 { Entity entity1 { ShortString Code { AutoCode; } } }", 38, 1, typeof(ShortStringPropertyInfo), 1)]
+        [DataRow("Module module1 { Entity entity1 { ShortString Code { AutoCode; } } }", 48, 1, typeof(ShortStringPropertyInfo), 1)]
+        [DataRow("Module module1 { Entity entity1 { ShortString Code { AutoCode; } } }", 50, 1, typeof(ShortStringPropertyInfo), 1)]
+        [DataRow("Module module1 { Entity entity1 { ShortString Code { AutoCode; } } }", 51, 1, typeof(ShortStringPropertyInfo), 2)]
+        [DataRow("Module module1 { Entity entity1 { ShortString Code { AutoCode; } } }", 52, 0, null, 0)]
+        [DataRow("Module module1 { Entity entity1 { ShortString Code { AutoCode; } } }", 53, 1, typeof(AutoCodePropertyInfo), 0)]
+        [DataRow("Module module1 { Entity entity1 { ShortString Code { AutoCode; } } }", 61, 1, typeof(AutoCodePropertyInfo), 1)]
+        [DataRow("Module module1 { Entity entity1 { ShortString Code { AutoCode; } } }", 62, 1, typeof(AutoCodePropertyInfo), null)]
+        [DataRow("Module module1 { Entity entity1 { ShortString Code { AutoCode; } } }", 63, 1, typeof(AutoCodePropertyInfo), null)]
+        [DataRow("Module module1 { Entity entity1 { ShortString Code { AutoCode; } } }", 64, 0, null, 0)]
+        public void SignatureSameLineStatements(string script, int chr, int totalValidSignatures, Type activeSignatureType, int? activeParameter)
+        {
+            var lineChr = new LineChr(0, chr);
+            var rhetosDocument = rhetosDocumentFactory.CreateWithTestUri(script, lineChr);
+
+            var signatureHelp = rhetosDocument.GetSignatureHelpAtPosition(lineChr);
+            if (totalValidSignatures == 0)
+            {
+                Console.WriteLine($"SignatureHelp: {signatureHelp}");
+                Assert.IsNull(signatureHelp.signatures);
+                return;
+            }
+
+            Assert.IsNotNull(signatureHelp.signatures);
+            Console.WriteLine($"Valid signatures: {signatureHelp.signatures.Count}");
+            Assert.AreEqual(totalValidSignatures, signatureHelp.signatures.Count);
+            Console.WriteLine($"Active signature type: {signatureHelp.signatures[0].ConceptInfoType.Name}");
+            Assert.AreEqual(activeSignatureType, signatureHelp.signatures[0].ConceptInfoType);
+
+            if (activeParameter != null) // if activeParameter is null, activeSignature will also be
+                Assert.AreEqual(0, signatureHelp.activeSignature);
+
+            Console.WriteLine($"Active parameter: {signatureHelp.activeParameter}");
+            Assert.AreEqual(signatureHelp.activeParameter, activeParameter);
+        }
+
         [TestMethod]
         public void SignatureAfterLastParameter()
         {
             var script = "Entity module.entity;\n";
 
-            Console.WriteLine(script);
-            var rhetosDocument = rhetosDocumentFactory.CreateWithTestUri();
-            rhetosDocument.UpdateText(script);
-
             {
                 var lineChr = new LineChr(0, 20);
-                var positionText = rhetosDocument.TextDocument.ShowPosition(lineChr);
-                Console.WriteLine($"\n{positionText}\n");
+                var rhetosDocument = rhetosDocumentFactory.CreateWithTestUri(script, lineChr);
 
                 var signatureHelp = rhetosDocument.GetSignatureHelpAtPosition(lineChr);
                 Console.WriteLine($"Signature count: {signatureHelp.signatures?.Count}, active parameter: {signatureHelp.activeParameter}");
@@ -361,8 +379,7 @@ Module module1
             }
             {
                 var lineChr = new LineChr(0, 21);
-                var positionText = rhetosDocument.TextDocument.ShowPosition(lineChr);
-                Console.WriteLine($"\n{positionText}\n");
+                var rhetosDocument = rhetosDocumentFactory.CreateWithTestUri(script, lineChr);
 
                 var signatureHelp = rhetosDocument.GetSignatureHelpAtPosition(lineChr);
                 Assert.IsNull(signatureHelp.signatures);
@@ -372,22 +389,13 @@ Module module1
         [TestMethod]
         public void SignatureAtEof()
         {
-            var script = "Entity module.entit";
+            var lineChr = new LineChr(0, 20);
+            var rhetosDocument = rhetosDocumentFactory.CreateWithTestUri("Entity module.entit", lineChr);
 
-            Console.WriteLine(script);
-            var rhetosDocument = rhetosDocumentFactory.CreateWithTestUri();
-            rhetosDocument.UpdateText(script);
-
-            {
-                var lineChr = new LineChr(0, 20);
-                var positionText = rhetosDocument.TextDocument.ShowPosition(lineChr);
-                Console.WriteLine($"\n{positionText}\n");
-
-                var signatureHelp = rhetosDocument.GetSignatureHelpAtPosition(lineChr);
-                Console.WriteLine($"Signature count: {signatureHelp.signatures?.Count}, active parameter: {signatureHelp.activeParameter}");
-                Assert.AreEqual(1, signatureHelp.signatures?.Count);
-                Assert.AreEqual(2, signatureHelp.activeParameter);
-            }
+            var signatureHelp = rhetosDocument.GetSignatureHelpAtPosition(lineChr);
+            Console.WriteLine($"Signature count: {signatureHelp.signatures?.Count}, active parameter: {signatureHelp.activeParameter}");
+            Assert.AreEqual(1, signatureHelp.signatures?.Count);
+            Assert.AreEqual(2, signatureHelp.activeParameter);
         }
 
         [DataTestMethod]
@@ -400,11 +408,7 @@ Module module1
         [DataRow(28, false)]
         public void QuotedSignatureHelp(int pos, bool expectedIsParam)
         {
-            var script = "FilterBy a.b.c 'expression';";
-
-            Console.WriteLine(script);
-            var rhetosDocument = rhetosDocumentFactory.CreateWithTestUri();
-            rhetosDocument.UpdateText(script);
+            var rhetosDocument = rhetosDocumentFactory.CreateWithTestUri("FilterBy a.b.c 'expression';");
 
             var lineChr = new LineChr(0, pos);
             var positionText = rhetosDocument.TextDocument.ShowPosition(lineChr);
@@ -415,6 +419,47 @@ Module module1
             Console.WriteLine(signatureHelp.activeParameter);
             var isParam = signatureHelp.activeParameter == 2;
             Assert.AreEqual(expectedIsParam, isParam);
+        }
+
+        [TestMethod]
+        [DeploymentItem("RhetosAppFolder\\", "RhetosAppFolder")]
+        public void ScriptWithFileInclude()
+        {
+            var script = "FilterBy a.b.c <include.txt>;";
+
+            Console.WriteLine(script);
+            var rhetosDocument = rhetosDocumentFactory.CreateNew(new Uri(Path.Combine(Environment.CurrentDirectory, @"RhetosAppFolder\EmptyFolder\inlinescript.rhe")));
+            rhetosDocument.UpdateText(script);
+
+            var analysis = rhetosDocument.GetAnalysis();
+            foreach (var error in analysis.AllErrors)
+                Console.WriteLine(error);
+
+            Assert.AreEqual(0, analysis.AllErrors.Count());
+
+            var textToken = analysis.Tokens[6];
+            Console.WriteLine(textToken.Value);
+
+            Assert.AreEqual(15, textToken.PositionInDslScript);
+            Assert.AreEqual(27, textToken.PositionEndInDslScript);
+            Assert.AreEqual("line 1\n\nline 3\nlast line", textToken.Value.ToLinuxEndings());
+        }
+
+        [TestMethod]
+        public void ScriptWithFileIncludeMissing()
+        {
+            var script = "FilterBy a.b.c <missinginclude.txt>;";
+
+            Console.WriteLine(script);
+            var rhetosDocument = rhetosDocumentFactory.CreateNew(new Uri(Path.Combine(Environment.CurrentDirectory, @"RhetosAppFolder\EmptyFolder\inlinescript.rhe")));
+            rhetosDocument.UpdateText(script);
+
+            var analysis = rhetosDocument.GetAnalysis();
+            foreach (var error in analysis.AllErrors)
+                Console.WriteLine(error);
+
+            Assert.AreEqual(2, analysis.AllErrors.Count());
+            StringAssert.Contains(analysis.AllErrors.First().Message, "Cannot find the extension file referenced in DSL script.");
         }
     }
 }

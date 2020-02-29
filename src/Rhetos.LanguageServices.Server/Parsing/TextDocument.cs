@@ -27,14 +27,16 @@ namespace Rhetos.LanguageServices.Server.Parsing
     public class TextDocument : IDslScriptsProvider
     {
         public string Text { get; }
+        public Uri Uri { get; }
 
-        public IEnumerable<DslScript> DslScripts => new[] {new DslScript() { Script = Text }};
+        public IEnumerable<DslScript> DslScripts => new[] {new DslScript() { Script = Text, Path = Uri.LocalPath }};
 
         private readonly Lazy<List<int>> lineStarts;
 
-        public TextDocument(string text)
+        public TextDocument(string text, Uri uri)
         {
             this.Text = text;
+            this.Uri = uri;
             lineStarts = new Lazy<List<int>>(GetLineStartPositions);
         }
 

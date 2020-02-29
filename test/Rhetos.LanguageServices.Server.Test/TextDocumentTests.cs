@@ -37,7 +37,7 @@ namespace Rhetos.LanguageServices.Server.Test
                        "\n" +
                        "\n";
 
-            var doc = new TextDocument(text);
+            var doc = new TextDocument(text, TestCommon.UriMock);
 
             Assert.AreEqual(0, doc.GetPosition(0, 0));
             Assert.AreEqual(4, doc.GetPosition(0, 4));
@@ -68,7 +68,7 @@ namespace Rhetos.LanguageServices.Server.Test
                        "0\r\n" +
                        "\r\n" +
                        "\r\n";
-            var doc = new TextDocument(text);
+            var doc = new TextDocument(text, TestCommon.UriMock);
 
             Assert.AreEqual(0, doc.GetPosition(0, 0));
             Assert.AreEqual(4, doc.GetPosition(0, 4));
@@ -98,7 +98,7 @@ namespace Rhetos.LanguageServices.Server.Test
                 "0123\n" +
                 "0";
 
-            var doc = new TextDocument(text);
+            var doc = new TextDocument(text, TestCommon.UriMock);
 
             Assert.AreEqual(5, doc.GetPosition(1, 0));
             Assert.AreEqual(6, doc.GetPosition(2, 0));
@@ -114,7 +114,7 @@ namespace Rhetos.LanguageServices.Server.Test
                 "\n" +
                 "0";
 
-            var doc = new TextDocument(text);
+            var doc = new TextDocument(text, TestCommon.UriMock);
             Assert.AreEqual("0123\n", doc.ExtractLine(0));
             Assert.AreEqual("0123\n", doc.ExtractLine(1));
             Assert.AreEqual("0123\n", doc.ExtractLine(4));
@@ -150,7 +150,7 @@ namespace Rhetos.LanguageServices.Server.Test
         [TestMethod]
         public void EmptyDocumentShowPosition()
         {
-            var textDocument = new TextDocument("");
+            var textDocument = new TextDocument("", TestCommon.UriMock);
             
             string GetAndPrint(int line, int chr)
             {
@@ -168,7 +168,7 @@ namespace Rhetos.LanguageServices.Server.Test
         [TestMethod]
         public void ShowPositionPastEof()
         {
-            var textDocument = new TextDocument("en");
+            var textDocument = new TextDocument("en", TestCommon.UriMock);
 
             string GetAndPrint(int line, int chr)
             {
@@ -188,7 +188,7 @@ namespace Rhetos.LanguageServices.Server.Test
         [TestMethod]
         public void EmptyDocumentPositions()
         {
-            var doc = new TextDocument("");
+            var doc = new TextDocument("", TestCommon.UriMock);
 
             Assert.AreEqual(0, doc.GetPosition(0, 0));
             Assert.AreEqual(0, doc.GetPosition(0, 10));
@@ -206,7 +206,7 @@ namespace Rhetos.LanguageServices.Server.Test
         {
             var text = "\n";
             text = text.ToEndings(endingsStyle);
-            var doc = new TextDocument(text);
+            var doc = new TextDocument(text, TestCommon.UriMock);
 
             var eol = endingsStyle == EndingsStyle.Linux ? 1 : 2;
             Assert.AreEqual(0, doc.GetPosition(0, 1));
@@ -257,7 +257,7 @@ Module
             foreach (var variant in variants)
             {
                 var text = testText.ToEndings(variant.endingsStyle);
-                var textDocument = new TextDocument(text);
+                var textDocument = new TextDocument(text, TestCommon.UriMock);
                 var truncated = textDocument.GetTruncatedAtNextEndOfLine(new LineChr(line, chr));
                 StringAssert.EndsWith(truncated, expectedEndsWith.ToEndings(variant.endingsStyle), variant.name);
             }
@@ -266,7 +266,7 @@ Module
         [TestMethod]
         public void CorrectlyTruncatesEmptyString()
         {
-            var textDocument = new TextDocument("");
+            var textDocument = new TextDocument("",TestCommon.UriMock);
             Assert.AreEqual("", textDocument.GetTruncatedAtNextEndOfLine(new LineChr(0, 0)));
             Assert.AreEqual("", textDocument.GetTruncatedAtNextEndOfLine(new LineChr(0, 1)));
             Assert.AreEqual("", textDocument.GetTruncatedAtNextEndOfLine(new LineChr(1, 0)));

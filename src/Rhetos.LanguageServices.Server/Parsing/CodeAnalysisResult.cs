@@ -105,7 +105,7 @@ namespace Rhetos.LanguageServices.Server.Parsing
 
             foreach (var token in Tokens)
             {
-                if (position >= token.PositionInDslScript && position < token.PositionInDslScript + token.Value.Length)
+                if (token.Type != TokenType.EndOfFile && position >= token.PositionInDslScript && position <= token.PositionEndInDslScript)
                     return token;
             }
 
