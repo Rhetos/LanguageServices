@@ -417,10 +417,6 @@
           </dict>
           <dict>
             <key>include</key>
-            <string>#anonymous-method-expression</string>
-          </dict>
-          <dict>
-            <key>include</key>
             <string>#object-creation-expression</string>
           </dict>
           <dict>
