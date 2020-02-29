@@ -101,7 +101,7 @@ namespace Rhetos.LanguageServices.Server.Test
 
             Assert.AreEqual(1, signatures.Count);
             var signature = signatures.Single();
-            StringAssert.Contains(signature.Documentation, "Defined by EntityInfo");
+            StringAssert.Contains(signature.Documentation, "Defined by Rhetos.Dsl.DefaultConcepts.EntityInfo");
             Assert.AreEqual("Entity <Module: ModuleInfo>.<Name: String> ", signature.Signature);
             Assert.AreEqual(signature.ConceptInfoType, typeof(EntityInfo));
             Assert.AreEqual("Module: ModuleInfo,Name: String", string.Join(",", signature.Parameters.Select(ConceptInfoType.ConceptMemberDescription)));
@@ -116,7 +116,7 @@ namespace Rhetos.LanguageServices.Server.Test
 
             Assert.AreEqual(2, signatures.Count);
             var signature = signatures.Single(sig => sig.ConceptInfoType == typeof(ReferencePropertyInfo));
-            StringAssert.Contains(signature.Documentation, "Defined by ReferencePropertyInfo");
+            StringAssert.Contains(signature.Documentation, "Defined by Rhetos.Dsl.DefaultConcepts.ReferencePropertyInfo");
             Assert.AreEqual("Reference <DataStructure: DataStructureInfo>.<Name: String> <Referenced: DataStructureInfo>", signature.Signature);
             Assert.AreEqual("DataStructure: DataStructureInfo,Name: String,Referenced: DataStructureInfo", string.Join(",", signature.Parameters.Select(ConceptInfoType.ConceptMemberDescription)));
         }

@@ -124,7 +124,7 @@ namespace Rhetos.LanguageServices.Server
                         if (string.IsNullOrEmpty(logFileMessage))
                             logFileMessage = "No log file configuration found. Edit 'NLog.config' to add log file target.";
                         else
-                            logFileMessage = $"Log file '{logFileMessage}'.";
+                            logFileMessage = $"Log file: '{logFileMessage}'.";
 
                         var localPath = new Uri(Assembly.GetExecutingAssembly().CodeBase).LocalPath;
                         log.LogInformation($"Initialized. Running server '{localPath}'. {logFileMessage}");
@@ -145,21 +145,25 @@ namespace Rhetos.LanguageServices.Server
 
         private static string GetLogFilePath()
         {
-            var fileTarget = LogManager.Configuration.LoggingRules
-                .SelectMany(rule => rule.Targets)
-                .Select(target => (target is AsyncTargetWrapper wrapper) ? wrapper.WrappedTarget : target)
-                .OfType<FileTarget>()
-                .FirstOrDefault();
+            try
+            {
+                var fileTarget = LogManager.Configuration.LoggingRules
+                    .SelectMany(rule => rule.Targets)
+                    .Select(target => (target is AsyncTargetWrapper wrapper) ? wrapper.WrappedTarget : target)
+                    .OfType<FileTarget>()
+                    .FirstOrDefault();
 
-            if (fileTarget == null)
+                if (fileTarget == null)
+                    return null;
+
+                var logEventInfo = new LogEventInfo {TimeStamp = DateTime.Now};
+                var fileName = fileTarget.FileName.Render(logEventInfo);
+                return Path.GetFullPath(fileName);
+            }
+            catch
+            {
                 return null;
-
-            var logEventInfo = new LogEventInfo { TimeStamp = DateTime.Now };
-            var fileName = fileTarget.FileName.Render(logEventInfo);
-
-            return fileName;
+            }
         }
-
     }
-
 }

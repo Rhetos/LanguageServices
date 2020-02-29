@@ -125,23 +125,23 @@ Module module1
 
         [DataTestMethod]
         [DataRow(1, 0, null)]
-        [DataRow(2, 0, "by ModuleInfo")]
-        [DataRow(2, 14, "by ModuleInfo")]
+        [DataRow(2, 0, "by Rhetos.Dsl.DefaultConcepts.ModuleInfo")]
+        [DataRow(2, 14, "by Rhetos.Dsl.DefaultConcepts.ModuleInfo")]
         [DataRow(2, 15, null)]
         [DataRow(2, 17, null)]
         [DataRow(2, 22, null)]
-        [DataRow(3, 0, "by ModuleInfo")]
+        [DataRow(3, 0, "by Rhetos.Dsl.DefaultConcepts.ModuleInfo")]
         [DataRow(4, 0, null)]
         [DataRow(4, 21, null)]
-        [DataRow(4, 18, "by EntityInfo")]
-        [DataRow(4, 19, "by EntityInfo")]
+        [DataRow(4, 18, "by Rhetos.Dsl.DefaultConcepts.EntityInfo")]
+        [DataRow(4, 19, "by Rhetos.Dsl.DefaultConcepts.EntityInfo")]
         [DataRow(5, 0, null)]
-        [DataRow(5, 10, "by EntityInfo")]
-        [DataRow(5, 20, "by EntityInfo")]
-        [DataRow(6, 0, "by EntityInfo")]
+        [DataRow(5, 10, "by Rhetos.Dsl.DefaultConcepts.EntityInfo")]
+        [DataRow(5, 20, "by Rhetos.Dsl.DefaultConcepts.EntityInfo")]
+        [DataRow(6, 0, "by Rhetos.Dsl.DefaultConcepts.EntityInfo")]
         [DataRow(6, 20, null)]
-        [DataRow(10, 20, "by SimpleReferencePropertyInfo")]
-        [DataRow(10, 30, "by SimpleReferencePropertyInfo")]
+        [DataRow(10, 20, "by Rhetos.Dsl.DefaultConcepts.SimpleReferencePropertyInfo")]
+        [DataRow(10, 30, "by Rhetos.Dsl.DefaultConcepts.SimpleReferencePropertyInfo")]
         [DataRow(11, 0, null)]
         [DataRow(12, 8, null)]
         [DataRow(14, 7, null)]
@@ -388,6 +388,33 @@ Module module1
                 Assert.AreEqual(1, signatureHelp.signatures?.Count);
                 Assert.AreEqual(2, signatureHelp.activeParameter);
             }
+        }
+
+        [DataTestMethod]
+        [DataRow(14, false)]
+        [DataRow(15, true)]
+        [DataRow(16, true)]
+        [DataRow(25, true)]
+        [DataRow(26, true)]
+        [DataRow(27, true)]
+        [DataRow(28, false)]
+        public void QuotedSignatureHelp(int pos, bool expectedIsParam)
+        {
+            var script = "FilterBy a.b.c 'expression';";
+
+            Console.WriteLine(script);
+            var rhetosDocument = rhetosDocumentFactory.CreateWithTestUri();
+            rhetosDocument.UpdateText(script);
+
+            var lineChr = new LineChr(0, pos);
+            var positionText = rhetosDocument.TextDocument.ShowPosition(lineChr);
+            Console.WriteLine($"\n{positionText}\n");
+
+            var signatureHelp = rhetosDocument.GetSignatureHelpAtPosition(lineChr);
+
+            Console.WriteLine(signatureHelp.activeParameter);
+            var isParam = signatureHelp.activeParameter == 2;
+            Assert.AreEqual(expectedIsParam, isParam);
         }
     }
 }

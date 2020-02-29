@@ -55,7 +55,7 @@ namespace Rhetos.LanguageServices.Server.Handlers
 
         public override Task<CompletionList> Handle(CompletionParams request, CancellationToken cancellationToken)
         {
-            var sw = Stopwatch.StartNew();
+            log.LogDebug($"Completion requested at {request.Position.ToLineChr()}.");
 
             var document = rhetosWorkspace.GetRhetosDocument(request.TextDocument.Uri);
             if (document == null)
@@ -68,7 +68,6 @@ namespace Rhetos.LanguageServices.Server.Handlers
                 .ToList();
 
             var completionList = new CompletionList(completionItems);
-            log.LogDebug($"End handle completion in {sw.ElapsedMilliseconds} ms. {completionList.Count()} valid items.");
 
             return Task.FromResult(completionList);
         }

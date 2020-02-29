@@ -17,6 +17,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -35,7 +36,7 @@ namespace Rhetos.LanguageServices.Server.Handlers
         private static readonly SignatureHelpRegistrationOptions _registrationOptions = new SignatureHelpRegistrationOptions()
         {
             DocumentSelector = TextDocumentHandler.RhetosDocumentSelector,
-            TriggerCharacters = new Container<string>(".", " ", ";", "{")
+            TriggerCharacters = new Container<string>(".", " ")
         };
 
         private readonly RhetosWorkspace rhetosWorkspace;
