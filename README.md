@@ -12,11 +12,12 @@ Install the `.vsix` as you would install any other Visual Studio extension.
 
 ## Features
 
-1. DSL syntax highlighting 
+1. DSL syntax highlighting
 2. DSL script parse error reporting
 3. Keyword autocompletion
 4. Signature help for concept parameters
-5. Documentation and signature info on hover
+5. Keyword and signature info on hover
+6. XML-style documentation from IConceptInfo implementation classes
 
 ## Usage
 
