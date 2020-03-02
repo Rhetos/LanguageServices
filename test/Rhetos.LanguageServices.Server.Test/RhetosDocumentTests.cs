@@ -441,7 +441,7 @@ Module module1
             Console.WriteLine(textToken.Value);
 
             Assert.AreEqual(15, textToken.PositionInDslScript);
-            Assert.AreEqual(27, textToken.PositionEndInDslScript);
+            Assert.AreEqual(28, textToken.PositionEndInDslScript);
             Assert.AreEqual("line 1\n\nline 3\nlast line", textToken.Value.ToLinuxEndings());
         }
 

@@ -124,7 +124,7 @@ namespace Rhetos.LanguageServices.Server.Parsing
             Token lastCommentTokenBeforeTarget = null;
             foreach (var commentToken in result.CommentTokens)
             {
-                if (targetPos >= commentToken.PositionInDslScript && targetPos <= commentToken.PositionEndInDslScript)
+                if (targetPos >= commentToken.PositionInDslScript && targetPos < commentToken.PositionEndInDslScript)
                 {
                     result.KeywordToken = null;
                     result.IsInsideComment = true;
@@ -184,7 +184,7 @@ namespace Rhetos.LanguageServices.Server.Parsing
         {
             var tokenReader = (TokenReader)iTokenReader;
             var lastToken = result.Tokens[tokenReader.PositionInTokenList - 1];
-            var contextPos = lastToken.PositionEndInDslScript + 1;
+            var contextPos = lastToken.PositionEndInDslScript;
             if (contextPos <= targetPos)
             {
                 result.ConceptContext = context.Reverse().ToList();
