@@ -29,8 +29,9 @@ echo.
 
 if not !FilesMissingLicense!==0 (
     popd
+    echo on
     exit /b 1
 )
 
 popd
-
+echo on
