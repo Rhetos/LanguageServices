@@ -79,10 +79,19 @@ namespace Rhetos.LanguageServices.Server.Services
             foreach (var conceptType in rhetosAppContext.ConceptInfoTypes)
             {
                 if (conceptType == parentConceptInfoType) continue;
-                var firstMember = ConceptMembers.Get(conceptType).FirstOrDefault();
-                if (firstMember == null || !firstMember.IsKey || !firstMember.IsConceptInfo) continue;
 
-                if (firstMember.ValueType.IsAssignableFrom(parentConceptInfoType))
+                var members = ConceptMembers.Get(conceptType);
+                var parentNestedMember = members.FirstOrDefault(member => member.IsParentNested);
+                var firstMember = members.FirstOrDefault();
+
+                // is first member valid?
+                if (firstMember == null || !firstMember.IsKey || !firstMember.IsConceptInfo)
+                    firstMember = null;
+
+                var parentMember = parentNestedMember ?? firstMember;
+                if (parentMember == null) continue;
+
+                if (parentMember.ValueType.IsAssignableFrom(parentConceptInfoType))
                     result.Add(conceptType);
             }
 

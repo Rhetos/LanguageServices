@@ -29,6 +29,7 @@ namespace Rhetos.LanguageServices.Server.Test
 {
     [TestClass]
     [DeploymentItem("RhetosAppFolder\\", "RhetosAppFolder")]
+    [DeploymentItem("RhetosAppFolder\\FolderWithApp\\MockObj\\Rhetos\\", "RhetosAppFolder\\FolderWithApp\\obj\\Rhetos")]
     public class RhetosAppContextTests
     {
         private readonly IServiceProvider serviceProvider;
@@ -61,7 +62,7 @@ namespace Rhetos.LanguageServices.Server.Test
             var rhetosDocument = documentFactory.CreateNew(uri);
             rhetosDocument.UpdateText(text);
 
-            var rootPathConfiguration = rhetosAppContext.GetRhetosAppRootPath(rhetosDocument);
+            var rootPathConfiguration = rhetosAppContext.GetRhetosProjectRootPath(rhetosDocument);
             Console.WriteLine($"\nRoot Path Configuration:\n{rootPathConfiguration?.ConfigurationType} = {rootPathConfiguration?.RootPath}\n  from {rootPathConfiguration?.Context}");
 
             Assert.AreEqual(expectedConfigurationType, rootPathConfiguration.ConfigurationType);

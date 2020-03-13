@@ -1,5 +1,15 @@
 # Rhetos Language Service changelog
 
+## v0.9.5-preview
+
+* Language Server will now use Rhetos project DLLs instead of built application DLLs
+* Added asynchronous checking for Rhetos project configuration changes and appropriate warnings
+* Completion at parameter positions will now offer all non-keyword tokens found in current document
+* Completion will now correctly handle concepts with `ConceptParentAttribute`
+* Configuration keys for overriding Rhetos project location have been changed to `rhetosProjectRootPath` (from `rhetosAppRootPath`)
+* [BUGFIX] XML documentation will now correctly be displayed for concepts in plugins
+
+
 ## v0.9.3-preview
 
 * Improved signature help/active parameter for several non-common scenarios

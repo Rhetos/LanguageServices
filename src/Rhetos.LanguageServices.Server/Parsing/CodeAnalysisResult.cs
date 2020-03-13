@@ -32,6 +32,7 @@ namespace Rhetos.LanguageServices.Server.Parsing
         public TextDocument TextDocument { get; }
         public bool SuccessfulRun { get; set; }
         public List<Token> Tokens { get; set; } = new List<Token>();
+        public List<string> NonKeywordWords { get; set; }
         public List<Token> CommentTokens { get; set; } = new List<Token>();
         public List<IConceptInfo> ConceptContext { get; set; } = new List<IConceptInfo>();
         public Token KeywordToken { get; set; }
@@ -88,7 +89,7 @@ namespace Rhetos.LanguageServices.Server.Parsing
 
         public bool IsAfterAnyErrorLine(LineChr lineChr)
         {
-            return AllErrors.Any(error => lineChr.Line > error.LineChr.Line);
+            return AllErrors.Where(a => a.Severity == CodeAnalysisError.ErrorSeverity.Error).Any(error => lineChr.Line > error.LineChr.Line);
         }
 
         public Token GetTokenBeingTypedAtCursor(LineChr lineChr)

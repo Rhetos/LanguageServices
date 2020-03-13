@@ -19,6 +19,8 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text.RegularExpressions;
 using Rhetos.Dsl;
 using Rhetos.LanguageServices.Server.Tools;
 
@@ -28,7 +30,6 @@ namespace Rhetos.LanguageServices.Server.Parsing
     {
         public string Text { get; }
         public Uri Uri { get; }
-
         public IEnumerable<DslScript> DslScripts => new[] {new DslScript() { Script = Text, Path = Uri.LocalPath }};
 
         private readonly Lazy<List<int>> lineStarts;

@@ -94,6 +94,18 @@ namespace Rhetos.LanguageServices.Server.Parsing
             result.TokenizerErrors.AddRange(capturedErrors);
 
             result.CommentTokens = ParseCommentTokens();
+            result.NonKeywordWords = NonKeywordWordsFromTokens(result.Tokens);
+        }
+
+        private List<string> NonKeywordWordsFromTokens(List<Token> tokens)
+        {
+            return tokens
+                .Where(token => token.Type == TokenType.Text && !token.Value.Contains(" "))
+                .Select(token => token.Value)
+                .Distinct()
+                .Except(rhetosAppContext.Keywords.Keys)
+                .OrderBy(word => word)
+                .ToList();
         }
 
         private void ParseAndCaptureErrors()

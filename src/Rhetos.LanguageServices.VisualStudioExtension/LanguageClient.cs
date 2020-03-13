@@ -111,7 +111,7 @@ namespace Rhetos.LanguageServices.VisualStudioExtension
 
         private RhetosLspServerOptions TryReadPathConfigurationFile()
         {
-            if (!File.Exists(_languageSeverPathConfigurationFilename)) 
+            if (!File.Exists(_languageSeverPathConfigurationFilename))
                 return null;
             
             var options = JsonConvert.DeserializeObject<RhetosLspServerOptions>(File.ReadAllText(_languageSeverPathConfigurationFilename));

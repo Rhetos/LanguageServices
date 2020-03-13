@@ -84,6 +84,7 @@ namespace Rhetos.LanguageServices.Server
             {
                 log.Debug($"Shutdown requested: {next}");
                 server.Services.GetRequiredService<PublishDiagnosticsRunner>().Stop();
+                server.Services.GetRequiredService<RhetosProjectMonitor>().Stop();
                 Task.Delay(500).Wait();
             });
 
@@ -115,6 +116,7 @@ namespace Rhetos.LanguageServices.Server
                         services.AddSingleton<XmlDocumentationProvider>();
                         services.AddSingleton<ILogProvider, RhetosNetCoreLogProvider>();
                         services.AddSingleton<PublishDiagnosticsRunner>();
+                        services.AddSingleton<RhetosProjectMonitor>();
                         services.AddSingleton<ConceptQueries>();
                     })
                     .OnInitialize((languageServer, request) =>
@@ -136,6 +138,7 @@ namespace Rhetos.LanguageServices.Server
                         response.Capabilities.TextDocumentSync.Kind = TextDocumentSyncKind.Full;
                         response.Capabilities.TextDocumentSync.Options.Change = TextDocumentSyncKind.Full;
                         languageServer.Services.GetService<PublishDiagnosticsRunner>().Start();
+                        languageServer.Services.GetService<RhetosProjectMonitor>().Start();
                         return Task.CompletedTask;
                     })
             );

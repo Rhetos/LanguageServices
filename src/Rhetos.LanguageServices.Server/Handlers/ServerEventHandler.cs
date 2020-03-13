@@ -37,7 +37,7 @@ namespace Rhetos.LanguageServices.Server.Handlers
         public Task InitializeRhetosContext(string rootPath)
         {
             log.LogInformation($"Initializing RhetosContext with rootPath='{rootPath}'.");
-            var initializeTask = Task.Run(() => rhetosContext.InitializeFromAppPath(rootPath))
+            var initializeTask = Task.Run(() => rhetosContext.InitializeFromRhetosProjectPath(rootPath))
                 .ContinueWith(result =>
                 {
                     var status = result.Status == TaskStatus.RanToCompletion

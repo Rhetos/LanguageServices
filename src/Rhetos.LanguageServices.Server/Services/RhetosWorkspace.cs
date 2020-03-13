@@ -104,5 +104,58 @@ namespace Rhetos.LanguageServices.Server.Services
                 return rhetosDocument;
             }
         }
+
+        private bool lastProjectConfigurationDirtyStatus;
+        public void UpdateRhetosContextStatus()
+        {
+            lock (rhetosDocuments)
+            {
+                if (rhetosAppContext.IsInitialized)
+                {
+                    rhetosAppContext.UpdateProjectConfigurationDirtyStatus();
+                    if (lastProjectConfigurationDirtyStatus != rhetosAppContext.ProjectConfigurationDirty)
+                    {
+                        foreach (var rhetosDocument in rhetosDocuments)
+                        {
+                            rhetosDocument.Value.InvalidateAnalysisCache();
+                            documentChangeTimes[rhetosDocument.Key] = DateTime.Now;
+                        }
+                    }
+                    lastProjectConfigurationDirtyStatus = rhetosAppContext.ProjectConfigurationDirty;
+                    return;
+                }
+
+                var documentsWithValidRootPath = rhetosDocuments.Values
+                    .Where(document => !string.IsNullOrEmpty(document.RootPathConfiguration?.RootPath))
+                    .ToList();
+                    
+                // try to initialize with each open document with valid rootPath
+                foreach (var rhetosDocument in documentsWithValidRootPath)
+                {
+                    log.LogTrace($"Trying to initialize context with rootPath='{rhetosDocument.RootPathConfiguration.RootPath}' from document '{rhetosDocument.DocumentUri}'.");
+                    rhetosAppContext.InitializeFromRhetosProjectPath(rhetosDocument.RootPathConfiguration.RootPath);
+
+                    if (rhetosDocument.RhetosAppContextInitializeError?.Message != rhetosAppContext.LastInitializeError?.Message)
+                    {
+                        rhetosDocument.RhetosAppContextInitializeError = rhetosAppContext.LastInitializeError;
+                        rhetosDocument.InvalidateAnalysisCache();
+                        documentChangeTimes[rhetosDocument.DocumentUri] = DateTime.Now;
+                    }
+
+                    if (rhetosAppContext.IsInitialized) break;
+                }
+
+                if (!rhetosAppContext.IsInitialized) return;
+
+                // we have just initialized, reset all documents' analysis states
+                foreach (var rhetosDocument in documentsWithValidRootPath)
+                {
+                    log.LogTrace($"Reset code analysis for {rhetosDocument.DocumentUri}. LastError = {rhetosAppContext.LastInitializeError?.Message}");
+                    rhetosDocument.RhetosAppContextInitializeError = null;
+                    rhetosDocument.InvalidateAnalysisCache();
+                    documentChangeTimes[rhetosDocument.DocumentUri] = DateTime.Now;
+                }
+            }
+        }
     }
 }

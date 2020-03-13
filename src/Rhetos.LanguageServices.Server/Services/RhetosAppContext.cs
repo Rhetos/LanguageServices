@@ -30,26 +30,31 @@ using Rhetos.Dsl;
 using Rhetos.LanguageServices.Server.Parsing;
 using Rhetos.LanguageServices.Server.Tools;
 using Rhetos.Logging;
-using Rhetos.Utilities.ApplicationConfiguration;
+using Rhetos.Utilities;
 
 namespace Rhetos.LanguageServices.Server.Services
 {
     public class RhetosAppContext
     {
         private static readonly string _configurationFilename = "rhetos-language-services.settings.json";
-        private static readonly string _rhetosAppRootPathConfigurationKey = "RhetosAppRootPath";
+        private static readonly string _rhetosProjectRootPathConfigurationKey = "RhetosProjectRootPath";
 
         public bool IsInitialized { get; private set; }
+        public CodeAnalysisError LastInitializeError { get; private set; }
         public bool IsInitializedFromCurrentDomain { get; private set; }
         public string RootPath { get; private set; }
         public Dictionary<string, Type[]> Keywords { get; private set; } = new Dictionary<string, Type[]>(StringComparer.InvariantCultureIgnoreCase);
         public Type[] ConceptInfoTypes { get; private set; } = new Type[0];
         public IConceptInfo[] ConceptInfoInstances { get; private set; } = new IConceptInfo[0];
-        public CodeAnalysisError LastInitializeError { get; private set; }
         public DateTime LastContextUpdateTime { get; private set; }
+        public bool ProjectConfigurationDirty { get; private set; }
+
+        private readonly object _syncInitialize = new object();
 
         private readonly ILogger<RhetosAppContext> log;
         private readonly ILogProvider rhetosLogProvider;
+        private DateTime projectAssetsFileTimestamp;
+        private List<(string path, DateTime timestamp)> projectAssetsAssemblies;
 
         public RhetosAppContext(ILoggerFactory logFactory)
         {
@@ -57,83 +62,156 @@ namespace Rhetos.LanguageServices.Server.Services
             this.rhetosLogProvider = new RhetosNetCoreLogProvider(logFactory);
         }
 
+        public void UpdateProjectConfigurationDirtyStatus()
+        {
+            if (ProjectConfigurationDirty) return;
+
+            ProjectConfigurationDirty = ProjectConfigurationChanged();
+        }
+
+        private bool ProjectConfigurationChanged()
+        {
+            lock (_syncInitialize)
+            {
+                if (!IsInitialized || IsInitializedFromCurrentDomain)
+                    return false;
+
+                try
+                {
+                    var rhetosProjectAssetsFileProvider = new RhetosProjectAssetsFileProvider(RootPath, rhetosLogProvider);
+                    var newTimestamp = new FileInfo(rhetosProjectAssetsFileProvider.ProjectAssetsFilePath).LastWriteTimeUtc;
+                    if (projectAssetsFileTimestamp == newTimestamp)
+                        return false;
+
+                    log.LogDebug($"{rhetosProjectAssetsFileProvider.ProjectAssetsFilePath} timestamp change detected.");
+
+                    var newAssemblies = GetComparableAssemblyList(rhetosProjectAssetsFileProvider.Load().Assemblies);
+                    if (newAssemblies == null || projectAssetsAssemblies.Count != newAssemblies.Count)
+                    {
+                        log.LogInformation($"Detected change in assembly count for this Rhetos project. Marking as dirty.");
+                        return true;
+                    }
+                    
+                    var changedAssemblies = projectAssetsAssemblies
+                        .Zip(newAssemblies, (a, b) => (a, b))
+                        .Where(pair => pair.a.path != pair.b.path || pair.a.timestamp != pair.b.timestamp)
+                        .ToList();
+
+                    if (!changedAssemblies.Any())
+                    {
+                        projectAssetsFileTimestamp = newTimestamp;
+                        return false;
+                    }
+
+                    log.LogInformation($"Some assemblies used by this Rhetos project have changed. Marking as dirty.");
+                    return true;
+                }
+                catch (Exception e)
+                {
+                    log.LogWarning($"Unexpected error occured during Rhetos project change check: {e.Message}.");
+                    return true;
+                }
+            }
+        }
+
         public void InitializeFromCurrentDomain()
         {
-            if (IsInitialized)
-                throw new InvalidOperationException($"{nameof(RhetosAppContext)} has already been initialized.");
+            lock (_syncInitialize)
+            {
+                if (IsInitialized)
+                    throw new InvalidOperationException($"{nameof(RhetosAppContext)} has already been initialized.");
 
-            var conceptInfoTypes = AppDomain.CurrentDomain
-                .GetAssemblies()
-                .SelectMany(a => a.GetTypes())
-                .Where(a => typeof(IConceptInfo).IsAssignableFrom(a) && a.IsClass)
-                .ToArray();
+                var conceptInfoTypes = AppDomain.CurrentDomain
+                    .GetAssemblies()
+                    .SelectMany(a => a.GetTypes())
+                    .Where(a => typeof(IConceptInfo).IsAssignableFrom(a) && a.IsClass)
+                    .ToArray();
 
-            InitializeFromConceptTypes(conceptInfoTypes);
-            IsInitializedFromCurrentDomain = true;
-            RootPath = null;
+                InitializeFromConceptTypes(conceptInfoTypes);
+                IsInitializedFromCurrentDomain = true;
+                RootPath = null;
+            }
         }
 
-        public void InitializeFromAppPath(string rootPath)
+        public void InitializeFromRhetosProjectPath(string rootPath)
         {
-            if (IsInitialized)
-                throw new InvalidOperationException($"{nameof(RhetosAppContext)} has already been initialized.");
-
-            if (string.IsNullOrEmpty(rootPath))
-                throw new ArgumentException($"Error initializing rhetos app, specified rootPath '{rootPath}' is not valid!", rootPath);
-
-            try
+            lock (_syncInitialize)
             {
-                var sw = Stopwatch.StartNew();
-                InitializeFromAppPathInternal(rootPath);
-                log.LogInformation($"Initialized Rhetos App Context at '{rootPath}' in {sw.ElapsedMilliseconds} ms. IConceptInfo count: {ConceptInfoTypes.Length}.");
-                LastInitializeError = null;
-            }
-            catch (Exception e)
-            {
-                log.LogDebug($"Exception while trying to initialize Rhetos app at '{rootPath}': {e}");
-                LastInitializeError = new CodeAnalysisError()
+                if (IsInitialized)
+                    throw new InvalidOperationException($"{nameof(RhetosAppContext)} has already been initialized.");
+
+                if (string.IsNullOrEmpty(rootPath))
+                    throw new ArgumentException($"Error initializing rhetos app, specified rootPath '{rootPath}' is not valid!", rootPath);
+
+                try
                 {
-                    Message =
-                        $"Failed to initialize Language Services from Rhetos app at '{rootPath}'. Either the path is not a valid Rhetos app path or Rhetos app has not been built yet. (Error: {e.Message})",
-                    Severity = CodeAnalysisError.ErrorSeverity.Warning
-                };
-            }
+                    var sw = Stopwatch.StartNew();
+                    InitializeFromRhetosProjectPathInternal(rootPath);
+                    log.LogInformation($"Initialized Rhetos App Context at '{rootPath}' in {sw.ElapsedMilliseconds} ms. IConceptInfo count: {ConceptInfoTypes.Length}.");
+                    LastInitializeError = null;
+                }
+                catch (Exception e)
+                {
+                    log.LogDebug($"Exception while trying to initialize Rhetos app at '{rootPath}': {e}");
+                    LastInitializeError = new CodeAnalysisError()
+                    {
+                        Message =
+                            $"Failed to initialize Language Services from Rhetos app at '{rootPath}'. Either the path is not a valid Rhetos app path or Rhetos app has not been built yet. (Error: {e.Message})",
+                        Severity = CodeAnalysisError.ErrorSeverity.Warning
+                    };
+                }
 
-            log.LogTrace($"{nameof(InitializeFromAppPath)} complete.");
+                log.LogTrace($"{nameof(InitializeFromRhetosProjectPath)} complete.");
+            }
         }
 
-        private void InitializeFromAppPathInternal(string rootPath)
+        private void InitializeFromRhetosProjectPathInternal(string rootPath)
         {
-            log.LogDebug($"Starting Rhetos app initialization at '{rootPath}'.");
-            rootPath = Path.GetFullPath(rootPath);
-            var configurationProvider = new ConfigurationBuilder()
-                .AddRhetosAppConfiguration(rootPath)
-                .Build();
-
-            var listAssemblies = LegacyUtilities.GetListAssembliesDelegate(configurationProvider);
-            var assemblyList = listAssemblies().ToList();
-            log.LogDebug($"Rhetos configuration reported {assemblyList.Count} assemblies to check for plugins.");
-
-            var resolveDelegate = CreateAssemblyResolveDelegate(assemblyList);
-
+            ResolveEventHandler resolveDelegate = null;
             try
             {
+                log.LogDebug($"Starting Rhetos project initialization at '{rootPath}'.");
+                rootPath = Path.GetFullPath(rootPath);
+
+                var rhetosProjectAssetsFileProvider = new RhetosProjectAssetsFileProvider(rootPath, rhetosLogProvider);
+                var assemblyList = rhetosProjectAssetsFileProvider.Load().Assemblies.ToList();
+
+                log.LogDebug($"Rhetos project assets reported {assemblyList.Count} assemblies to check for plugins.");
+
+                resolveDelegate = CreateAssemblyResolveDelegate(assemblyList);
                 AppDomain.CurrentDomain.AssemblyResolve += resolveDelegate;
 
-                var builder = new RhetosContainerBuilder(configurationProvider, rhetosLogProvider, listAssemblies);
+                var rhetosAppEnvironment = new RhetosAppEnvironment
+                {
+                    RootFolder = rootPath,
+                    AssetsFolder = Path.Combine(rootPath, "RhetosAssets"),
+                };
+
+                var configurationProvider = new ConfigurationBuilder()
+                    .AddRhetosAppEnvironment(rhetosAppEnvironment)
+                    .AddKeyValue(nameof(BuildOptions.ProjectFolder), rootPath)
+                    .AddKeyValue(nameof(BuildOptions.CacheFolder), Path.Combine(rootPath, "obj\\Rhetos"))
+                    .AddConfigurationManagerConfiguration()
+                    .Build();
+
+                var builder = new RhetosContainerBuilder(configurationProvider, rhetosLogProvider, () => assemblyList);
                 var scanner = builder.GetPluginScanner();
                 var conceptInfoTypes = scanner.FindPlugins(typeof(IConceptInfo)).Select(a => a.Type).ToArray();
                 log.LogDebug($"Plugin scanner found {conceptInfoTypes.Length} IConceptInfo types.");
                 InitializeFromConceptTypes(conceptInfoTypes);
                 RootPath = rootPath;
+
+                projectAssetsFileTimestamp = new FileInfo(rhetosProjectAssetsFileProvider.ProjectAssetsFilePath).LastWriteTimeUtc;
+                projectAssetsAssemblies = GetComparableAssemblyList(assemblyList);
             }
             finally
             {
-                AppDomain.CurrentDomain.AssemblyResolve -= resolveDelegate;
+                if (resolveDelegate != null)
+                    AppDomain.CurrentDomain.AssemblyResolve -= resolveDelegate;
             }
         }
 
-        public RootPathConfiguration GetRhetosAppRootPath(RhetosDocument rhetosDocument, bool directiveOnly = false)
+        public RootPathConfiguration GetRhetosProjectRootPath(RhetosDocument rhetosDocument, bool directiveOnly = false)
         {
             try
             {
@@ -160,9 +238,17 @@ namespace Rhetos.LanguageServices.Server.Services
             return new RootPathConfiguration(null, RootPathConfigurationType.None, null);
         }
 
+        private List<(string path, DateTime timestamp)> GetComparableAssemblyList(IEnumerable<string> assemblyList)
+        {
+            return assemblyList
+                .Select(a => (path: a, timestamp: new FileInfo(a).LastWriteTimeUtc))
+                .OrderBy(a => a.path).ThenBy(a => a.timestamp)
+                .ToList();
+        }
+
         private string GetRootPathFromText(string text)
         {
-            var pathMatch = Regex.Match(text, @"^\s*//\s*<rhetosAppRootPath=""(.+)""\s*/>");
+            var pathMatch = Regex.Match(text, @"^\s*//\s*<rhetosProjectRootPath=""(.+)""\s*/>");
             var rootPath = pathMatch.Success
                 ? Path.GetFullPath(pathMatch.Groups[1].Value)
                 : null;
@@ -172,10 +258,17 @@ namespace Rhetos.LanguageServices.Server.Services
 
         private string GetRootPathInParentFolders(string startingFolder)
         {
-            var rhetosAppRootFolder = EnumerateParentFolders(startingFolder)
-                .FirstOrDefault(RhetosAppEnvironmentProvider.IsRhetosApplicationRootFolder);
+            var rhetosProjectRootFolder = EnumerateParentFolders(startingFolder)
+                .FirstOrDefault(IsValidRhetosProjectFolder);
 
-            return rhetosAppRootFolder;
+            return rhetosProjectRootFolder;
+        }
+
+        private bool IsValidRhetosProjectFolder(string folder)
+        {
+            var rhetosProjectAssetsFileProvider = new RhetosProjectAssetsFileProvider(folder, rhetosLogProvider);
+            var assetsFilePath = rhetosProjectAssetsFileProvider.ProjectAssetsFilePath;
+            return File.Exists(assetsFilePath);
         }
 
         private (string rootPath, string configurationPath) GetRootPathFromConfigurationInParentFolders(string startingFolder)
@@ -191,11 +284,11 @@ namespace Rhetos.LanguageServices.Server.Services
                 .AddJsonFile(configurationFile)
                 .Build();
 
-            var rhetosAppRootPath = configurationProvider.GetValue<string>(_rhetosAppRootPathConfigurationKey);
-            if (string.IsNullOrEmpty(rhetosAppRootPath))
-                throw new InvalidOperationException($"Configuration file '{configurationFile}' does not contain valid configuration key {_rhetosAppRootPathConfigurationKey}.");
+            var rhetosProjectRootPath = configurationProvider.GetValue<string>(_rhetosProjectRootPathConfigurationKey);
+            if (string.IsNullOrEmpty(rhetosProjectRootPath))
+                throw new InvalidOperationException($"Configuration file '{configurationFile}' does not contain valid configuration key {_rhetosProjectRootPathConfigurationKey}.");
 
-            return (Path.GetFullPath(rhetosAppRootPath), Path.GetFullPath(configurationFile));
+            return (Path.GetFullPath(rhetosProjectRootPath), Path.GetFullPath(configurationFile));
         }
 
         private IEnumerable<string> EnumerateParentFolders(string startingFolder)

@@ -55,7 +55,7 @@
     <Content Include="Grammars\Rhetos.json">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <None Include="rhetos.lsp-server.local.json">
+    <None Include="*.local.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="source.extension.vsixmanifest">

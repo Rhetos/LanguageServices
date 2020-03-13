@@ -207,7 +207,7 @@ Reference a.b.x p ";
                 Assert.AreEqual(1, analysisResult.AllErrors.Count());
                 Assert.IsFalse(analysisResult.SuccessfulRun);
                 Console.WriteLine(analysisResult.AllErrors.First().Message);
-                StringAssert.Contains(analysisResult.AllErrors.First().Message, "No valid RhetosAppRoothPath configuration was found");
+                StringAssert.Contains(analysisResult.AllErrors.First().Message, "No valid RhetosProjectRootPath configuration was found");
             }
         }
 

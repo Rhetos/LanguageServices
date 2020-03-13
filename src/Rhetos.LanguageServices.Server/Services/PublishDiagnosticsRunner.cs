@@ -34,6 +34,8 @@ namespace Rhetos.LanguageServices.Server.Services
 {
     public class PublishDiagnosticsRunner
     {
+        private static readonly TimeSpan _cycleInterval = TimeSpan.FromMilliseconds(300);
+
         private readonly RhetosWorkspace rhetosWorkspace;
         private readonly ILanguageServer languageServer;
         private readonly ILogger<PublishDiagnosticsRunner> log;
@@ -54,7 +56,7 @@ namespace Rhetos.LanguageServices.Server.Services
             if (cancellationTokenSource.IsCancellationRequested)
                 return;
 
-            log.LogInformation($"Starting {nameof(PublishDiagnosticsRunner)}.");
+            log.LogInformation($"Starting {nameof(PublishDiagnosticsRunner)}.{nameof(PublishLoop)}.");
             publishLoopTask = Task.Factory.StartNew(() => PublishLoop(cancellationTokenSource.Token), TaskCreationOptions.LongRunning);
         }
 
@@ -62,7 +64,7 @@ namespace Rhetos.LanguageServices.Server.Services
         {
             try
             {
-                log.LogDebug($"Stopping {nameof(PublishLoop)}.");
+                log.LogDebug($"Stopping {nameof(PublishDiagnosticsRunner)}.{nameof(PublishLoop)}.");
                 cancellationTokenSource.Cancel();
                 publishLoopTask?.Wait();
             }
@@ -79,7 +81,7 @@ namespace Rhetos.LanguageServices.Server.Services
         {
             while (true)
             {
-                Task.Delay(300, cancellationToken).Wait(cancellationToken);
+                Task.Delay(_cycleInterval, cancellationToken).Wait(cancellationToken);
 
                 try
                 {

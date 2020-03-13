@@ -181,18 +181,18 @@ Module module1 // comment
 
         [DataTestMethod]
         
-        [DataRow(1, 0, 169, null, null)]
+        [DataRow(1, 0, 170, null, null)]
         [DataRow(1, 8, 0, null, null)]
         [DataRow(1, 10, 0, null, null)]
         [DataRow(1, 30, 0, null, null)]
-        [DataRow(4, 0, 30, "Entity", "Reference")]
+        [DataRow(4, 0, 31, "WithParent", "Reference")]
         [DataRow(9, 0, 9, "AllProperties", "Logging")]
         [DataRow(8, 30, 9, "AllProperties", "Logging")]
         [DataRow(11, 0, 66, "Logging", "AllProperties")]
-        [DataRow(2, 30, 0, null, null)]
-        [DataRow(13, 19, 0, null, null)]
+        [DataRow(2, 30, 6, "Ent", "Entity")]
+        [DataRow(13, 19, 6, "Ent", "Entity")]
         [DataRow(13, 21, 66, "Logging", "AllProperties")]
-        [DataRow(14, 7, 30, "Entity", "Reference")]
+        [DataRow(14, 7, 31, "WithParent", "Reference")]
         [DataRow(15, 9, 0, null, null)] // shouldn't work after errorline
         [DataRow(16, 30, 0, null, null)]
         [DataRow(17, 0, 0, null, null)]
@@ -212,7 +212,7 @@ Module module1
         }
 
     }
-    Entity SameLine {}
+    Entity SameLine { }
     Ent 
     Entit 
     error '
@@ -238,15 +238,97 @@ Module module1
             }
         }
 
+        [DataTestMethod]
+        [DataRow(1, 10, "")]
+        [DataRow(2, 10, "Ent,entity1,module1,SameLine")]
+        [DataRow(2, 20, "Ent,entity1,module1,SameLine")]
+        [DataRow(4, 11, "Ent,entity1,module1,SameLine")]
+        [DataRow(6, 20, "Ent,entity1,module1,SameLine")]
+        [DataRow(8, 0, "AllProperties,Log,RelatedItem,SqlDependsOn,SqlDependsOnFunction,...")]
+        [DataRow(10, 30, "AutoCode,AutoCodeCached,AutoCodeForEach,AutoCodeForEachCached,...")]
+        [DataRow(10, 40, "Ent,entity1,module1,SameLine")]
+        [DataRow (10, 43, null)]
+
+        public void CompletionNonKeywords(int line, int chr, string expectedNonKeywords)
+        {
+            var script = @"
+        // comment
+Module module1
+{
+    Entity entity1
+    {
+        Logging
+        {
+
+        }
+        ShortString SameLine { AutoCode  ;   }
+    }
+    Ent '
+    Entit 
+    error
+}";
+            var lineChr = new LineChr(line, chr);
+            var rhetosDocument = rhetosDocumentFactory.CreateWithTestUri(script, lineChr);
+
+            var completion = rhetosDocument.GetCompletionKeywordsAtPosition(lineChr);
+            var joined = string.Join(",", completion);
+            Console.WriteLine($"NonKeywords: [{completion.Count}] {joined}");
+
+            if (expectedNonKeywords == null)
+            {
+                Console.WriteLine($"Not supported: returns non-keywords, but should return actual keywords. Problems with detecting ';' as statement termination symbol.");
+                Assert.Inconclusive("Not supported feature / known bug.");
+            }
+
+            if (expectedNonKeywords.Contains("..."))
+            {
+                expectedNonKeywords = expectedNonKeywords.Replace(",...", "");
+                joined = new string(joined.Take(expectedNonKeywords.Length).ToArray());
+            }
+            Assert.AreEqual(expectedNonKeywords, joined);
+        }
+
+        [DataTestMethod]
+        [DataRow(2, 0, true)]
+        [DataRow(5, 0, false)]
+        [DataRow(6, 20, true)]
+        [DataRow(8, 0, true)]
+        public void CompletionForConceptParent(int line, int chr, bool shouldContainWithParent)
+        {
+            var script =
+                @"Module ParentModule
+{
+    WithParent Module1.Entity1 name1 param1;
+    Entity Entity1
+    {
+
+    }
+}
+
+WithParent Module2.Entity2 name2 ParentModule param2;
+";
+
+            var lineChr = new LineChr(line, chr);
+            var rhetosDocument = rhetosDocumentFactory.CreateWithTestUri(script, lineChr);
+
+            var completion = rhetosDocument.GetCompletionKeywordsAtPosition(lineChr);
+            var valid = completion.Contains("WithParent");
+
+            Console.WriteLine($"Keyword 'WithParent' valid at pos: {valid}");
+            Assert.AreEqual(shouldContainWithParent, valid);
+        }
+
         [TestMethod]
         public void CompletionAtEof()
         {
             var lineChr = new LineChr(0, 3);
             var rhetosDocument = rhetosDocumentFactory.CreateWithTestUri("Ent", lineChr);
 
-            var completion = rhetosDocument.GetCompletionKeywordsAtPosition(lineChr);
+            var completion = rhetosDocument.GetCompletionKeywordsAtPosition(lineChr)
+                .OrderBy(a => a)
+                .ToList();
             Console.WriteLine($"Keywords: [{completion.Count}] {string.Join(",", completion)}");
-            Assert.AreEqual(169, completion.Count);
+            Assert.AreEqual(170, completion.Count);
         }
 
         [TestMethod]
@@ -257,7 +339,7 @@ Module module1
 
             var completion = rhetosDocument.GetCompletionKeywordsAtPosition(lineChr);
             Console.WriteLine($"Keywords: [{completion.Count}] {string.Join(",", completion)}");
-            Assert.AreEqual(169, completion.Count);
+            Assert.AreEqual(170, completion.Count);
         }
 
         [DataTestMethod]
