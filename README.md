@@ -18,9 +18,10 @@ Install the `.vsix` as you would install any other Visual Studio extension.
 1. DSL syntax highlighting
 2. DSL script parse error reporting
 3. Keyword autocompletion
-4. Signature help for concept parameters
-5. Keyword and signature info on hover
-6. XML-style documentation from IConceptInfo implementation classes
+4. Parameters autocompletion based on all tokens in the current document
+5. Signature help for concept parameters
+6. Keyword and signature info on hover
+7. XML-style documentation from IConceptInfo implementation classes
 
 ## Usage
 
@@ -30,17 +31,17 @@ Rhetos Language Services will activate whenever `.rhe` file is opened within Vis
 
 For a `.rhe` document, the following rules are applied in order to find the location of corresponding Rhetos application:
 
-1. Document is checked for explicit directive pointing to a folder which contains Rhetos application in the form of: `// <rhetosAppRootPath="c:\some\path\to\rhetosapp" />`. It must be placed on the first line of the file.
+1. Document is checked for explicit directive pointing to a folder which contains Rhetos application in the form of: `// <rhetosProjectRootPath="c:\some\path\to\rhetosproject" />`. It must be placed on the first line of the file.
 
 2. Document folder and all parent folders are checked for `rhetos-language-services.settings.json` configuration file specifying the Rhetos application path. File format should be:
 
     ``` json
     {
-        "RhetosAppRootPath": "c:\\some\\path\\to\\rhetosapp"
+        "RhetosProjectRootPath": "c:\\some\\path\\to\\rhetosproject"
     }
     ```
 
-3. Document folder and all parent folders are checked for a valid Rhetos application root path. This generally means that folders are checked for existance of the `RhetosAppEnvironment.json` file which is produced by building the Rhetos application.
+3. Document folder and all parent folders are checked for a valid Rhetos application root path. This generally means that folders are checked for existence of the `obj/Rhetos/rhetos-project.assets.json` file which is produced by building the Rhetos application.
 
 Use rules (1) and (2) as means to override this default behavior.
 
@@ -48,7 +49,7 @@ Use rules (1) and (2) as means to override this default behavior.
 
 ### Changing Rhetos application after initialization
 
-Initializating language services server with specific Rhetos application causes `.dll` files of that application to be loaded (for DSL concept discovery). As a consequence, once initialized with a specific Rhetos application, services will only work for that application for the duration of the process runtime.
+Initializing language services server with specific Rhetos application causes `.dll` files of that application to be loaded (for DSL concept discovery). As a consequence, once initialized with a specific Rhetos application, services will only work for that application for the duration of the process runtime.
 
 **To change the Rhetos application used in code analysis, restart Visual Studio.**
 

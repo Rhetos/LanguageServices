@@ -9,7 +9,6 @@
 * Configuration keys for overriding Rhetos project location have been changed to `rhetosProjectRootPath` (from `rhetosAppRootPath`)
 * [BUGFIX] XML documentation will now correctly be displayed for concepts in plugins
 
-
 ## v0.9.3-preview
 
 * Improved signature help/active parameter for several non-common scenarios
