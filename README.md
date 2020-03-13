@@ -6,8 +6,11 @@ This project is a [Language Server Protocol](https://microsoft.github.io/languag
 
 ## Building the project
 
-Build the project using `build.bat`. This will produce `.vsix` file in the `./dist` folder. It is a Visual Studio extension containing both the extension code and LSP server binaries needed to run it.
+Build the project using `build.bat`.
 
+* If build returns error `The imported project "...\Microsoft.VsSDK.targets" was not found`, open *Rhetos.LanguageServices.sln* in Visual Studio, it will automatically offer to install the required component "Visual Studio extension development".
+
+Build will produce `.vsix` file in the `./dist` folder. It is a Visual Studio extension containing both the extension code and LSP server binaries needed to run it.
 Install the `.vsix` as you would install any other Visual Studio extension.
 
 ## Features
