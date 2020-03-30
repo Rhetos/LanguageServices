@@ -60,9 +60,9 @@ namespace Rhetos.LanguageServices.Server.Services
             var prefix = "    ";
 
             var signature = ConceptInfoType.SignatureDescription(conceptInfoType);
-            var documentation = $"{prefix}Defined by {conceptInfoType.FullName}";
+            var documentation = $"{prefix}* defined by {conceptInfoType.FullName}";
             var xmlDocumentation = xmlDocumentationProvider.GetDocumentation(conceptInfoType, prefix);
-            if (!string.IsNullOrEmpty(xmlDocumentation)) documentation += $"\n{xmlDocumentation}";
+            if (!string.IsNullOrEmpty(xmlDocumentation)) documentation = $"{xmlDocumentation}\n{documentation}";
 
             return new RhetosSignature()
             {

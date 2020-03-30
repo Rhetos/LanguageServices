@@ -110,7 +110,7 @@ namespace Rhetos.LanguageServices.Server.Parsing
                 var result = analysisRun.RunForPosition(lineChr);
 
                 if (rhetosAppContext.ProjectConfigurationDirty)
-                    result.DslParserErrors.Add(new CodeAnalysisError() { Message = "Rhetos project configuration change detected. Restart Visual Studio for these changes to take effect.", Severity = CodeAnalysisError.ErrorSeverity.Warning });
+                    result.DslParserErrors.Add(new CodeAnalysisError() { Message = "Rhetos project configuration change detected. Restart Visual Studio to update DSL IntelliSense.", Severity = CodeAnalysisError.ErrorSeverity.Warning });
                 
                 cachedAnalysisResults[cacheKey] = result;
                 return result;

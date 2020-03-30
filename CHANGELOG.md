@@ -1,5 +1,10 @@
 # Rhetos Language Service changelog
 
+## Next
+
+* Changed XML documentation display format
+* Minor wording changes in LSP warning
+
 ## v0.9.5-preview
 
 * Language Server will now use Rhetos project DLLs instead of built application DLLs
