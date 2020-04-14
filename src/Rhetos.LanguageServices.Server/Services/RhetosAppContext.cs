@@ -78,14 +78,14 @@ namespace Rhetos.LanguageServices.Server.Services
 
                 try
                 {
-                    var rhetosProjectAssetsFileProvider = new RhetosProjectAssetsFileProvider(RootPath, rhetosLogProvider);
-                    var newTimestamp = new FileInfo(rhetosProjectAssetsFileProvider.ProjectAssetsFilePath).LastWriteTimeUtc;
+                    var rhetosProjectContentProvider = new RhetosProjectContentProvider(RootPath, rhetosLogProvider);
+                    var newTimestamp = new FileInfo(rhetosProjectContentProvider.ProjectAssetsFilePath).LastWriteTimeUtc;
                     if (projectAssetsFileTimestamp == newTimestamp)
                         return false;
 
-                    log.LogDebug($"{rhetosProjectAssetsFileProvider.ProjectAssetsFilePath} timestamp change detected.");
+                    log.LogDebug($"{rhetosProjectContentProvider.ProjectAssetsFilePath} timestamp change detected.");
 
-                    var newAssemblies = GetComparableAssemblyList(rhetosProjectAssetsFileProvider.Load().Assemblies);
+                    var newAssemblies = GetComparableAssemblyList(rhetosProjectContentProvider.Load().RhetosProjectAssets.Assemblies);
                     if (newAssemblies == null || projectAssetsAssemblies.Count != newAssemblies.Count)
                     {
                         log.LogInformation($"Detected change in assembly count for this Rhetos project. Marking as dirty.");
@@ -156,7 +156,7 @@ namespace Rhetos.LanguageServices.Server.Services
                     LastInitializeError = new CodeAnalysisError()
                     {
                         Message =
-                            $"Failed to initialize Language Services from Rhetos app at '{rootPath}'. Either the path is not a valid Rhetos app path or Rhetos app has not been built yet. (Error: {e.Message})",
+                            $"Failed to initialize Language Services from Rhetos app at '{rootPath}'. Either the path is not a valid Rhetos app path or Rhetos app has not been built yet - rebuild and reopen document. (Error: {e.Message})",
                         Severity = CodeAnalysisError.ErrorSeverity.Warning
                     };
                 }
@@ -173,25 +173,26 @@ namespace Rhetos.LanguageServices.Server.Services
                 log.LogDebug($"Starting Rhetos project initialization at '{rootPath}'.");
                 rootPath = Path.GetFullPath(rootPath);
 
-                var rhetosProjectAssetsFileProvider = new RhetosProjectAssetsFileProvider(rootPath, rhetosLogProvider);
-                var assemblyList = rhetosProjectAssetsFileProvider.Load().Assemblies.ToList();
+                var rhetosProjectContentProvider = new RhetosProjectContentProvider(rootPath, rhetosLogProvider);
+                var rhetosProjectContent = rhetosProjectContentProvider.Load();
+                var assemblyList = rhetosProjectContent.RhetosProjectAssets.Assemblies.ToList();
 
                 log.LogDebug($"Rhetos project assets reported {assemblyList.Count} assemblies to check for plugins.");
 
                 resolveDelegate = CreateAssemblyResolveDelegate(assemblyList);
                 AppDomain.CurrentDomain.AssemblyResolve += resolveDelegate;
 
-                var rhetosAppEnvironment = new RhetosAppEnvironment
-                {
-                    RootFolder = rootPath,
-                    AssetsFolder = Path.Combine(rootPath, "RhetosAssets"),
-                };
-
                 var configurationProvider = new ConfigurationBuilder()
-                    .AddRhetosAppEnvironment(rhetosAppEnvironment)
-                    .AddKeyValue(nameof(BuildOptions.ProjectFolder), rootPath)
-                    .AddKeyValue(nameof(BuildOptions.CacheFolder), Path.Combine(rootPath, "obj\\Rhetos"))
+                    .AddOptions(rhetosProjectContent.RhetosBuildEnvironment)
+                    .AddOptions(rhetosProjectContent.RhetosTargetEnvironment)
+                    .AddOptions(new LegacyPathsOptions
+                    {
+                        BinFolder = null, // It should not be needed for build with Rhetos CLI.
+                        PluginsFolder = null, // It should not be needed for build with Rhetos CLI.
+                        ResourcesFolder = Path.Combine(rootPath, "Resources"), // Currently supporting old plugins by default.
+                    })
                     .AddConfigurationManagerConfiguration()
+                    .AddJsonFile(Path.Combine(rootPath, "rhetos-build.settings.json"), optional: true)
                     .Build();
 
                 var builder = new RhetosContainerBuilder(configurationProvider, rhetosLogProvider, () => assemblyList);
@@ -201,7 +202,7 @@ namespace Rhetos.LanguageServices.Server.Services
                 InitializeFromConceptTypes(conceptInfoTypes);
                 RootPath = rootPath;
 
-                projectAssetsFileTimestamp = new FileInfo(rhetosProjectAssetsFileProvider.ProjectAssetsFilePath).LastWriteTimeUtc;
+                projectAssetsFileTimestamp = new FileInfo(rhetosProjectContentProvider.ProjectAssetsFilePath).LastWriteTimeUtc;
                 projectAssetsAssemblies = GetComparableAssemblyList(assemblyList);
             }
             finally
@@ -266,7 +267,7 @@ namespace Rhetos.LanguageServices.Server.Services
 
         private bool IsValidRhetosProjectFolder(string folder)
         {
-            var rhetosProjectAssetsFileProvider = new RhetosProjectAssetsFileProvider(folder, rhetosLogProvider);
+            var rhetosProjectAssetsFileProvider = new RhetosProjectContentProvider(folder, rhetosLogProvider);
             var assetsFilePath = rhetosProjectAssetsFileProvider.ProjectAssetsFilePath;
             return File.Exists(assetsFilePath);
         }
