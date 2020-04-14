@@ -1,9 +1,12 @@
 # Rhetos Language Service changelog
 
-## Next
+## v0.9.6-preview
 
 * Changed XML documentation display format
 * Minor wording changes in LSP warning
+* Extension will now monitor solution projects for changes in Rhetos generated files and will refresh projects accordingly to fix IntelliSense
+* [BUGFIX] Hover while Visual Studio is loading will no longer generate LSP exception message
+* Upgraded to latest Rhetos 4.0 build
 
 ## v0.9.5-preview
 

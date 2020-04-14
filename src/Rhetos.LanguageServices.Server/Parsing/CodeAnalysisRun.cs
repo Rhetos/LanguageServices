@@ -116,7 +116,7 @@ namespace Rhetos.LanguageServices.Server.Parsing
 
                 dslParser.ParseConceptsWithCallbacks(OnKeyword, OnMemberRead, OnUpdateContext);
             }
-            catch (DslParseSyntaxException e)
+            catch (DslSyntaxException e)
             {
                 result.DslParserErrors.Add(CreateAnalysisError(e));
             }
@@ -181,10 +181,10 @@ namespace Rhetos.LanguageServices.Server.Parsing
                 result.ActiveConceptValidTypes.Add(conceptType);
         }
 
-        private CodeAnalysisError CreateAnalysisError(DslParseSyntaxException e)
+        private CodeAnalysisError CreateAnalysisError(DslSyntaxException e)
         {
-            var lineChr = textDocument.GetLineChr(e.Position);
-            return new CodeAnalysisError() {LineChr = lineChr, Message = e.SimpleMessage};
+            var lineChr = new LineChr(e.FilePosition.BeginLine - 1, e.FilePosition.BeginColumn - 1);
+            return new CodeAnalysisError() {LineChr = lineChr, Message = e.Message};
         }
 
         private void OnUpdateContext(ITokenReader iTokenReader, Stack<IConceptInfo> context, bool isOpening)
@@ -271,10 +271,10 @@ namespace Rhetos.LanguageServices.Server.Parsing
             {
                 safeTokenizer.GetTokens();
             }
-            catch (DslParseSyntaxException e)
+            catch (DslSyntaxException e)
             {
-                var lineChr = textDocument.GetLineChr(e.Position);
-                capturedErrors.Add(new CodeAnalysisError() { LineChr = lineChr, Message = e.SimpleMessage });
+                var lineChr = new LineChr(e.FilePosition.BeginLine - 1, e.FilePosition.BeginColumn - 1);
+                capturedErrors.Add(new CodeAnalysisError() { LineChr = lineChr, Message = e.Message });
             }
             catch (Exception e)
             {
