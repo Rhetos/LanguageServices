@@ -19,20 +19,14 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using EnvDTE;
 using EnvDTE80;
 using Microsoft;
-using Microsoft.VisualStudio.ProjectSystem;
 using Microsoft.VisualStudio.Shell;
-using Microsoft.VisualStudio.Shell.CodeContainerManagement;
-using Microsoft.VisualStudio.Shell.Interop;
-using Microsoft.VisualStudio.Threading;
 using IAsyncServiceProvider = Microsoft.VisualStudio.Shell.IAsyncServiceProvider;
 using Task = System.Threading.Tasks.Task;
 
@@ -42,6 +36,7 @@ namespace Rhetos.LanguageServices.VisualStudioExtension
     {
         private DTE2 dte;
         private Dictionary<string, DateTime?> beforeBuildSources;
+        private readonly string _outputName = "Rhetos DSL Language Extension";
 
         public async Task InitializeAsync(IAsyncServiceProvider provider, CancellationToken cancellationToken)
         {
@@ -50,7 +45,7 @@ namespace Rhetos.LanguageServices.VisualStudioExtension
             Assumes.Present(dte);
             dte.Events.BuildEvents.OnBuildBegin += BuildEvents_OnBuildBegin;
             dte.Events.BuildEvents.OnBuildDone += BuildEvents_OnBuildDone;
-            await WriteToOutputWindowAsync(nameof(SolutionRefreshService), "Initialized!");
+            await WriteToOutputWindowAsync(_outputName, "Initialized monitoring of Rhetos projects for source file changes.");
         }
 
         private void BuildEvents_OnBuildBegin(vsBuildScope scope, vsBuildAction action)
@@ -60,8 +55,8 @@ namespace Rhetos.LanguageServices.VisualStudioExtension
 
         private async Task OnBuildBeginAsync()
         {
-            await WriteToOutputWindowAsync(nameof(SolutionRefreshService), "Build Begin!");
-            beforeBuildSources = await EnumerateProjectSourcesAsync();
+            var projects = await GetProjectsAsync(dte.Solution);
+            beforeBuildSources = await EnumerateProjectSourcesAsync(projects);
         }
 
         private void BuildEvents_OnBuildDone(vsBuildScope scope, vsBuildAction action)
@@ -71,33 +66,56 @@ namespace Rhetos.LanguageServices.VisualStudioExtension
 
         private async Task OnBuildDoneAsync()
         {
-            await WriteToOutputWindowAsync(nameof(SolutionRefreshService), "Build Done!");
-            var sources = await EnumerateProjectSourcesAsync();
+            await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+
+            await WriteToOutputWindowAsync(_outputName, "Build done, checking Rhetos projects for changed source files.");
+            var oldActiveWindow = dte.ActiveWindow.Caption;
+
+            var projects = await GetProjectsAsync(dte.Solution);
+            var sources = await EnumerateProjectSourcesAsync(projects);
             foreach (var source in sources)
             {
                 if (beforeBuildSources == null
                     || !beforeBuildSources.ContainsKey(source.Key)
                     || beforeBuildSources[source.Key] != source.Value)
                 {
-                    await WriteToOutputWindowAsync(nameof(SolutionRefreshService), $"Project '{source.Key}' has changed, refreshing!");
+#pragma warning disable VSTHRD010 // Invoke single-threaded types on Main thread
+                    var project = projects.Single(a => a.FullName == source.Key);
+#pragma warning restore VSTHRD010 // Invoke single-threaded types on Main thread
+                    var projectPath = await GetProjectSolutionPathAsync(project);
+
+                    await WriteToOutputWindowAsync(_outputName, $"'{source.Key}' has changed, refreshing project in solution explorer.");
+                    dte.Windows.Item(EnvDTE.Constants.vsWindowKindSolutionExplorer).Activate();
+                    dte.ToolWindows.SolutionExplorer.GetItem(projectPath).Select(vsUISelectionType.vsUISelectionTypeSelect);
+                    dte.ExecuteCommand("View.Refresh", String.Empty);
                 }
             }
 
-            await RefreshProjectWindowAsync("ble");
+            if (oldActiveWindow != dte.ActiveWindow.Caption)
+                dte.Windows.Item(oldActiveWindow).Activate();
         }
 
-        // https://codeblog.vurdalakov.net/2016/11/vsix-get-list-of-projects-in-visual-studio-solution.html
-        private async Task<Dictionary<string, DateTime?>> EnumerateProjectSourcesAsync()
+        private async Task<string> GetProjectSolutionPathAsync(Project project)
+        {
+            await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+            var path = project.Name;
+            while (project.ParentProjectItem?.ContainingProject != null)
+            {
+                path = $"{project.ParentProjectItem.ContainingProject.Name}\\{path}";
+                project = project.ParentProjectItem.ContainingProject;
+            }
+            var solutionName = Path.GetFileNameWithoutExtension(dte.Solution.FullName);
+
+            return $"{solutionName}\\{path}";
+        }
+
+        private async Task<Dictionary<string, DateTime?>> EnumerateProjectSourcesAsync(Project[] projects)
         {
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
 
             var result = new Dictionary<string, DateTime?>();
-            foreach (var projectObject in dte.Solution.Projects)
+            foreach (var project in projects)
             {
-                var project = (EnvDTE.Project)projectObject;
-                if (project.Kind != VSLangProj.PrjKind.prjKindCSharpProject)
-                    continue;
-                
                 var projectName = project.FullName;
 
                 result[projectName] = null;
@@ -107,79 +125,80 @@ namespace Rhetos.LanguageServices.VisualStudioExtension
                 if (File.Exists(rhetosSources))
                     result[projectName] = new FileInfo(rhetosSources).LastWriteTimeUtc;
 
-                await WriteToOutputWindowAsync(nameof(SolutionRefreshService), $"{projectName}: {result[projectName]:s}");
+                // await WriteToOutputWindowAsync(_outputName, $"{projectName}: {result[projectName]:s}");
             }
 
             return result;
         }
-
-        private async Task RefreshProjectWindowAsync(string projectFullName)
+        public static async Task<Project[]> GetProjectsAsync(Solution solution)
         {
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
-            var solutionName = Path.GetFileNameWithoutExtension(dte.Solution.FullName);
+            var projects = new List<EnvDTE.Project>();
 
-            dte.Windows.Item(EnvDTE.Constants.vsWindowKindSolutionExplorer).Activate();
-
-            foreach (var item in dte.ToolWindows.SolutionExplorer.UIHierarchyItems)
+            var enumerator = solution.Projects.GetEnumerator();
+            while (enumerator.MoveNext())
             {
-                var pero = item;
+                var project = enumerator.Current as Project;
+                projects.AddRange(await GetProjectsAsync(project));
             }
-            
-            dte.ToolWindows.SolutionExplorer.GetItem(solutionName + @"\" + "Rhetos40App2").Select(vsUISelectionType.vsUISelectionTypeSelect);
-            dte.ExecuteCommand("View.Refresh", String.Empty);
-            // Reactivate your old window
-            //dte2.Windows.Item(captionOfActiveWindow).Activate();
+
+            return projects.ToArray();
         }
 
-        private async Task RefreshSolutionAsync()
-        {
-            var cmd = "SolutionExplorer.Refresh";
-            dte.ExecuteCommand(cmd);
-            await WriteToOutputWindowAsync(nameof(SolutionRefreshService), $"Executed '{cmd}'.");
-        }
-
-        private async Task DebugCommandsAsync()
+        private static async Task<Project[]> GetProjectsAsync(Project project)
         {
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
 
-            var allCommands = new List<EnvDTE.Command>();
-            foreach (var item in dte.Commands)
+            if (project == null)
+                return new Project[0];
+
+            var projects = new List<EnvDTE.Project>();
+
+            if (project.Kind != ProjectKinds.vsProjectKindSolutionFolder)
             {
-                allCommands.Add((EnvDTE.Command)item);
+                projects.Add(project);
             }
 
-            var refreshNames = allCommands
-                .Select(a => a.Name)
-                .Where(a => a.IndexOf("refresh", StringComparison.InvariantCultureIgnoreCase) >= 0);
+            if (project.ProjectItems != null)
+            {
+                for (var i = 1; i <= project.ProjectItems.Count; i++)
+                {
+                    var subProject = project.ProjectItems.Item(i).SubProject;
+                    projects.AddRange(await GetProjectsAsync(subProject));
+                }
+            }
 
-            var all = string.Join("\n", refreshNames);
-
-            await WriteToOutputWindowAsync(nameof(SolutionRefreshService), all);
-
-            //var cmd = "SolutionExplorer.Refresh";
-            var cmd = "ProjectandSolutionContextMenus.CrossProjectMultiItem.RefreshFolder";
-            var refCommand = allCommands.Single(a => a.Name == cmd);
-            dte.ExecuteCommand(cmd);
-            await WriteToOutputWindowAsync(nameof(SolutionRefreshService), $"Executed '{cmd}'.");
+            return projects.ToArray();
         }
 
         private async Task WriteToOutputWindowAsync(string paneName, string message)
         {
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
             var panes = dte.ToolWindows.OutputWindow.OutputWindowPanes;
-            OutputWindowPane pane;
+            OutputWindowPane pane = null;
             try
             {
                 pane = panes.Item(paneName);
             }
             catch (ArgumentException)
             {
-                pane = panes.Add(paneName);
             }
 
-            pane.Activate();
-            pane.OutputString(message);
-            pane.OutputString(Environment.NewLine);
+            if (pane == null)
+            {
+                try
+                {
+                    pane = panes.Item("Build");
+                }
+                catch (ArgumentException)
+                {
+                }
+            }
+
+            // if neither panes exist, return without outputting anything
+            if (pane == null) return;
+
+            pane.OutputString($"{nameof(SolutionRefreshService)}: {message}{Environment.NewLine}");
         }
     }
 }
