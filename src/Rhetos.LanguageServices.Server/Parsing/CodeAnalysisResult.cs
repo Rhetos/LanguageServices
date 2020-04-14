@@ -57,6 +57,7 @@ namespace Rhetos.LanguageServices.Server.Parsing
         {
             return ActiveConceptValidTypes
                 .Select(conceptType => (conceptType, GetActiveParameterForValidConcept(conceptType)))
+                .OrderBy(a => a.conceptType.Name)
                 .ToList();
         }
 

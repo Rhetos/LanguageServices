@@ -391,8 +391,9 @@ Module module1
             Assert.IsNotNull(signatureHelp.signatures);
             Console.WriteLine($"Valid signatures: {signatureHelp.signatures.Count}");
             Assert.AreEqual(totalValidSignatures, signatureHelp.signatures.Count);
-            Console.WriteLine($"Active signature type: {signatureHelp.signatures[0].ConceptInfoType.Name}");
-            Assert.AreEqual(activeSignatureType, signatureHelp.signatures[0].ConceptInfoType);
+            Console.WriteLine($"Active signature types: {string.Join(",",signatureHelp.signatures.Select(a => a.ConceptInfoType.Name))}");
+            var matchingSignature = signatureHelp.signatures.Single(a => a.ConceptInfoType == activeSignatureType);
+            Assert.AreEqual(activeSignatureType, matchingSignature.ConceptInfoType);
 
             if (activeParameter != null) // if activeParameter is null, activeSignature will also be
                 Assert.AreEqual(0, signatureHelp.activeSignature);

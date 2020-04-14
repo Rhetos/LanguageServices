@@ -112,12 +112,7 @@ namespace Rhetos.LanguageServices.Server.Parsing
         {
             try
             {
-#pragma warning disable CS0618 // Type or member is obsolete
-                var configurationProvider = new ConfigurationBuilder().Build();
-                var configuration = new Utilities.Configuration(configurationProvider);
-#pragma warning restore CS0618 // Type or member is obsolete
-
-                var dslParser = new DslParser(tokenizer, rhetosAppContext.ConceptInfoInstances, rhetosLogProvider, configuration);
+                var dslParser = new DslParser(tokenizer, rhetosAppContext.ConceptInfoInstances, rhetosLogProvider, new BuildOptions());
 
                 dslParser.ParseConceptsWithCallbacks(OnKeyword, OnMemberRead, OnUpdateContext);
             }

@@ -17,11 +17,13 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using OmniSharp.Extensions.LanguageServer.Protocol.Models;
 using OmniSharp.Extensions.LanguageServer.Protocol.Server;
+using Rhetos.LanguageServices.Server.Parsing;
 using Rhetos.LanguageServices.Server.Services;
 
 namespace Rhetos.LanguageServices.Server.Handlers
@@ -39,9 +41,17 @@ namespace Rhetos.LanguageServices.Server.Handlers
 
         public override Task<Hover> Handle(HoverParams request, CancellationToken cancellationToken)
         {
-            var rhetosDocument = rhetosWorkspace.GetRhetosDocument(request.TextDocument.Uri);
-            if (rhetosDocument == null)
+            RhetosDocument rhetosDocument;
+            // Visual Studio may issue hover before DidOpen if hover happens before solution is fully loaded
+            try
+            {
+                rhetosDocument = rhetosWorkspace.GetRhetosDocument(request.TextDocument.Uri);
+            }
+            catch (InvalidOperationException)
+            {
+                log.LogWarning($"Trying to resolve hover on document that is not opened '{request.TextDocument.Uri}'.");
                 return Task.FromResult<Hover>(null);
+            }
 
             var descInfo = rhetosDocument.GetHoverDescriptionAtPosition(request.Position.ToLineChr());
             if (string.IsNullOrEmpty(descInfo.description))

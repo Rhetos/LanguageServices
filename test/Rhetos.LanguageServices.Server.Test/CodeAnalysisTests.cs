@@ -335,7 +335,7 @@ Reference a.b.x p ";
                 formattedParams.Add(formatted);
             }
 
-            var activeParams = string.Join(",", formattedParams);
+            var activeParams = string.Join(",", formattedParams.OrderByDescending(a => a)); // SimpleReference is before Reference in expected test data
             Console.WriteLine();
             Console.WriteLine(activeParams);
             Assert.AreEqual(expectedActiveParams, activeParams);
