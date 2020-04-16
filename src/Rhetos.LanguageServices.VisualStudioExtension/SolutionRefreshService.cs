@@ -27,6 +27,8 @@ using EnvDTE;
 using EnvDTE80;
 using Microsoft;
 using Microsoft.VisualStudio.Shell;
+using VSLangProj;
+using VSLangProj80;
 using IAsyncServiceProvider = Microsoft.VisualStudio.Shell.IAsyncServiceProvider;
 using Task = System.Threading.Tasks.Task;
 
@@ -82,33 +84,17 @@ namespace Rhetos.LanguageServices.VisualStudioExtension
 #pragma warning disable VSTHRD010 // Invoke single-threaded types on Main thread
                     var project = projects.Single(a => a.FullName == source.Key);
 #pragma warning restore VSTHRD010 // Invoke single-threaded types on Main thread
-                    var projectPath = await GetProjectSolutionPathAsync(project);
 
-                    await WriteToOutputWindowAsync(_outputName, $"'{source.Key}' has changed, refreshing project in solution explorer.");
-                    dte.Windows.Item(EnvDTE.Constants.vsWindowKindSolutionExplorer).Activate();
-                    dte.ToolWindows.SolutionExplorer.GetItem(projectPath).Select(vsUISelectionType.vsUISelectionTypeSelect);
-                    dte.ExecuteCommand("View.Refresh", String.Empty);
+                    await WriteToOutputWindowAsync(_outputName, $"'{source.Key}' has changed, refreshing project.");
+
+                    var vsProject = (VSProject2) project.Object;
+                    vsProject.Refresh();
                 }
             }
 
             if (oldActiveWindow != dte.ActiveWindow.Caption)
                 dte.Windows.Item(oldActiveWindow).Activate();
         }
-
-        private async Task<string> GetProjectSolutionPathAsync(Project project)
-        {
-            await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
-            var path = project.Name;
-            while (project.ParentProjectItem?.ContainingProject != null)
-            {
-                path = $"{project.ParentProjectItem.ContainingProject.Name}\\{path}";
-                project = project.ParentProjectItem.ContainingProject;
-            }
-            var solutionName = Path.GetFileNameWithoutExtension(dte.Solution.FullName);
-
-            return $"{solutionName}\\{path}";
-        }
-
         private async Task<Dictionary<string, DateTime?>> EnumerateProjectSourcesAsync(Project[] projects)
         {
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
@@ -154,7 +140,7 @@ namespace Rhetos.LanguageServices.VisualStudioExtension
 
             var projects = new List<EnvDTE.Project>();
 
-            if (project.Kind != ProjectKinds.vsProjectKindSolutionFolder)
+            if (project.Kind == PrjKind.prjKindCSharpProject || project.Kind == PrjKind.prjKindVBProject)
             {
                 projects.Add(project);
             }

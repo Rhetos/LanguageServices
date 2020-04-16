@@ -1,5 +1,9 @@
 # Rhetos Language Service changelog
 
+## v0.9.7-preview
+
+* Refreshing projects in solution after build will no longer impact VS UI
+
 ## v0.9.6-preview
 
 * Changed XML documentation display format

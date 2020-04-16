@@ -22,7 +22,7 @@ Install the `.vsix` as you would install any other Visual Studio extension.
 5. Signature help for concept parameters
 6. Keyword and signature info on hover
 7. XML-style documentation from IConceptInfo implementation classes
-8. Automatic refresh of Rhetos projects when Rhetos generated source files change (this solution explorer refresh is needed to fix IntelliSense)
+8. Automatic refresh of Rhetos projects when Rhetos generated source files change (this refresh is needed to fix IntelliSense)
 
 ## Usage
 
