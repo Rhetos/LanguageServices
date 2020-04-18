@@ -26,6 +26,8 @@ Install the `.vsix` as you would install any other Visual Studio extension.
 
 ## Usage
 
+Install from Visual Studio Marketplace: [Rhetos DSL Language Extension](https://marketplace.visualstudio.com/items?itemName=rhetos.rhetos-languageservices).
+
 Rhetos Language Services will activate whenever `.rhe` file is opened within Visual Studio. An attempt to detect a corresponding Rhetos application is made and if successful, the system will provide IntelliSense and other features to the editor.
 
 **If your `.rhe` document resides in the directory tree inside your Rhetos application, it will automatically be detected by rule (3), so no additional configuration is needed.**
