@@ -22,11 +22,11 @@ Install the `.vsix` as you would install any other Visual Studio extension.
 5. Signature help for concept parameters
 6. Keyword and signature info on hover
 7. XML-style documentation from IConceptInfo implementation classes
-8. Automatic refresh of Rhetos projects when Rhetos generated source files change (this refresh is needed to fix IntelliSense)
+8. Automatic refresh of Rhetos projects when Rhetos generated source files change (this refresh is needed to fix C# IntelliSense)
 
 ## Usage
 
-Rhetos Language Services will activate whenever `.rhe` file is opened within Visual Studio. An attempt to detect a corresponding Rhetos application is made and if successful, the system will provide intellisense and other features to the editor.
+Rhetos Language Services will activate whenever `.rhe` file is opened within Visual Studio. An attempt to detect a corresponding Rhetos application is made and if successful, the system will provide IntelliSense and other features to the editor.
 
 **If your `.rhe` document resides in the directory tree inside your Rhetos application, it will automatically be detected by rule (3), so no additional configuration is needed.**
 
