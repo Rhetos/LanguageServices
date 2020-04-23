@@ -3,7 +3,7 @@
     <Metadata>
         <Identity Id="Rhetos.LanguageServerProtocol.VisualStudioExtension.876c511f-12ec-4532-9a84-2f9ccf8b1732" Version="0.9.8" Language="en-US" Publisher="Rhetos" />
         <DisplayName>Rhetos DSL Language Extension</DisplayName>
-        <Description xml:space="preserve">Rhetos DSL Language ExtensionRhetos DSL Language Extension</Description>
+        <Description xml:space="preserve">Rhetos DSL Language Extension</Description>
     </Metadata>
     <Installation>
         <InstallationTarget Id="Microsoft.VisualStudio.Community" Version="[16.0, 17.0)" />
