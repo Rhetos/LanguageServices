@@ -70,7 +70,6 @@ namespace Rhetos.LanguageServices.VisualStudioExtension
         {
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
 
-            await WriteToOutputWindowAsync(_outputName, "Build done, checking Rhetos projects for changed source files.");
             var oldActiveWindow = dte.ActiveWindow.Caption;
 
             var projects = await GetProjectsAsync(dte.Solution);
