@@ -182,7 +182,7 @@ namespace Rhetos.LanguageServices.Server.Services
                 resolveDelegate = CreateAssemblyResolveDelegate(assemblyList);
                 AppDomain.CurrentDomain.AssemblyResolve += resolveDelegate;
 
-                var configurationProvider = new ConfigurationBuilder()
+                var configurationProvider = new ConfigurationBuilder(rhetosLogProvider)
                     .AddOptions(rhetosProjectContent.RhetosBuildEnvironment)
                     .AddOptions(rhetosProjectContent.RhetosTargetEnvironment)
                     .AddOptions(new LegacyPathsOptions
@@ -195,7 +195,7 @@ namespace Rhetos.LanguageServices.Server.Services
                     .AddJsonFile(Path.Combine(rootPath, "rhetos-build.settings.json"), optional: true)
                     .Build();
 
-                var builder = new RhetosContainerBuilder(configurationProvider, rhetosLogProvider, () => assemblyList);
+                var builder = new RhetosContainerBuilder(configurationProvider, rhetosLogProvider, assemblyList);
                 var scanner = builder.GetPluginScanner();
                 var conceptInfoTypes = scanner.FindPlugins(typeof(IConceptInfo)).Select(a => a.Type).ToArray();
                 log.LogDebug($"Plugin scanner found {conceptInfoTypes.Length} IConceptInfo types.");
@@ -281,7 +281,7 @@ namespace Rhetos.LanguageServices.Server.Services
             if (configurationFile == null)
                 return (null, null);
 
-            var configurationProvider = new ConfigurationBuilder()
+            var configurationProvider = new ConfigurationBuilder(rhetosLogProvider)
                 .AddJsonFile(configurationFile)
                 .Build();
 
