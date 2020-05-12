@@ -181,7 +181,7 @@ Module module1 // comment
 
         [DataTestMethod]
         
-        [DataRow(1, 0, 170, null, null)]
+        [DataRow(1, 0, 171, null, null)]
         [DataRow(1, 8, 0, null, null)]
         [DataRow(1, 10, 0, null, null)]
         [DataRow(1, 30, 0, null, null)]
@@ -328,7 +328,7 @@ WithParent Module2.Entity2 name2 ParentModule param2;
                 .OrderBy(a => a)
                 .ToList();
             Console.WriteLine($"Keywords: [{completion.Count}] {string.Join(",", completion)}");
-            Assert.AreEqual(170, completion.Count);
+            Assert.AreEqual(171, completion.Count);
         }
 
         [TestMethod]
@@ -339,7 +339,7 @@ WithParent Module2.Entity2 name2 ParentModule param2;
 
             var completion = rhetosDocument.GetCompletionKeywordsAtPosition(lineChr);
             Console.WriteLine($"Keywords: [{completion.Count}] {string.Join(",", completion)}");
-            Assert.AreEqual(170, completion.Count);
+            Assert.AreEqual(171, completion.Count);
         }
 
         [DataTestMethod]
