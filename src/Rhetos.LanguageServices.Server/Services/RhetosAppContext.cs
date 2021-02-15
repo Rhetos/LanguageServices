@@ -103,12 +103,17 @@ namespace Rhetos.LanguageServices.Server.Services
                         return false;
                     }
 
-                    log.LogInformation($"Some assemblies used by this Rhetos project have changed. Marking as dirty.");
+                    var changedAssembly = changedAssemblies.First();
+                    string changedAssemblyName = changedAssembly.a.path != null ? Path.GetFileName(changedAssembly.a.path) : "";
+                    log.LogDebug($"Changed assembly:{Environment.NewLine}" +
+                        $"{changedAssembly.a.path}, {changedAssembly.a.timestamp}{Environment.NewLine}" +
+                        $"{changedAssembly.b.path}, {changedAssembly.b.timestamp}");
+                    log.LogInformation($"Some assemblies used by this Rhetos project have changed. Marking as dirty. ({changedAssemblyName})");
                     return true;
                 }
                 catch (Exception e)
                 {
-                    log.LogWarning($"Unexpected error occured during Rhetos project change check: {e.Message}.");
+                    log.LogWarning($"Unexpected error occurred during Rhetos project change check: {e.Message}.");
                     return true;
                 }
             }
