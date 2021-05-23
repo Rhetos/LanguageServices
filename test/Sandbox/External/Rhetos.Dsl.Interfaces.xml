@@ -1,0 +1,272 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Rhetos.Dsl.Interfaces</name>
+    </assembly>
+    <members>
+        <member name="M:Rhetos.Dsl.ConceptInfoHelper.GetKey(Rhetos.Dsl.IConceptInfo)">
+            <summary>
+            Returns a string that <b>uniquely describes the concept instance</b>.
+            The string contains concept's base class type and a list of concept's key properties.
+            </summary>
+            <remarks>
+            If the concept inherits another concept, the base class type will be used instead of
+            actual concept's type to achieve normalized form. That way, the resulting string
+            can be used in scenarios such as resolving references to other concepts where
+            a reference can be of the base class type, but referencing inherited type.
+            </remarks>
+        </member>
+        <member name="M:Rhetos.Dsl.ConceptInfoHelper.GetUserDescription(Rhetos.Dsl.IConceptInfo)">
+            <summary>
+            Returns a string that describes the concept instance in a user-friendly manner.
+            The string contains concept's keyword and a list of concept's key properties.
+            </summary>
+            <remarks>
+            This description in not unique because different concepts might have same keyword.
+            </remarks>
+        </member>
+        <member name="M:Rhetos.Dsl.ConceptInfoHelper.GetKeyProperties(Rhetos.Dsl.IConceptInfo)">
+            <summary>
+            Returns a string with a dot-separated list of concept's key properties.
+            </summary>
+        </member>
+        <member name="M:Rhetos.Dsl.ConceptInfoHelper.GetFullDescription(Rhetos.Dsl.IConceptInfo)">
+            <summary>
+            Returns a string that fully describes the concept instance.
+            The string contains concept's type name and all concept's properties.
+            </summary>
+        </member>
+        <member name="M:Rhetos.Dsl.ConceptInfoHelper.GetFullDescriptionAsBaseConcept(Rhetos.Dsl.IConceptInfo,System.Type)">
+            <summary>
+            Returns a string that describes the concept instance cast as a base concept.
+            The string contains base concept's type name and the base concept's properties.
+            </summary>
+        </member>
+        <member name="M:Rhetos.Dsl.ConceptInfoHelper.GetKeyword(Rhetos.Dsl.IConceptInfo)">
+            <summary>
+            Return value is null if IConceptInfo implementations does not have ConceptKeyword attribute. Such classes are usually used as a base class for other concepts.
+            </summary>
+        </member>
+        <member name="M:Rhetos.Dsl.ConceptInfoHelper.GetKeyword(System.Type)">
+            <summary>
+            Return value is null if IConceptInfo implementations does not have ConceptKeyword attribute. Such classes are usually used as a base class for other concepts.
+            </summary>
+        </member>
+        <member name="M:Rhetos.Dsl.ConceptInfoHelper.GetDirectDependencies(Rhetos.Dsl.IConceptInfo)">
+            <summary>
+            Returns a list of concepts that this concept directly depends on.
+            </summary>
+        </member>
+        <member name="M:Rhetos.Dsl.ConceptInfoHelper.GetAllDependencies(Rhetos.Dsl.IConceptInfo)">
+            <summary>
+            Returns a list of concepts that this concept depends on directly or indirectly.
+            </summary>
+        </member>
+        <member name="M:Rhetos.Dsl.ConceptInfoHelper.GetErrorDescription(Rhetos.Dsl.IConceptInfo)">
+            <summary>
+            Use only for generating an error details. Returns the concept's description ignoring possible null reference errors.
+            </summary>
+        </member>
+        <member name="P:Rhetos.Dsl.ConceptMemberSyntax.ConceptType">
+            <summary>
+            If a member references a concrete concept, this property describes type of that concept.
+            It is set only if <see cref="P:Rhetos.Dsl.ConceptMemberBase.IsConceptInfo"/> is true and <see cref="P:Rhetos.Dsl.ConceptMemberBase.IsConceptInfoInterface"/> is false, null otherwise.
+            </summary>
+        </member>
+        <member name="F:Rhetos.Dsl.ConceptMetadata._pluginsByType">
+            <summary>First key is the metadata interface type (inherits <see cref="T:Rhetos.Dsl.IConceptMetadataExtension"/>), second key is the concept type (inherits <see cref="T:Rhetos.Dsl.IConceptInfo"/>).</summary>
+        </member>
+        <member name="F:Rhetos.Dsl.ConceptMetadata._pluginsByTypeOrDerivedConcept">
+            <summary>First key is the metadata interface type (inherits <see cref="T:Rhetos.Dsl.IConceptMetadataExtension"/>), second key is the concept type (inherits <see cref="T:Rhetos.Dsl.IConceptInfo"/>).</summary>
+        </member>
+        <member name="T:Rhetos.Dsl.ConceptParentAttribute">
+            <summary>
+            It is possible to nest a concept within a parent concept ("module x { entity y; }") or to use it explicitly ("entity x.y;").
+            Parent reference is defined by a property that references another concept, marked with <see cref="T:Rhetos.Dsl.ConceptParentAttribute"/> or the first property by default.
+            Derived concept can override parent property with its own property marked with <see cref="T:Rhetos.Dsl.ConceptParentAttribute"/>;
+            this allows construction of recursive concepts such as menu items.
+            </summary>
+        </member>
+        <member name="P:Rhetos.Dsl.ConceptSyntaxNode.Parameters">
+            <summary>
+            Elements are either <see cref="T:Rhetos.Dsl.ConceptSyntaxNode"/> or <see cref="T:System.String"/>.
+            </summary>
+        </member>
+        <member name="M:Rhetos.Dsl.ConceptSyntaxNode.GetUserDescription">
+            <summary>
+            Returns a string that describes the concept instance in a user-friendly manner.
+            The string contains concept's keyword and a list of concept's key properties.
+            </summary>
+            <remarks>
+            This description in not unique because different concepts might have same keyword.
+            </remarks>
+        </member>
+        <member name="T:Rhetos.Dsl.ConceptType">
+            <summary>
+            Represents a distinct concept type (implementation of <see cref="T:Rhetos.Dsl.IConceptInfo"/>),
+            and describes the DSL syntax of the concept.
+            </summary>
+            <remarks>
+            It provides separation from <see cref="T:Rhetos.Dsl.IConceptInfo"/> types, to allows serialization
+            of DSL grammar and use of the grammar in external processes, such as DSL IntelliSense plugin.
+            </remarks>
+        </member>
+        <member name="P:Rhetos.Dsl.ConceptType.AssemblyQualifiedName">
+            <summary>
+            <see cref="P:System.Type.AssemblyQualifiedName"/> of <see cref="T:Rhetos.Dsl.IConceptInfo"/> implementation class for this concept.
+            </summary>
+        </member>
+        <member name="P:Rhetos.Dsl.ConceptType.BaseTypesAssemblyQualifiedName">
+            <summary>
+            Base types, excluding the current concept type itself (<see cref="P:Rhetos.Dsl.ConceptType.AssemblyQualifiedName"/>).
+            The array is sorted by inheritance depth, each element is a derivation of the previous one.
+            </summary>
+        </member>
+        <member name="P:Rhetos.Dsl.ConceptType.BaseTypeName">
+            <summary>
+            Short type name of the root concept type, used for unique concept key definition.
+            It is same as <see cref="P:Rhetos.Dsl.ConceptType.TypeName"/> if the <see cref="T:Rhetos.Dsl.IConceptInfo"/> implementation is not a derivation of another concept.
+            </summary>
+        </member>
+        <member name="P:Rhetos.Dsl.ConceptType.TypeName">
+            <summary>
+            Short type name of <see cref="T:Rhetos.Dsl.IConceptInfo"/> implementation class for this concept.
+            </summary>
+        </member>
+        <member name="T:Rhetos.Dsl.DslModelIndexByReference.ConceptsIndex">
+            <summary>
+            Keys are: 1. Referenced concept key, 2. Returned concept type, 3. Reference property name.
+            </summary>
+        </member>
+        <member name="T:Rhetos.Dsl.DslModelIndexByReference.Subtypes">
+            <summary>
+            The <see cref="M:Rhetos.Utilities.MultiDictionary`2.Get(`0)"/> method returns all previously registered derivations
+            or implementations (by <see cref="M:Rhetos.Dsl.DslModelIndexByReference.Subtypes.Add(System.Type)"/>) of the given base class or an index,
+            including the supertype itself (if registered).
+            The supertype may be an interface or a class, except the <see cref="T:System.Object"/> type.
+            </summary>
+        </member>
+        <member name="M:Rhetos.Dsl.DslModelIndexerByTypeExtensions.FindByType``1(Rhetos.Dsl.IDslModel)">
+            <summary>
+            Returns all concepts of the given interface or type, including derivations.
+            </summary>
+        </member>
+        <member name="T:Rhetos.Dsl.IAlternativeInitializationConcept">
+            <summary>
+            Implement this interface to alter a concept's DSL syntax
+            by ignoring some of its properties when parsing a DSL script.
+            The ignored properties (non-parsable) must be initialized manually in the InitializeNonparsableProperties function.
+            
+            When creating this kind of concept from a IMacroConcept, it is not needed to assign non-parsable properties.
+            </summary>
+        </member>
+        <member name="M:Rhetos.Dsl.IAlternativeInitializationConcept.DeclareNonparsableProperties">
+            <summary>
+            The function should return the names of public member properties that will be ignored when parsing a DSL script.
+            The properties should be initialized in InitializeNonparsableProperties() function.
+            The list may contain properties inherited from a base class.
+            </summary>
+        </member>
+        <member name="M:Rhetos.Dsl.IAlternativeInitializationConcept.InitializeNonparsableProperties(System.Collections.Generic.IEnumerable{Rhetos.Dsl.IConceptInfo}@)">
+            <summary>
+            The function may create new concepts referenced by NonparsableMembers, similar to IMacroConcept.CreateNewConcepts.
+            </summary>
+            <param name="createdConcepts">
+            Created new concepts referenced by non-parsable members, set to null otherwise.
+            Create only those concepts that could be created by IMacroConcept, but are necessary to initialize NonparsableMembers members.
+            </param>
+            <remarks>
+            Member references to other concepts are not resolved before this function is called. This means that inside this function,
+            when using the member properties that reference other concepts, only key properties of the other concepts and base concept
+            types are available. An exception to this rule is a reference to parent concept, but only when using embedded syntax in the DSL script.
+            </remarks>
+        </member>
+        <member name="M:Rhetos.Dsl.IConceptMacro`1.CreateNewConcepts(`0,Rhetos.Dsl.IDslModel)">
+            <summary>
+            If the function creates a concept that already exists, that concept will be safely ignored.
+            </summary>
+        </member>
+        <member name="M:Rhetos.Dsl.IConceptParser.Parse(Rhetos.Dsl.ITokenReader,System.Collections.Generic.Stack{Rhetos.Dsl.ConceptSyntaxNode},System.Collections.Generic.List{System.String}@)">
+            <summary>
+            If the keyword is not recognized return empty error string.
+            If the keyword is recognized, but the syntax is wrong, return error description.
+            </summary>
+        </member>
+        <member name="T:Rhetos.Dsl.IDslModel">
+            <summary>
+            DSL model represents a list of features of the generated application.
+            It includes concepts directly written in DSL scripts, and additionally generated concepts (by macro concepts, for example).
+            </summary>
+            <remarks>
+            DSL model is similar to an abstract syntax tree, but it is represented as a directed acyclic graph with multiple root nodes.
+            </remarks>
+        </member>
+        <member name="P:Rhetos.Dsl.IDslModel.Concepts">
+            <summary>
+            The concepts are already sorted by their dependencies.
+            </summary>
+        </member>
+        <member name="M:Rhetos.Dsl.IDslModel.FindByKey(System.String)">
+            <summary>
+            See ConceptInfoHelper.GetKey function description for expected format of conceptKey.
+            Returns null is there is no concept with the given key.
+            </summary>
+        </member>
+        <member name="M:Rhetos.Dsl.IMacroConcept.CreateNewConcepts(System.Collections.Generic.IEnumerable{Rhetos.Dsl.IConceptInfo})">
+            <summary>
+            If the function creates a concept that already exists, that concept will be ignored.
+            </summary>
+        </member>
+        <member name="T:Rhetos.Dsl.InitializationConcept">
+            <summary>
+            An instance of this concept is always present as the first concept in the DSL model.
+            This concept can be used for code generators that generate infrastructure classes and singletons.
+            </summary>
+        </member>
+        <member name="P:Rhetos.Dsl.InitializationConcept.RhetosVersion">
+            <summary>
+            Rhetos framework version.
+            Note that it is not compatible with System.Version because Rhetos version may contain
+            textual pre-release information and build metadata (see Semantic Versioning 2.0.0 for example).
+            </summary>
+        </member>
+        <member name="M:Rhetos.Dsl.ITokenReader.ReadText">
+            <summary>
+            Returns error if there are no more tokens or the next token is a special token.
+            </summary>
+        </member>
+        <member name="M:Rhetos.Dsl.ITokenReader.TryRead(System.String)">
+            <summary>
+            Returns false if next token does not equal "value". Ignores case.
+            </summary>
+        </member>
+        <member name="M:Rhetos.Dsl.ITokenReader.GetPositionInScript">
+            <summary>
+            Returns the position of current token in its script
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:Rhetos.Dsl.IValidatedConcept">
+            <summary>
+            An implementation of IConceptInfo may implement this interface
+            to enforce constraints that cannot be enforced by data structure or inheritance.
+            </summary>
+        </member>
+        <member name="M:Rhetos.Dsl.IValidatedConcept.CheckSemantics(Rhetos.Dsl.IDslModel)">
+            <summary>
+            Throws exception if the instance of IConceptInfo has invalid data.
+            </summary>
+        </member>
+        <member name="T:Rhetos.Dsl.IValidationConcept">
+            <summary>
+            An implementation of IConceptInfo may implement this interface
+            to enforce constraints that cannot be enforced by data structure or inheritance.
+            </summary>
+        </member>
+        <member name="M:Rhetos.Dsl.IValidationConcept.CheckSemantics(System.Collections.Generic.IEnumerable{Rhetos.Dsl.IConceptInfo})">
+            <summary>
+            Throws exception if the instance of IConceptInfo has invalid data.
+            </summary>
+        </member>
+    </members>
+</doc>

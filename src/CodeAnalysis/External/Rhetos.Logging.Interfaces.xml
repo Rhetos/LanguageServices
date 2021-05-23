@@ -1,0 +1,46 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Rhetos.Logging.Interfaces</name>
+    </assembly>
+    <members>
+        <member name="F:Rhetos.Logging.EventType.Trace">
+            <summary>
+            Very detailed logs, which may include high-volume information such as protocol payloads.
+            This log level is typically only enabled for debugging.
+            </summary>
+        </member>
+        <member name="F:Rhetos.Logging.EventType.Info">
+            <summary>
+            Information messages, which are normally enabled in production environment and kept permanently.
+            </summary>
+        </member>
+        <member name="F:Rhetos.Logging.EventType.Warning">
+            <summary>
+            Warning messages, which are normally enabled in production environment and kept permanently.
+            </summary>
+        </member>
+        <member name="F:Rhetos.Logging.EventType.Error">
+            <summary>
+            Error messages, which are normally sent to administrator in production environment.
+            </summary>
+        </member>
+        <member name="P:Rhetos.Logging.ILogger.Name">
+            <summary>
+            Returns the logger name that was provided as argument for <see cref="M:Rhetos.Logging.ILogProvider.GetLogger(System.String)"/>.
+            </summary>
+        </member>
+        <member name="M:Rhetos.Logging.LoggerHelper.Write(Rhetos.Logging.ILogger,System.Diagnostics.Stopwatch,System.Func{System.String})">
+            <summary>
+            Logs 'Trace' or 'Info' level, depending on the event duration.
+            Restarts the stopwatch.
+            </summary>
+        </member>
+        <member name="M:Rhetos.Logging.LoggerHelper.Write(Rhetos.Logging.ILogger,System.Diagnostics.Stopwatch,System.String)">
+            <summary>
+            Logs 'Trace' or 'Info' level, depending on the event duration.
+            Restarts the stopwatch.
+            </summary>
+        </member>
+    </members>
+</doc>
