@@ -1,11 +1,14 @@
 {
   "$id": "1",
+  "Version": "5.0.0-dev2105301522eea541",
+  "ExcessDotInKey": 0,
+  "DatabaseLanguage": "MsSql",
   "ConceptTypes": [
     {
       "$id": "2",
       "AssemblyQualifiedName": "Rhetos.Dsl.InitializationConcept, Rhetos.Dsl.Interfaces, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "InitializationConcept",
+      "RootTypeName": "InitializationConcept",
       "TypeName": "InitializationConcept",
       "Keyword": null,
       "Members": [
@@ -31,7 +34,7 @@
       "$id": "4",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.EntityHistoryAllPropertiesInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "EntityHistoryAllPropertiesInfo",
+      "RootTypeName": "EntityHistoryAllPropertiesInfo",
       "TypeName": "EntityHistoryAllPropertiesInfo",
       "Keyword": "AllProperties",
       "Members": [
@@ -41,7 +44,7 @@
             "$id": "6",
             "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.EntityHistoryInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
             "BaseTypesAssemblyQualifiedName": [],
-            "BaseTypeName": "EntityHistoryInfo",
+            "RootTypeName": "EntityHistoryInfo",
             "TypeName": "EntityHistoryInfo",
             "Keyword": "History",
             "Members": [
@@ -53,7 +56,7 @@
                   "BaseTypesAssemblyQualifiedName": [
                     "Rhetos.Dsl.DefaultConcepts.DataStructureInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null"
                   ],
-                  "BaseTypeName": "DataStructureInfo",
+                  "RootTypeName": "DataStructureInfo",
                   "TypeName": "EntityInfo",
                   "Keyword": "Entity",
                   "Members": [
@@ -63,7 +66,7 @@
                         "$id": "10",
                         "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.ModuleInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
                         "BaseTypesAssemblyQualifiedName": [],
-                        "BaseTypeName": "ModuleInfo",
+                        "RootTypeName": "ModuleInfo",
                         "TypeName": "ModuleInfo",
                         "Keyword": "Module",
                         "Members": [
@@ -169,7 +172,7 @@
       "$id": "14",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.EntityHistoryPropertyInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "EntityHistoryPropertyInfo",
+      "RootTypeName": "EntityHistoryPropertyInfo",
       "TypeName": "EntityHistoryPropertyInfo",
       "Keyword": "History",
       "Members": [
@@ -179,7 +182,7 @@
             "$id": "16",
             "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.PropertyInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
             "BaseTypesAssemblyQualifiedName": [],
-            "BaseTypeName": "PropertyInfo",
+            "RootTypeName": "PropertyInfo",
             "TypeName": "PropertyInfo",
             "Keyword": null,
             "Members": [
@@ -189,7 +192,7 @@
                   "$id": "18",
                   "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.DataStructureInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
                   "BaseTypesAssemblyQualifiedName": [],
-                  "BaseTypeName": "DataStructureInfo",
+                  "RootTypeName": "DataStructureInfo",
                   "TypeName": "DataStructureInfo",
                   "Keyword": "DataStructure",
                   "Members": [
@@ -293,7 +296,7 @@
             "$id": "24",
             "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.SqlFunctionInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
             "BaseTypesAssemblyQualifiedName": [],
-            "BaseTypeName": "SqlFunctionInfo",
+            "RootTypeName": "SqlFunctionInfo",
             "TypeName": "SqlFunctionInfo",
             "Keyword": "SqlFunction",
             "Members": [
@@ -382,7 +385,7 @@
             "BaseTypesAssemblyQualifiedName": [
               "Rhetos.Dsl.DefaultConcepts.DataStructureInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null"
             ],
-            "BaseTypeName": "DataStructureInfo",
+            "RootTypeName": "DataStructureInfo",
             "TypeName": "SqlQueryableInfo",
             "Keyword": "SqlQueryable",
             "Members": [
@@ -454,7 +457,7 @@
             "$id": "35",
             "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.WriteInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
             "BaseTypesAssemblyQualifiedName": [],
-            "BaseTypeName": "WriteInfo",
+            "RootTypeName": "WriteInfo",
             "TypeName": "WriteInfo",
             "Keyword": "Write",
             "Members": [
@@ -515,7 +518,7 @@
         "Rhetos.Dsl.DefaultConcepts.PropertyInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
         "Rhetos.Dsl.DefaultConcepts.ReferencePropertyInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null"
       ],
-      "BaseTypeName": "PropertyInfo",
+      "RootTypeName": "PropertyInfo",
       "TypeName": "HierarchyInfo",
       "Keyword": "Hierarchy",
       "Members": [
@@ -575,7 +578,7 @@
       "$id": "42",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.HierarchySingleRootInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "HierarchySingleRootInfo",
+      "RootTypeName": "HierarchySingleRootInfo",
       "TypeName": "HierarchySingleRootInfo",
       "Keyword": "SingleRoot",
       "Members": [
@@ -603,7 +606,7 @@
       "$id": "44",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.HierarchySingleRootInternalInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "HierarchySingleRootInternalInfo",
+      "RootTypeName": "HierarchySingleRootInternalInfo",
       "TypeName": "HierarchySingleRootInternalInfo",
       "Keyword": null,
       "Members": [
@@ -652,7 +655,7 @@
         "Rhetos.Dsl.DefaultConcepts.ReferencePropertyInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
         "Rhetos.Dsl.DefaultConcepts.HierarchyInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null"
       ],
-      "BaseTypeName": "PropertyInfo",
+      "RootTypeName": "PropertyInfo",
       "TypeName": "HierarchyWithPathInfo",
       "Keyword": "Hierarchy",
       "Members": [
@@ -757,7 +760,7 @@
       "$id": "54",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.AlternativeKeyComparerInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "AlternativeKeyComparerInfo",
+      "RootTypeName": "AlternativeKeyComparerInfo",
       "TypeName": "AlternativeKeyComparerInfo",
       "Keyword": null,
       "Members": [
@@ -767,7 +770,7 @@
             "$id": "56",
             "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.EntityComputedFromInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
             "BaseTypesAssemblyQualifiedName": [],
-            "BaseTypeName": "EntityComputedFromInfo",
+            "RootTypeName": "EntityComputedFromInfo",
             "TypeName": "EntityComputedFromInfo",
             "Keyword": "ComputedFrom",
             "Members": [
@@ -829,7 +832,7 @@
       "BaseTypesAssemblyQualifiedName": [
         "Rhetos.Dsl.DefaultConcepts.ApplyFilterOnClientReadWhereInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null"
       ],
-      "BaseTypeName": "ApplyFilterOnClientReadWhereInfo",
+      "RootTypeName": "ApplyFilterOnClientReadWhereInfo",
       "TypeName": "ApplyFilterOnClientReadAllInfo",
       "Keyword": "ApplyFilterOnClientRead",
       "Members": [
@@ -887,7 +890,7 @@
       "$id": "63",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.ApplyFilterOnClientReadWhereInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "ApplyFilterOnClientReadWhereInfo",
+      "RootTypeName": "ApplyFilterOnClientReadWhereInfo",
       "TypeName": "ApplyFilterOnClientReadWhereInfo",
       "Keyword": "ApplyFilterOnClientRead",
       "Members": [
@@ -945,7 +948,7 @@
       "$id": "67",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.ChangesOnBaseItemInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "ChangesOnBaseItemInfo",
+      "RootTypeName": "ChangesOnBaseItemInfo",
       "TypeName": "ChangesOnBaseItemInfo",
       "Keyword": "ChangesOnBaseItem",
       "Members": [
@@ -973,7 +976,7 @@
       "$id": "69",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.ChangesOnChangedItemsInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "ChangesOnChangedItemsInfo",
+      "RootTypeName": "ChangesOnChangedItemsInfo",
       "TypeName": "ChangesOnChangedItemsInfo",
       "Keyword": "ChangesOnChangedItems",
       "Members": [
@@ -1048,7 +1051,7 @@
       "$id": "74",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.ChangesOnLinkedItemsInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "ChangesOnLinkedItemsInfo",
+      "RootTypeName": "ChangesOnLinkedItemsInfo",
       "TypeName": "ChangesOnLinkedItemsInfo",
       "Keyword": "ChangesOnLinkedItems",
       "Members": [
@@ -1077,7 +1080,7 @@
             "BaseTypesAssemblyQualifiedName": [
               "Rhetos.Dsl.DefaultConcepts.PropertyInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null"
             ],
-            "BaseTypeName": "PropertyInfo",
+            "RootTypeName": "PropertyInfo",
             "TypeName": "ReferencePropertyInfo",
             "Keyword": "Reference",
             "Members": [
@@ -1152,7 +1155,7 @@
       "$id": "81",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.ChangesOnReferencedInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "ChangesOnReferencedInfo",
+      "RootTypeName": "ChangesOnReferencedInfo",
       "TypeName": "ChangesOnReferencedInfo",
       "Keyword": "ChangesOnReferenced",
       "Members": [
@@ -1195,7 +1198,7 @@
       "$id": "84",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.ComposableFilterApplyOnClientReadInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "ComposableFilterApplyOnClientReadInfo",
+      "RootTypeName": "ComposableFilterApplyOnClientReadInfo",
       "TypeName": "ComposableFilterApplyOnClientReadInfo",
       "Keyword": "ApplyOnClientRead",
       "Members": [
@@ -1207,7 +1210,7 @@
             "BaseTypesAssemblyQualifiedName": [
               "Rhetos.Dsl.DefaultConcepts.QueryFilterInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null"
             ],
-            "BaseTypeName": "QueryFilterInfo",
+            "RootTypeName": "QueryFilterInfo",
             "TypeName": "ComposableFilterByInfo",
             "Keyword": "ComposableFilterBy",
             "Members": [
@@ -1283,7 +1286,7 @@
       "$id": "90",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.ComposableFilterByReferencedInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "ComposableFilterByReferencedInfo",
+      "RootTypeName": "ComposableFilterByReferencedInfo",
       "TypeName": "ComposableFilterByReferencedInfo",
       "Keyword": "ComposableFilterByReferenced",
       "Members": [
@@ -1360,7 +1363,7 @@
       "BaseTypesAssemblyQualifiedName": [
         "Rhetos.Dsl.DefaultConcepts.ComposableFilterByReferencedInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null"
       ],
-      "BaseTypeName": "ComposableFilterByReferencedInfo",
+      "RootTypeName": "ComposableFilterByReferencedInfo",
       "TypeName": "ComposableFilterByReferencedNoSubfilterInfo",
       "Keyword": "ComposableFilterByReferenced",
       "Members": [
@@ -1435,7 +1438,7 @@
       "$id": "100",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.ComposableFilterUseExecutionContextInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "ComposableFilterUseExecutionContextInfo",
+      "RootTypeName": "ComposableFilterUseExecutionContextInfo",
       "TypeName": "ComposableFilterUseExecutionContextInfo",
       "Keyword": "UseExecutionContext",
       "Members": [
@@ -1463,7 +1466,7 @@
       "$id": "102",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.ComputationUseExecutionContextInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "ComputationUseExecutionContextInfo",
+      "RootTypeName": "ComputationUseExecutionContextInfo",
       "TypeName": "ComputationUseExecutionContextInfo",
       "Keyword": "UseExecutionContext",
       "Members": [
@@ -1491,7 +1494,7 @@
       "$id": "104",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.ComputedFromKeyPropertiesInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "ComputedFromKeyPropertiesInfo",
+      "RootTypeName": "ComputedFromKeyPropertiesInfo",
       "TypeName": "ComputedFromKeyPropertiesInfo",
       "Keyword": "KeyProperties",
       "Members": [
@@ -1536,7 +1539,7 @@
       "BaseTypesAssemblyQualifiedName": [
         "Rhetos.Dsl.DefaultConcepts.DataStructureInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null"
       ],
-      "BaseTypeName": "DataStructureInfo",
+      "RootTypeName": "DataStructureInfo",
       "TypeName": "ComputedInfo",
       "Keyword": "Computed",
       "Members": [
@@ -1594,7 +1597,7 @@
       "$id": "111",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.ComputeForNewBaseItemsInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "ComputeForNewBaseItemsInfo",
+      "RootTypeName": "ComputeForNewBaseItemsInfo",
       "TypeName": "ComputeForNewBaseItemsInfo",
       "Keyword": "ComputeForNewBaseItems",
       "Members": [
@@ -1636,7 +1639,7 @@
             "$id": "115",
             "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.UniqueReferenceInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
             "BaseTypesAssemblyQualifiedName": [],
-            "BaseTypeName": "UniqueReferenceInfo",
+            "RootTypeName": "UniqueReferenceInfo",
             "TypeName": "UniqueReferenceInfo",
             "Keyword": "UniqueReference",
             "Members": [
@@ -1698,7 +1701,7 @@
       "BaseTypesAssemblyQualifiedName": [
         "Rhetos.Dsl.DefaultConcepts.ComputeForNewBaseItemsInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null"
       ],
-      "BaseTypeName": "ComputeForNewBaseItemsInfo",
+      "RootTypeName": "ComputeForNewBaseItemsInfo",
       "TypeName": "ComputeForNewBaseItemsWithoutFilterInfo",
       "Keyword": "ComputeForNewBaseItems",
       "Members": [
@@ -1758,7 +1761,7 @@
       "$id": "122",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.ComputeForNewItemsInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "ComputeForNewItemsInfo",
+      "RootTypeName": "ComputeForNewItemsInfo",
       "TypeName": "ComputeForNewItemsInfo",
       "Keyword": "ComputeForNewItems",
       "Members": [
@@ -1803,7 +1806,7 @@
       "BaseTypesAssemblyQualifiedName": [
         "Rhetos.Dsl.DefaultConcepts.ComputeForNewItemsInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null"
       ],
-      "BaseTypeName": "ComputeForNewItemsInfo",
+      "RootTypeName": "ComputeForNewItemsInfo",
       "TypeName": "ComputeForNewItemsWithoutFilterInfo",
       "Keyword": "ComputeForNewItems",
       "Members": [
@@ -1849,7 +1852,7 @@
         "Rhetos.Dsl.DefaultConcepts.InvalidDataInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
         "Rhetos.Dsl.DefaultConcepts.InvalidDataMarkPropertyInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null"
       ],
-      "BaseTypeName": "InvalidDataInfo",
+      "RootTypeName": "InvalidDataInfo",
       "TypeName": "DenySaveForPropertyInfo",
       "Keyword": "DenySave",
       "Members": [
@@ -1926,7 +1929,7 @@
       "BaseTypesAssemblyQualifiedName": [
         "Rhetos.Dsl.DefaultConcepts.InvalidDataInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null"
       ],
-      "BaseTypeName": "InvalidDataInfo",
+      "RootTypeName": "InvalidDataInfo",
       "TypeName": "DenySaveInfo",
       "Keyword": "DenySave",
       "Members": [
@@ -1984,7 +1987,7 @@
       "$id": "137",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.EntityComputedFromAllPropertiesInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "EntityComputedFromAllPropertiesInfo",
+      "RootTypeName": "EntityComputedFromAllPropertiesInfo",
       "TypeName": "EntityComputedFromAllPropertiesInfo",
       "Keyword": "AllProperties",
       "Members": [
@@ -2012,7 +2015,7 @@
       "$id": "139",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.EntityComputedFromDefaultLoadFilterInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "EntityComputedFromDefaultLoadFilterInfo",
+      "RootTypeName": "EntityComputedFromDefaultLoadFilterInfo",
       "TypeName": "EntityComputedFromDefaultLoadFilterInfo",
       "Keyword": "DefaultLoadFilter",
       "Members": [
@@ -2058,7 +2061,7 @@
       "$id": "142",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.FilterByBaseInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "FilterByBaseInfo",
+      "RootTypeName": "FilterByBaseInfo",
       "TypeName": "FilterByBaseInfo",
       "Keyword": "FilterByBase",
       "Members": [
@@ -2101,7 +2104,7 @@
       "$id": "145",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.FilterByInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "FilterByInfo",
+      "RootTypeName": "FilterByInfo",
       "TypeName": "FilterByInfo",
       "Keyword": "FilterBy",
       "Members": [
@@ -2159,7 +2162,7 @@
       "$id": "149",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.FilterByLinkedItemsInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "FilterByLinkedItemsInfo",
+      "RootTypeName": "FilterByLinkedItemsInfo",
       "TypeName": "FilterByLinkedItemsInfo",
       "Keyword": "FilterByLinkedItems",
       "Members": [
@@ -2219,7 +2222,7 @@
       "$id": "153",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.FilterByReferencedInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "FilterByReferencedInfo",
+      "RootTypeName": "FilterByReferencedInfo",
       "TypeName": "FilterByReferencedInfo",
       "Keyword": "FilterByReferenced",
       "Members": [
@@ -2296,7 +2299,7 @@
       "BaseTypesAssemblyQualifiedName": [
         "Rhetos.Dsl.DefaultConcepts.FilterByReferencedInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null"
       ],
-      "BaseTypeName": "FilterByReferencedInfo",
+      "RootTypeName": "FilterByReferencedInfo",
       "TypeName": "FilterByReferencedNoSubfilterInfo",
       "Keyword": "FilterByReferenced",
       "Members": [
@@ -2371,7 +2374,7 @@
       "$id": "163",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.FilterInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "FilterInfo",
+      "RootTypeName": "FilterInfo",
       "TypeName": "FilterInfo",
       "Keyword": null,
       "Members": [
@@ -2414,7 +2417,7 @@
       "$id": "166",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.FilterUseExecutionContextInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "FilterUseExecutionContextInfo",
+      "RootTypeName": "FilterUseExecutionContextInfo",
       "TypeName": "FilterUseExecutionContextInfo",
       "Keyword": "UseExecutionContext",
       "Members": [
@@ -2442,7 +2445,7 @@
       "$id": "168",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.InvalidDataAllowSaveInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "InvalidDataAllowSaveInfo",
+      "RootTypeName": "InvalidDataAllowSaveInfo",
       "TypeName": "InvalidDataAllowSaveInfo",
       "Keyword": "AllowSave",
       "Members": [
@@ -2452,7 +2455,7 @@
             "$id": "170",
             "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.InvalidDataInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
             "BaseTypesAssemblyQualifiedName": [],
-            "BaseTypeName": "InvalidDataInfo",
+            "RootTypeName": "InvalidDataInfo",
             "TypeName": "InvalidDataInfo",
             "Keyword": "InvalidData",
             "Members": [
@@ -2525,7 +2528,7 @@
       "$id": "174",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.InvalidDataErrorMetadataInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "InvalidDataErrorMetadataInfo",
+      "RootTypeName": "InvalidDataErrorMetadataInfo",
       "TypeName": "InvalidDataErrorMetadataInfo",
       "Keyword": "ErrorMetadata",
       "Members": [
@@ -2588,7 +2591,7 @@
       "BaseTypesAssemblyQualifiedName": [
         "Rhetos.Dsl.DefaultConcepts.InvalidDataErrorMetadataInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null"
       ],
-      "BaseTypeName": "InvalidDataErrorMetadataInfo",
+      "RootTypeName": "InvalidDataErrorMetadataInfo",
       "TypeName": "InvalidDataMarkProperty2Info",
       "Keyword": "MarkProperty",
       "Members": [
@@ -2665,7 +2668,7 @@
       "BaseTypesAssemblyQualifiedName": [
         "Rhetos.Dsl.DefaultConcepts.InvalidDataInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null"
       ],
-      "BaseTypeName": "InvalidDataInfo",
+      "RootTypeName": "InvalidDataInfo",
       "TypeName": "InvalidDataMarkPropertyInfo",
       "Keyword": "InvalidData",
       "Members": [
@@ -2742,7 +2745,7 @@
       "BaseTypesAssemblyQualifiedName": [
         "Rhetos.Dsl.DefaultConcepts.InvalidDataMessageInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null"
       ],
-      "BaseTypeName": "InvalidDataMessageInfo",
+      "RootTypeName": "InvalidDataMessageInfo",
       "TypeName": "InvalidDataMessageFunctionInfo",
       "Keyword": "MessageFunction",
       "Members": [
@@ -2785,7 +2788,7 @@
       "$id": "191",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.InvalidDataMessageInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "InvalidDataMessageInfo",
+      "RootTypeName": "InvalidDataMessageInfo",
       "TypeName": "InvalidDataMessageInfo",
       "Keyword": null,
       "Members": [
@@ -2815,7 +2818,7 @@
       "BaseTypesAssemblyQualifiedName": [
         "Rhetos.Dsl.DefaultConcepts.InvalidDataMessageInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null"
       ],
-      "BaseTypeName": "InvalidDataMessageInfo",
+      "RootTypeName": "InvalidDataMessageInfo",
       "TypeName": "InvalidDataMessageParametersConstantInfo",
       "Keyword": "MessageParametersConstant",
       "Members": [
@@ -2860,7 +2863,7 @@
       "BaseTypesAssemblyQualifiedName": [
         "Rhetos.Dsl.DefaultConcepts.InvalidDataMessageInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null"
       ],
-      "BaseTypeName": "InvalidDataMessageInfo",
+      "RootTypeName": "InvalidDataMessageInfo",
       "TypeName": "InvalidDataMessageParametersItemInfo",
       "Keyword": "MessageParametersItem",
       "Members": [
@@ -2903,7 +2906,7 @@
       "$id": "199",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.ItemFilterApplyOnClientReadInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "ItemFilterApplyOnClientReadInfo",
+      "RootTypeName": "ItemFilterApplyOnClientReadInfo",
       "TypeName": "ItemFilterApplyOnClientReadInfo",
       "Keyword": "ApplyOnClientRead",
       "Members": [
@@ -2913,7 +2916,7 @@
             "$id": "201",
             "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.ItemFilterInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
             "BaseTypesAssemblyQualifiedName": [],
-            "BaseTypeName": "ItemFilterInfo",
+            "RootTypeName": "ItemFilterInfo",
             "TypeName": "ItemFilterInfo",
             "Keyword": "ItemFilter",
             "Members": [
@@ -2989,7 +2992,7 @@
       "$id": "205",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.ItemFilterReferencedInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "ItemFilterReferencedInfo",
+      "RootTypeName": "ItemFilterReferencedInfo",
       "TypeName": "ItemFilterReferencedInfo",
       "Keyword": "ItemFilterReferenced",
       "Members": [
@@ -3066,7 +3069,7 @@
       "BaseTypesAssemblyQualifiedName": [
         "Rhetos.Dsl.DefaultConcepts.ItemFilterReferencedInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null"
       ],
-      "BaseTypeName": "ItemFilterReferencedInfo",
+      "RootTypeName": "ItemFilterReferencedInfo",
       "TypeName": "ItemFilterReferencedNoSubfilterInfo",
       "Keyword": "ItemFilterReferenced",
       "Members": [
@@ -3141,7 +3144,7 @@
       "$id": "215",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.KeepSynchronizedInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "KeepSynchronizedInfo",
+      "RootTypeName": "KeepSynchronizedInfo",
       "TypeName": "KeepSynchronizedInfo",
       "Keyword": "KeepSynchronized",
       "Members": [
@@ -3184,7 +3187,7 @@
       "$id": "218",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.KeepSynchronizedOnChangedItemsInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "KeepSynchronizedOnChangedItemsInfo",
+      "RootTypeName": "KeepSynchronizedOnChangedItemsInfo",
       "TypeName": "KeepSynchronizedOnChangedItemsInfo",
       "Keyword": null,
       "Members": [
@@ -3231,7 +3234,7 @@
       "BaseTypesAssemblyQualifiedName": [
         "Rhetos.Dsl.DefaultConcepts.KeepSynchronizedInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null"
       ],
-      "BaseTypeName": "KeepSynchronizedInfo",
+      "RootTypeName": "KeepSynchronizedInfo",
       "TypeName": "KeepSynchronizedWithoutFilteredSaveInfo",
       "Keyword": "KeepSynchronized",
       "Members": [
@@ -3274,7 +3277,7 @@
       "$id": "224",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.KeyPropertyComputedFromInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "KeyPropertyComputedFromInfo",
+      "RootTypeName": "KeyPropertyComputedFromInfo",
       "TypeName": "KeyPropertyComputedFromInfo",
       "Keyword": "KeyProperty",
       "Members": [
@@ -3284,7 +3287,7 @@
             "$id": "226",
             "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.PropertyComputedFromInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
             "BaseTypesAssemblyQualifiedName": [],
-            "BaseTypeName": "PropertyComputedFromInfo",
+            "RootTypeName": "PropertyComputedFromInfo",
             "TypeName": "PropertyComputedFromInfo",
             "Keyword": "ComputedFrom",
             "Members": [
@@ -3378,7 +3381,7 @@
       "$id": "231",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.KeyPropertyIDComputedFromInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "KeyPropertyIDComputedFromInfo",
+      "RootTypeName": "KeyPropertyIDComputedFromInfo",
       "TypeName": "KeyPropertyIDComputedFromInfo",
       "Keyword": "KeyPropertyID",
       "Members": [
@@ -3423,7 +3426,7 @@
       "$id": "234",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.LoadInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "LoadInfo",
+      "RootTypeName": "LoadInfo",
       "TypeName": "LoadInfo",
       "Keyword": null,
       "Members": [
@@ -3466,7 +3469,7 @@
       "$id": "237",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.LockItemsExceptPropertiesInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "LockItemsExceptPropertiesInfo",
+      "RootTypeName": "LockItemsExceptPropertiesInfo",
       "TypeName": "LockItemsExceptPropertiesInfo",
       "Keyword": "LockExcept",
       "Members": [
@@ -3539,7 +3542,7 @@
       "$id": "242",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.LockItemsInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "LockItemsInfo",
+      "RootTypeName": "LockItemsInfo",
       "TypeName": "LockItemsInfo",
       "Keyword": "Lock",
       "Members": [
@@ -3597,7 +3600,7 @@
       "$id": "246",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.LockItemsLockPropertyInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "LockItemsLockPropertyInfo",
+      "RootTypeName": "LockItemsLockPropertyInfo",
       "TypeName": "LockItemsLockPropertyInfo",
       "Keyword": null,
       "Members": [
@@ -3644,7 +3647,7 @@
       "BaseTypesAssemblyQualifiedName": [
         "Rhetos.Dsl.DefaultConcepts.LockItemsInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null"
       ],
-      "BaseTypeName": "LockItemsInfo",
+      "RootTypeName": "LockItemsInfo",
       "TypeName": "LockItemsMarkPropertyInfo",
       "Keyword": "Lock",
       "Members": [
@@ -3719,7 +3722,7 @@
       "$id": "254",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.LockPropertyInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "LockPropertyInfo",
+      "RootTypeName": "LockPropertyInfo",
       "TypeName": "LockPropertyInfo",
       "Keyword": "LockProperty",
       "Members": [
@@ -3779,7 +3782,7 @@
       "BaseTypesAssemblyQualifiedName": [
         "Rhetos.Dsl.DefaultConcepts.DataStructureInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null"
       ],
-      "BaseTypeName": "DataStructureInfo",
+      "RootTypeName": "DataStructureInfo",
       "TypeName": "ParameterInfo",
       "Keyword": "Parameter",
       "Members": [
@@ -3822,7 +3825,7 @@
       "$id": "261",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.PersistedAllPropertiesInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "PersistedAllPropertiesInfo",
+      "RootTypeName": "PersistedAllPropertiesInfo",
       "TypeName": "PersistedAllPropertiesInfo",
       "Keyword": "AllProperties",
       "Members": [
@@ -3835,7 +3838,7 @@
               "Rhetos.Dsl.DefaultConcepts.DataStructureInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
               "Rhetos.Dsl.DefaultConcepts.EntityInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null"
             ],
-            "BaseTypeName": "DataStructureInfo",
+            "RootTypeName": "DataStructureInfo",
             "TypeName": "PersistedDataStructureInfo",
             "Keyword": "Persisted",
             "Members": [
@@ -3910,7 +3913,7 @@
       "$id": "267",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.PersistedComputeForNewBaseItemsInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "PersistedComputeForNewBaseItemsInfo",
+      "RootTypeName": "PersistedComputeForNewBaseItemsInfo",
       "TypeName": "PersistedComputeForNewBaseItemsInfo",
       "Keyword": "ComputeForNewBaseItems",
       "Members": [
@@ -3938,7 +3941,7 @@
       "$id": "269",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.PersistedComputeForNewBaseItemsWithFilterInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "PersistedComputeForNewBaseItemsWithFilterInfo",
+      "RootTypeName": "PersistedComputeForNewBaseItemsWithFilterInfo",
       "TypeName": "PersistedComputeForNewBaseItemsWithFilterInfo",
       "Keyword": "ComputeForNewBaseItems",
       "Members": [
@@ -3984,7 +3987,7 @@
       "$id": "272",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.PersistedKeepSynchronizedInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "PersistedKeepSynchronizedInfo",
+      "RootTypeName": "PersistedKeepSynchronizedInfo",
       "TypeName": "PersistedKeepSynchronizedInfo",
       "Keyword": "KeepSynchronized",
       "Members": [
@@ -4012,7 +4015,7 @@
       "$id": "274",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.PersistedKeepSynchronizedWithFilteredSaveInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "PersistedKeepSynchronizedWithFilteredSaveInfo",
+      "RootTypeName": "PersistedKeepSynchronizedWithFilteredSaveInfo",
       "TypeName": "PersistedKeepSynchronizedWithFilteredSaveInfo",
       "Keyword": "KeepSynchronized",
       "Members": [
@@ -4055,7 +4058,7 @@
       "$id": "277",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.PersistedKeyPropertiesInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "PersistedKeyPropertiesInfo",
+      "RootTypeName": "PersistedKeyPropertiesInfo",
       "TypeName": "PersistedKeyPropertiesInfo",
       "Keyword": "KeyProperties",
       "Members": [
@@ -4103,7 +4106,7 @@
       "BaseTypesAssemblyQualifiedName": [
         "Rhetos.Dsl.DefaultConcepts.DataStructureInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null"
       ],
-      "BaseTypeName": "DataStructureInfo",
+      "RootTypeName": "DataStructureInfo",
       "TypeName": "QueryableExtensionInfo",
       "Keyword": "QueryableExtension",
       "Members": [
@@ -4180,7 +4183,7 @@
       "BaseTypesAssemblyQualifiedName": [
         "Rhetos.Dsl.DefaultConcepts.QueryInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null"
       ],
-      "BaseTypeName": "QueryInfo",
+      "RootTypeName": "QueryInfo",
       "TypeName": "QueryExpressionInfo",
       "Keyword": "Query",
       "Members": [
@@ -4240,7 +4243,7 @@
       "BaseTypesAssemblyQualifiedName": [
         "Rhetos.Dsl.DefaultConcepts.QueryFilterInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null"
       ],
-      "BaseTypeName": "QueryFilterInfo",
+      "RootTypeName": "QueryFilterInfo",
       "TypeName": "QueryFilterExpressionInfo",
       "Keyword": "QueryFilter",
       "Members": [
@@ -4298,7 +4301,7 @@
       "$id": "293",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.QueryFilterInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "QueryFilterInfo",
+      "RootTypeName": "QueryFilterInfo",
       "TypeName": "QueryFilterInfo",
       "Keyword": null,
       "Members": [
@@ -4341,7 +4344,7 @@
       "$id": "296",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.QueryInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "QueryInfo",
+      "RootTypeName": "QueryInfo",
       "TypeName": "QueryInfo",
       "Keyword": null,
       "Members": [
@@ -4387,7 +4390,7 @@
         "Rhetos.Dsl.DefaultConcepts.DataStructureInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
         "Rhetos.Dsl.DefaultConcepts.ParameterInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null"
       ],
-      "BaseTypeName": "DataStructureInfo",
+      "RootTypeName": "DataStructureInfo",
       "TypeName": "ReportDataInfo",
       "Keyword": "ReportData",
       "Members": [
@@ -4430,7 +4433,7 @@
       "$id": "302",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.ReportDataSourceInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "ReportDataSourceInfo",
+      "RootTypeName": "ReportDataSourceInfo",
       "TypeName": "ReportDataSourceInfo",
       "Keyword": "DataSource",
       "Members": [
@@ -4490,7 +4493,7 @@
       "$id": "306",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.ReportDataSourcesInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "ReportDataSourcesInfo",
+      "RootTypeName": "ReportDataSourcesInfo",
       "TypeName": "ReportDataSourcesInfo",
       "Keyword": "DataSources",
       "Members": [
@@ -4537,7 +4540,7 @@
         "Rhetos.Dsl.DefaultConcepts.ParameterInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
         "Rhetos.Dsl.DefaultConcepts.ReportDataInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null"
       ],
-      "BaseTypeName": "DataStructureInfo",
+      "RootTypeName": "DataStructureInfo",
       "TypeName": "ReportFileInfo",
       "Keyword": "ReportFile",
       "Members": [
@@ -4595,7 +4598,7 @@
       "$id": "313",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.SkipRecomputeOnDeployInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "SkipRecomputeOnDeployInfo",
+      "RootTypeName": "SkipRecomputeOnDeployInfo",
       "TypeName": "SkipRecomputeOnDeployInfo",
       "Keyword": "SkipRecomputeOnDeploy",
       "Members": [
@@ -4626,7 +4629,7 @@
       "$id": "315",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.SuppressSynchronizationInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "SuppressSynchronizationInfo",
+      "RootTypeName": "SuppressSynchronizationInfo",
       "TypeName": "SuppressSynchronizationInfo",
       "Keyword": "SuppressSynchronization",
       "Members": [
@@ -4654,7 +4657,7 @@
       "$id": "317",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.SuppressSynchronizationOnChangesItemsInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "SuppressSynchronizationOnChangesItemsInfo",
+      "RootTypeName": "SuppressSynchronizationOnChangesItemsInfo",
       "TypeName": "SuppressSynchronizationOnChangesItemsInfo",
       "Keyword": null,
       "Members": [
@@ -4682,7 +4685,7 @@
       "$id": "319",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.AutoLegacyEntityDependsOnInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "AutoLegacyEntityDependsOnInfo",
+      "RootTypeName": "AutoLegacyEntityDependsOnInfo",
       "TypeName": "AutoLegacyEntityDependsOnInfo",
       "Keyword": "AutodetectSqlDependencies",
       "Members": [
@@ -4694,7 +4697,7 @@
             "BaseTypesAssemblyQualifiedName": [
               "Rhetos.Dsl.DefaultConcepts.DataStructureInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null"
             ],
-            "BaseTypeName": "DataStructureInfo",
+            "RootTypeName": "DataStructureInfo",
             "TypeName": "LegacyEntityInfo",
             "Keyword": "LegacyEntity",
             "Members": [
@@ -4782,7 +4785,7 @@
       "$id": "326",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.AutoSqlFunctionDependsOnInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "AutoSqlFunctionDependsOnInfo",
+      "RootTypeName": "AutoSqlFunctionDependsOnInfo",
       "TypeName": "AutoSqlFunctionDependsOnInfo",
       "Keyword": "AutodetectSqlDependencies",
       "Members": [
@@ -4810,7 +4813,7 @@
       "$id": "328",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.AutoSqlProcedureDependsOnInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "AutoSqlProcedureDependsOnInfo",
+      "RootTypeName": "AutoSqlProcedureDependsOnInfo",
       "TypeName": "AutoSqlProcedureDependsOnInfo",
       "Keyword": "AutodetectSqlDependencies",
       "Members": [
@@ -4820,7 +4823,7 @@
             "$id": "330",
             "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.SqlProcedureInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
             "BaseTypesAssemblyQualifiedName": [],
-            "BaseTypeName": "SqlProcedureInfo",
+            "RootTypeName": "SqlProcedureInfo",
             "TypeName": "SqlProcedureInfo",
             "Keyword": "SqlProcedure",
             "Members": [
@@ -4908,7 +4911,7 @@
       "$id": "335",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.AutoSqlQueryableDependsOnInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "AutoSqlQueryableDependsOnInfo",
+      "RootTypeName": "AutoSqlQueryableDependsOnInfo",
       "TypeName": "AutoSqlQueryableDependsOnInfo",
       "Keyword": "AutodetectSqlDependencies",
       "Members": [
@@ -4936,7 +4939,7 @@
       "$id": "337",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.AutoSqlTriggerDependsOnInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "AutoSqlTriggerDependsOnInfo",
+      "RootTypeName": "AutoSqlTriggerDependsOnInfo",
       "TypeName": "AutoSqlTriggerDependsOnInfo",
       "Keyword": "AutodetectSqlDependencies",
       "Members": [
@@ -4946,7 +4949,7 @@
             "$id": "339",
             "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.SqlTriggerInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
             "BaseTypesAssemblyQualifiedName": [],
-            "BaseTypeName": "SqlTriggerInfo",
+            "RootTypeName": "SqlTriggerInfo",
             "TypeName": "SqlTriggerInfo",
             "Keyword": "SqlTrigger",
             "Members": [
@@ -5034,7 +5037,7 @@
       "$id": "344",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.AutoSqlViewDependsOnInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "AutoSqlViewDependsOnInfo",
+      "RootTypeName": "AutoSqlViewDependsOnInfo",
       "TypeName": "AutoSqlViewDependsOnInfo",
       "Keyword": "AutodetectSqlDependencies",
       "Members": [
@@ -5044,7 +5047,7 @@
             "$id": "346",
             "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.SqlViewInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
             "BaseTypesAssemblyQualifiedName": [],
-            "BaseTypeName": "SqlViewInfo",
+            "RootTypeName": "SqlViewInfo",
             "TypeName": "SqlViewInfo",
             "Keyword": "SqlView",
             "Members": [
@@ -5117,7 +5120,7 @@
       "$id": "350",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.ModuleAutoSqlDependsOnInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "ModuleAutoSqlDependsOnInfo",
+      "RootTypeName": "ModuleAutoSqlDependsOnInfo",
       "TypeName": "ModuleAutoSqlDependsOnInfo",
       "Keyword": "AutodetectSqlDependencies",
       "Members": [
@@ -5145,7 +5148,7 @@
       "$id": "352",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.SqlDefaultPropertyInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "SqlDefaultPropertyInfo",
+      "RootTypeName": "SqlDefaultPropertyInfo",
       "TypeName": "SqlDefaultPropertyInfo",
       "Keyword": "SqlDefault",
       "Members": [
@@ -5188,7 +5191,7 @@
       "$id": "355",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.SqlDependsOnDataStructureInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "SqlDependsOnDataStructureInfo",
+      "RootTypeName": "SqlDependsOnDataStructureInfo",
       "TypeName": "SqlDependsOnDataStructureInfo",
       "Keyword": "SqlDependsOn",
       "Members": [
@@ -5231,7 +5234,7 @@
       "$id": "358",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.SqlDependsOnIDInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "SqlDependsOnIDInfo",
+      "RootTypeName": "SqlDependsOnIDInfo",
       "TypeName": "SqlDependsOnIDInfo",
       "Keyword": "SqlDependsOnID",
       "Members": [
@@ -5274,7 +5277,7 @@
       "$id": "361",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.SqlDependsOnModuleInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "SqlDependsOnModuleInfo",
+      "RootTypeName": "SqlDependsOnModuleInfo",
       "TypeName": "SqlDependsOnModuleInfo",
       "Keyword": "SqlDependsOn",
       "Members": [
@@ -5317,7 +5320,7 @@
       "$id": "364",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.SqlDependsOnPropertyInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "SqlDependsOnPropertyInfo",
+      "RootTypeName": "SqlDependsOnPropertyInfo",
       "TypeName": "SqlDependsOnPropertyInfo",
       "Keyword": "SqlDependsOn",
       "Members": [
@@ -5360,7 +5363,7 @@
       "$id": "367",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.SqlDependsOnSqlFunctionInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "SqlDependsOnSqlFunctionInfo",
+      "RootTypeName": "SqlDependsOnSqlFunctionInfo",
       "TypeName": "SqlDependsOnSqlFunctionInfo",
       "Keyword": "SqlDependsOnFunction",
       "Members": [
@@ -5403,7 +5406,7 @@
       "$id": "370",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.SqlDependsOnSqlIndexInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "SqlDependsOnSqlIndexInfo",
+      "RootTypeName": "SqlDependsOnSqlIndexInfo",
       "TypeName": "SqlDependsOnSqlIndexInfo",
       "Keyword": "SqlDependsOnIndex",
       "Members": [
@@ -5428,7 +5431,7 @@
             "$id": "373",
             "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.SqlIndexMultipleInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
             "BaseTypesAssemblyQualifiedName": [],
-            "BaseTypeName": "SqlIndexMultipleInfo",
+            "RootTypeName": "SqlIndexMultipleInfo",
             "TypeName": "SqlIndexMultipleInfo",
             "Keyword": "SqlIndexMultiple",
             "Members": [
@@ -5486,7 +5489,7 @@
       "$id": "376",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.SqlDependsOnSqlObjectInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "SqlDependsOnSqlObjectInfo",
+      "RootTypeName": "SqlDependsOnSqlObjectInfo",
       "TypeName": "SqlDependsOnSqlObjectInfo",
       "Keyword": "SqlDependsOnSqlObject",
       "Members": [
@@ -5511,7 +5514,7 @@
             "$id": "379",
             "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.SqlObjectInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
             "BaseTypesAssemblyQualifiedName": [],
-            "BaseTypeName": "SqlObjectInfo",
+            "RootTypeName": "SqlObjectInfo",
             "TypeName": "SqlObjectInfo",
             "Keyword": "SqlObject",
             "Members": [
@@ -5599,7 +5602,7 @@
       "$id": "384",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.SqlDependsOnSqlViewInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "SqlDependsOnSqlViewInfo",
+      "RootTypeName": "SqlDependsOnSqlViewInfo",
       "TypeName": "SqlDependsOnSqlViewInfo",
       "Keyword": "SqlDependsOnView",
       "Members": [
@@ -5645,7 +5648,7 @@
       "$id": "387",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.SqlIndex2Info, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "SqlIndex2Info",
+      "RootTypeName": "SqlIndex2Info",
       "TypeName": "SqlIndex2Info",
       "Keyword": "SqlIndex",
       "Members": [
@@ -5707,7 +5710,7 @@
       "$id": "391",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.SqlIndex3Info, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "SqlIndex3Info",
+      "RootTypeName": "SqlIndex3Info",
       "TypeName": "SqlIndex3Info",
       "Keyword": "SqlIndex",
       "Members": [
@@ -5786,7 +5789,7 @@
       "$id": "396",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.SqlIndexClusteredFlatInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "SqlIndexClusteredFlatInfo",
+      "RootTypeName": "SqlIndexClusteredFlatInfo",
       "TypeName": "SqlIndexClusteredFlatInfo",
       "Keyword": "Clustered",
       "Members": [
@@ -5829,7 +5832,7 @@
       "$id": "399",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.SqlIndexClusteredInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "SqlIndexClusteredInfo",
+      "RootTypeName": "SqlIndexClusteredInfo",
       "TypeName": "SqlIndexClusteredInfo",
       "Keyword": "Clustered",
       "Members": [
@@ -5857,7 +5860,7 @@
       "$id": "401",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.SqlIndexInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "SqlIndexInfo",
+      "RootTypeName": "SqlIndexInfo",
       "TypeName": "SqlIndexInfo",
       "Keyword": "SqlIndex",
       "Members": [
@@ -5887,7 +5890,7 @@
       "BaseTypesAssemblyQualifiedName": [
         "Rhetos.Dsl.DefaultConcepts.SqlIndexMultiplePropertyInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null"
       ],
-      "BaseTypeName": "SqlIndexMultiplePropertyInfo",
+      "RootTypeName": "SqlIndexMultiplePropertyInfo",
       "TypeName": "SqlIndexMultipleFollowingPropertyInfo",
       "Keyword": null,
       "Members": [
@@ -5931,7 +5934,7 @@
             "$id": "407",
             "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.SqlIndexMultiplePropertyInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
             "BaseTypesAssemblyQualifiedName": [],
-            "BaseTypeName": "SqlIndexMultiplePropertyInfo",
+            "RootTypeName": "SqlIndexMultiplePropertyInfo",
             "TypeName": "SqlIndexMultiplePropertyInfo",
             "Keyword": null,
             "Members": [
@@ -5997,7 +6000,7 @@
       "$id": "410",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.SqlIndexPropertyClusteredInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "SqlIndexPropertyClusteredInfo",
+      "RootTypeName": "SqlIndexPropertyClusteredInfo",
       "TypeName": "SqlIndexPropertyClusteredInfo",
       "Keyword": "Clustered",
       "Members": [
@@ -6025,7 +6028,7 @@
       "$id": "412",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.SqlNotNullInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "SqlNotNullInfo",
+      "RootTypeName": "SqlNotNullInfo",
       "TypeName": "SqlNotNullInfo",
       "Keyword": "SqlNotNull",
       "Members": [
@@ -6080,7 +6083,7 @@
       "$id": "415",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.UniqueClusteredInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "UniqueClusteredInfo",
+      "RootTypeName": "UniqueClusteredInfo",
       "TypeName": "UniqueClusteredInfo",
       "Keyword": "Clustered",
       "Members": [
@@ -6090,7 +6093,7 @@
             "$id": "417",
             "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.UniqueMultiplePropertiesInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
             "BaseTypesAssemblyQualifiedName": [],
-            "BaseTypeName": "UniqueMultiplePropertiesInfo",
+            "RootTypeName": "UniqueMultiplePropertiesInfo",
             "TypeName": "UniqueMultiplePropertiesInfo",
             "Keyword": "UniqueMultiple",
             "Members": [
@@ -6165,7 +6168,7 @@
       "$id": "421",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.AllPropertiesFromInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "AllPropertiesFromInfo",
+      "RootTypeName": "AllPropertiesFromInfo",
       "TypeName": "AllPropertiesFromInfo",
       "Keyword": "AllPropertiesFrom",
       "Members": [
@@ -6212,7 +6215,7 @@
       "BaseTypesAssemblyQualifiedName": [
         "Rhetos.Dsl.DefaultConcepts.AllPropertiesFromInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null"
       ],
-      "BaseTypeName": "AllPropertiesFromInfo",
+      "RootTypeName": "AllPropertiesFromInfo",
       "TypeName": "AllPropertiesWithCascadeDeleteFromInfo",
       "Keyword": "AllPropertiesWithCascadeDeleteFrom",
       "Members": [
@@ -6257,7 +6260,7 @@
       "$id": "427",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.BeforeQueryExpressionInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "BeforeQueryExpressionInfo",
+      "RootTypeName": "BeforeQueryExpressionInfo",
       "TypeName": "BeforeQueryExpressionInfo",
       "Keyword": "BeforeQuery",
       "Members": [
@@ -6302,7 +6305,7 @@
       "BaseTypesAssemblyQualifiedName": [
         "Rhetos.Dsl.DefaultConcepts.DataStructureInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null"
       ],
-      "BaseTypeName": "DataStructureInfo",
+      "RootTypeName": "DataStructureInfo",
       "TypeName": "BrowseDataStructureInfo",
       "Keyword": "Browse",
       "Members": [
@@ -6362,7 +6365,7 @@
       "$id": "434",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.BrowseFromPropertyInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "BrowseFromPropertyInfo",
+      "RootTypeName": "BrowseFromPropertyInfo",
       "TypeName": "BrowseFromPropertyInfo",
       "Keyword": "From",
       "Members": [
@@ -6407,7 +6410,7 @@
       "BaseTypesAssemblyQualifiedName": [
         "Rhetos.Dsl.DefaultConcepts.UniqueReferenceInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null"
       ],
-      "BaseTypeName": "UniqueReferenceInfo",
+      "RootTypeName": "UniqueReferenceInfo",
       "TypeName": "DataStructureExtendsInfo",
       "Keyword": "Extends",
       "Members": [
@@ -6458,7 +6461,7 @@
       "$id": "440",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.EntryInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "EntryInfo",
+      "RootTypeName": "EntryInfo",
       "TypeName": "EntryInfo",
       "Keyword": "Entry",
       "Members": [
@@ -6471,7 +6474,7 @@
               "Rhetos.Dsl.DefaultConcepts.DataStructureInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
               "Rhetos.Dsl.DefaultConcepts.EntityInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null"
             ],
-            "BaseTypeName": "DataStructureInfo",
+            "RootTypeName": "DataStructureInfo",
             "TypeName": "HardcodedEntityInfo",
             "Keyword": "Hardcoded",
             "Members": [
@@ -6561,7 +6564,7 @@
       "BaseTypesAssemblyQualifiedName": [
         "Rhetos.Dsl.DefaultConcepts.EntryInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null"
       ],
-      "BaseTypeName": "EntryInfo",
+      "RootTypeName": "EntryInfo",
       "TypeName": "EntryWithGeneratedIdentifierInfo",
       "Keyword": "Entry",
       "Members": [
@@ -6619,7 +6622,7 @@
       "$id": "451",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.EntryValueInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "EntryValueInfo",
+      "RootTypeName": "EntryValueInfo",
       "TypeName": "EntryValueInfo",
       "Keyword": "Value",
       "Members": [
@@ -6696,7 +6699,7 @@
       "BaseTypesAssemblyQualifiedName": [
         "Rhetos.Dsl.DefaultConcepts.SqlViewInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null"
       ],
-      "BaseTypeName": "SqlViewInfo",
+      "RootTypeName": "SqlViewInfo",
       "TypeName": "ExtensibleSubtypeSqlViewInfo",
       "Keyword": null,
       "Members": [
@@ -6753,7 +6756,7 @@
             "$id": "461",
             "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.IsSubtypeOfInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
             "BaseTypesAssemblyQualifiedName": [],
-            "BaseTypeName": "IsSubtypeOfInfo",
+            "RootTypeName": "IsSubtypeOfInfo",
             "TypeName": "IsSubtypeOfInfo",
             "Keyword": "Is",
             "Members": [
@@ -6782,7 +6785,7 @@
                   "BaseTypesAssemblyQualifiedName": [
                     "Rhetos.Dsl.DefaultConcepts.DataStructureInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null"
                   ],
-                  "BaseTypeName": "DataStructureInfo",
+                  "RootTypeName": "DataStructureInfo",
                   "TypeName": "PolymorphicInfo",
                   "Keyword": "Polymorphic",
                   "Members": [
@@ -6873,7 +6876,7 @@
       "$id": "468",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.ImplementsInterfaceInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "ImplementsInterfaceInfo",
+      "RootTypeName": "ImplementsInterfaceInfo",
       "TypeName": "ImplementsInterfaceInfo",
       "Keyword": "Implements",
       "Members": [
@@ -6916,7 +6919,7 @@
       "$id": "471",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.ImplementsInterfacePropertyInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "ImplementsInterfacePropertyInfo",
+      "RootTypeName": "ImplementsInterfacePropertyInfo",
       "TypeName": "ImplementsInterfacePropertyInfo",
       "Keyword": null,
       "Members": [
@@ -6976,7 +6979,7 @@
       "$id": "475",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.ImplementsQueryableInterfaceInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "ImplementsQueryableInterfaceInfo",
+      "RootTypeName": "ImplementsQueryableInterfaceInfo",
       "TypeName": "ImplementsQueryableInterfaceInfo",
       "Keyword": "ImplementsQueryable",
       "Members": [
@@ -7019,7 +7022,7 @@
       "$id": "478",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.ImplementsQueryableInterfacePropertyInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "ImplementsQueryableInterfacePropertyInfo",
+      "RootTypeName": "ImplementsQueryableInterfacePropertyInfo",
       "TypeName": "ImplementsQueryableInterfacePropertyInfo",
       "Keyword": null,
       "Members": [
@@ -7081,7 +7084,7 @@
       "BaseTypesAssemblyQualifiedName": [
         "Rhetos.Dsl.DefaultConcepts.IsSubtypeOfInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null"
       ],
-      "BaseTypeName": "IsSubtypeOfInfo",
+      "RootTypeName": "IsSubtypeOfInfo",
       "TypeName": "IsSubtypeOfDefaultNameInfo",
       "Keyword": "Is",
       "Members": [
@@ -7149,7 +7152,7 @@
       "BaseTypesAssemblyQualifiedName": [
         "Rhetos.Dsl.DefaultConcepts.DataStructureInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null"
       ],
-      "BaseTypeName": "DataStructureInfo",
+      "RootTypeName": "DataStructureInfo",
       "TypeName": "LegacyEntityWithAutoCreatedViewInfo",
       "Keyword": "LegacyEntity",
       "Members": [
@@ -7210,7 +7213,7 @@
       "$id": "490",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.PersistedSubtypeImplementationIdInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "PersistedSubtypeImplementationIdInfo",
+      "RootTypeName": "PersistedSubtypeImplementationIdInfo",
       "TypeName": "PersistedSubtypeImplementationIdInfo",
       "Keyword": null,
       "Members": [
@@ -7256,7 +7259,7 @@
       "$id": "493",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.PolymorphicMaterializedInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "PolymorphicMaterializedInfo",
+      "RootTypeName": "PolymorphicMaterializedInfo",
       "TypeName": "PolymorphicMaterializedInfo",
       "Keyword": "Materialized",
       "Members": [
@@ -7284,7 +7287,7 @@
       "$id": "495",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.PolymorphicPropertyInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "PolymorphicPropertyInfo",
+      "RootTypeName": "PolymorphicPropertyInfo",
       "TypeName": "PolymorphicPropertyInfo",
       "Keyword": null,
       "Members": [
@@ -7313,7 +7316,7 @@
             "BaseTypesAssemblyQualifiedName": [
               "Rhetos.Dsl.DefaultConcepts.SqlObjectInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null"
             ],
-            "BaseTypeName": "SqlObjectInfo",
+            "RootTypeName": "SqlObjectInfo",
             "TypeName": "PolymorphicUnionViewInfo",
             "Keyword": null,
             "Members": [
@@ -7404,7 +7407,7 @@
         "Rhetos.Dsl.DefaultConcepts.PropertyInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
         "Rhetos.Dsl.DefaultConcepts.ShortStringPropertyInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null"
       ],
-      "BaseTypeName": "PropertyInfo",
+      "RootTypeName": "PropertyInfo",
       "TypeName": "PolymorphicSubtypeDiscriminatorInfo",
       "Keyword": null,
       "Members": [
@@ -7450,7 +7453,7 @@
         "Rhetos.Dsl.DefaultConcepts.PropertyInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
         "Rhetos.Dsl.DefaultConcepts.ReferencePropertyInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null"
       ],
-      "BaseTypeName": "PropertyInfo",
+      "RootTypeName": "PropertyInfo",
       "TypeName": "PolymorphicSubtypeReferenceInfo",
       "Keyword": null,
       "Members": [
@@ -7515,7 +7518,7 @@
       "BaseTypesAssemblyQualifiedName": [
         "Rhetos.Dsl.DefaultConcepts.PropertyInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null"
       ],
-      "BaseTypeName": "PropertyInfo",
+      "RootTypeName": "PropertyInfo",
       "TypeName": "BinaryPropertyInfo",
       "Keyword": "Binary",
       "Members": [
@@ -7560,7 +7563,7 @@
       "BaseTypesAssemblyQualifiedName": [
         "Rhetos.Dsl.DefaultConcepts.PropertyInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null"
       ],
-      "BaseTypeName": "PropertyInfo",
+      "RootTypeName": "PropertyInfo",
       "TypeName": "BoolPropertyInfo",
       "Keyword": "Bool",
       "Members": [
@@ -7605,7 +7608,7 @@
       "BaseTypesAssemblyQualifiedName": [
         "Rhetos.Dsl.DefaultConcepts.PropertyInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null"
       ],
-      "BaseTypeName": "PropertyInfo",
+      "RootTypeName": "PropertyInfo",
       "TypeName": "DatePropertyInfo",
       "Keyword": "Date",
       "Members": [
@@ -7650,7 +7653,7 @@
       "BaseTypesAssemblyQualifiedName": [
         "Rhetos.Dsl.DefaultConcepts.PropertyInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null"
       ],
-      "BaseTypeName": "PropertyInfo",
+      "RootTypeName": "PropertyInfo",
       "TypeName": "DateTimePropertyInfo",
       "Keyword": "DateTime",
       "Members": [
@@ -7695,7 +7698,7 @@
       "BaseTypesAssemblyQualifiedName": [
         "Rhetos.Dsl.DefaultConcepts.PropertyInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null"
       ],
-      "BaseTypeName": "PropertyInfo",
+      "RootTypeName": "PropertyInfo",
       "TypeName": "DecimalPropertyInfo",
       "Keyword": "Decimal",
       "Members": [
@@ -7740,7 +7743,7 @@
       "BaseTypesAssemblyQualifiedName": [
         "Rhetos.Dsl.DefaultConcepts.PropertyInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null"
       ],
-      "BaseTypeName": "PropertyInfo",
+      "RootTypeName": "PropertyInfo",
       "TypeName": "GuidPropertyInfo",
       "Keyword": "Guid",
       "Members": [
@@ -7785,7 +7788,7 @@
       "BaseTypesAssemblyQualifiedName": [
         "Rhetos.Dsl.DefaultConcepts.PropertyInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null"
       ],
-      "BaseTypeName": "PropertyInfo",
+      "RootTypeName": "PropertyInfo",
       "TypeName": "IntegerPropertyInfo",
       "Keyword": "Integer",
       "Members": [
@@ -7830,7 +7833,7 @@
       "BaseTypesAssemblyQualifiedName": [
         "Rhetos.Dsl.DefaultConcepts.PropertyInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null"
       ],
-      "BaseTypeName": "PropertyInfo",
+      "RootTypeName": "PropertyInfo",
       "TypeName": "LinkedItemsInfo",
       "Keyword": "LinkedItems",
       "Members": [
@@ -7892,7 +7895,7 @@
       "BaseTypesAssemblyQualifiedName": [
         "Rhetos.Dsl.DefaultConcepts.PropertyInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null"
       ],
-      "BaseTypeName": "PropertyInfo",
+      "RootTypeName": "PropertyInfo",
       "TypeName": "LongStringPropertyInfo",
       "Keyword": "LongString",
       "Members": [
@@ -7937,7 +7940,7 @@
       "BaseTypesAssemblyQualifiedName": [
         "Rhetos.Dsl.DefaultConcepts.PropertyInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null"
       ],
-      "BaseTypeName": "PropertyInfo",
+      "RootTypeName": "PropertyInfo",
       "TypeName": "MoneyPropertyInfo",
       "Keyword": "Money",
       "Members": [
@@ -7983,7 +7986,7 @@
       "$id": "541",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.ReferencePropertyDbConstraintInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "ReferencePropertyDbConstraintInfo",
+      "RootTypeName": "ReferencePropertyDbConstraintInfo",
       "TypeName": "ReferencePropertyDbConstraintInfo",
       "Keyword": null,
       "Members": [
@@ -8016,7 +8019,7 @@
       "BaseTypesAssemblyQualifiedName": [
         "Rhetos.Dsl.DefaultConcepts.PropertyInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null"
       ],
-      "BaseTypeName": "PropertyInfo",
+      "RootTypeName": "PropertyInfo",
       "TypeName": "ShortStringPropertyInfo",
       "Keyword": "ShortString",
       "Members": [
@@ -8059,7 +8062,7 @@
       "$id": "546",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.PropertyFromInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "PropertyFromInfo",
+      "RootTypeName": "PropertyFromInfo",
       "TypeName": "PropertyFromInfo",
       "Keyword": "PropertyFrom",
       "Members": [
@@ -8104,7 +8107,7 @@
       "$id": "549",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.RegisteredInterfaceImplementationHelperInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "RegisteredInterfaceImplementationHelperInfo",
+      "RootTypeName": "RegisteredInterfaceImplementationHelperInfo",
       "TypeName": "RegisteredInterfaceImplementationHelperInfo",
       "Keyword": "RegisteredImplementation",
       "Members": [
@@ -8132,7 +8135,7 @@
       "$id": "551",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.RegisteredInterfaceImplementationInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "RegisteredInterfaceImplementationInfo",
+      "RootTypeName": "RegisteredInterfaceImplementationInfo",
       "TypeName": "RegisteredInterfaceImplementationInfo",
       "Keyword": null,
       "Members": [
@@ -8175,7 +8178,7 @@
       "$id": "554",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.RegisteredQueryableInterfaceImplementationHelperInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "RegisteredQueryableInterfaceImplementationHelperInfo",
+      "RootTypeName": "RegisteredQueryableInterfaceImplementationHelperInfo",
       "TypeName": "RegisteredQueryableInterfaceImplementationHelperInfo",
       "Keyword": "RegisteredImplementation",
       "Members": [
@@ -8203,7 +8206,7 @@
       "$id": "556",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.RepositoryMemberInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "RepositoryMemberInfo",
+      "RootTypeName": "RepositoryMemberInfo",
       "TypeName": "RepositoryMemberInfo",
       "Keyword": "RepositoryMember",
       "Members": [
@@ -8261,7 +8264,7 @@
       "$id": "560",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.RepositoryUsesInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "RepositoryUsesInfo",
+      "RootTypeName": "RepositoryUsesInfo",
       "TypeName": "RepositoryUsesInfo",
       "Keyword": "RepositoryUses",
       "Members": [
@@ -8319,7 +8322,7 @@
       "$id": "564",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.SamePropertyValue2Info, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "SamePropertyValue2Info",
+      "RootTypeName": "SamePropertyValue2Info",
       "TypeName": "SamePropertyValue2Info",
       "Keyword": "SamePropertyValue",
       "Members": [
@@ -8379,7 +8382,7 @@
       "$id": "568",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.SamePropertyValueInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "SamePropertyValueInfo",
+      "RootTypeName": "SamePropertyValueInfo",
       "TypeName": "SamePropertyValueInfo",
       "Keyword": "SamePropertyValue",
       "Members": [
@@ -8424,7 +8427,7 @@
       "BaseTypesAssemblyQualifiedName": [
         "Rhetos.Dsl.DefaultConcepts.SqlViewInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null"
       ],
-      "BaseTypeName": "SqlViewInfo",
+      "RootTypeName": "SqlViewInfo",
       "TypeName": "SpecificSubtypeSqlViewInfo",
       "Keyword": "SqlImplementation",
       "Members": [
@@ -8514,7 +8517,7 @@
       "$id": "577",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.SubtypeExtendFilterInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "SubtypeExtendFilterInfo",
+      "RootTypeName": "SubtypeExtendFilterInfo",
       "TypeName": "SubtypeExtendFilterInfo",
       "Keyword": null,
       "Members": [
@@ -8559,7 +8562,7 @@
       "$id": "580",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.SubtypeExtendPolymorphicInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "SubtypeExtendPolymorphicInfo",
+      "RootTypeName": "SubtypeExtendPolymorphicInfo",
       "TypeName": "SubtypeExtendPolymorphicInfo",
       "Keyword": null,
       "Members": [
@@ -8621,7 +8624,7 @@
       "$id": "584",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.SubtypeImplementsPropertyInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "SubtypeImplementsPropertyInfo",
+      "RootTypeName": "SubtypeImplementsPropertyInfo",
       "TypeName": "SubtypeImplementsPropertyInfo",
       "Keyword": "Implements",
       "Members": [
@@ -8698,7 +8701,7 @@
       "$id": "589",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.SubtypeImplementsReferenceToHardcodedEntityInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "SubtypeImplementsReferenceToHardcodedEntityInfo",
+      "RootTypeName": "SubtypeImplementsReferenceToHardcodedEntityInfo",
       "TypeName": "SubtypeImplementsReferenceToHardcodedEntityInfo",
       "Keyword": "Implements",
       "Members": [
@@ -8760,7 +8763,7 @@
       "$id": "593",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.SubtypeWhereInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "SubtypeWhereInfo",
+      "RootTypeName": "SubtypeWhereInfo",
       "TypeName": "SubtypeWhereInfo",
       "Keyword": "Where",
       "Members": [
@@ -8826,7 +8829,7 @@
       "$id": "597",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.ArgumentValidationInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "ArgumentValidationInfo",
+      "RootTypeName": "ArgumentValidationInfo",
       "TypeName": "ArgumentValidationInfo",
       "Keyword": "ArgumentValidation",
       "Members": [
@@ -8836,7 +8839,7 @@
             "$id": "599",
             "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.SaveMethodInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
             "BaseTypesAssemblyQualifiedName": [],
-            "BaseTypeName": "SaveMethodInfo",
+            "RootTypeName": "SaveMethodInfo",
             "TypeName": "SaveMethodInfo",
             "Keyword": "SaveMethod",
             "Members": [
@@ -8909,7 +8912,7 @@
       "$id": "603",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.LoadOldItemsInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "LoadOldItemsInfo",
+      "RootTypeName": "LoadOldItemsInfo",
       "TypeName": "LoadOldItemsInfo",
       "Keyword": "LoadOldItems",
       "Members": [
@@ -8937,7 +8940,7 @@
       "$id": "605",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.LoadOldItemsTakeInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "LoadOldItemsTakeInfo",
+      "RootTypeName": "LoadOldItemsTakeInfo",
       "TypeName": "LoadOldItemsTakeInfo",
       "Keyword": "Take",
       "Members": [
@@ -8980,7 +8983,7 @@
       "$id": "608",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.OldDataLoadedInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "OldDataLoadedInfo",
+      "RootTypeName": "OldDataLoadedInfo",
       "TypeName": "OldDataLoadedInfo",
       "Keyword": "OldDataLoaded",
       "Members": [
@@ -9038,7 +9041,7 @@
       "$id": "612",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.OnSaveUpdateInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "OnSaveUpdateInfo",
+      "RootTypeName": "OnSaveUpdateInfo",
       "TypeName": "OnSaveUpdateInfo",
       "Keyword": "OnSaveUpdate",
       "Members": [
@@ -9096,7 +9099,7 @@
       "$id": "616",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.OnSaveValidateInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "OnSaveValidateInfo",
+      "RootTypeName": "OnSaveValidateInfo",
       "TypeName": "OnSaveValidateInfo",
       "Keyword": "OnSaveValidate",
       "Members": [
@@ -9154,7 +9157,7 @@
       "$id": "620",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.SaveMethodAfterSaveInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "SaveMethodAfterSaveInfo",
+      "RootTypeName": "SaveMethodAfterSaveInfo",
       "TypeName": "SaveMethodAfterSaveInfo",
       "Keyword": "AfterSave",
       "Members": [
@@ -9215,7 +9218,7 @@
       "$id": "624",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.SaveMethodInitializationInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "SaveMethodInitializationInfo",
+      "RootTypeName": "SaveMethodInitializationInfo",
       "TypeName": "SaveMethodInitializationInfo",
       "Keyword": "Initialization",
       "Members": [
@@ -9276,7 +9279,7 @@
         "Rhetos.Dsl.DefaultConcepts.DataStructureInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
         "Rhetos.Dsl.DefaultConcepts.BrowseDataStructureInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null"
       ],
-      "BaseTypeName": "DataStructureInfo",
+      "RootTypeName": "DataStructureInfo",
       "TypeName": "SnowflakeDataStructureInfo",
       "Keyword": "Snowflake",
       "Members": [
@@ -9336,7 +9339,7 @@
       "$id": "632",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.AutoInheritRowPermissionsInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "AutoInheritRowPermissionsInfo",
+      "RootTypeName": "AutoInheritRowPermissionsInfo",
       "TypeName": "AutoInheritRowPermissionsInfo",
       "Keyword": "AutoInheritRowPermissions",
       "Members": [
@@ -9366,7 +9369,7 @@
       "BaseTypesAssemblyQualifiedName": [
         "Rhetos.Dsl.DefaultConcepts.AutoInheritRowPermissionsInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null"
       ],
-      "BaseTypeName": "AutoInheritRowPermissionsInfo",
+      "RootTypeName": "AutoInheritRowPermissionsInfo",
       "TypeName": "AutoInheritRowPermissionsInternallyInfo",
       "Keyword": "AutoInheritRowPermissionsInternally",
       "Members": [
@@ -9394,7 +9397,7 @@
       "$id": "636",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.RowPermissionsInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "RowPermissionsInfo",
+      "RootTypeName": "RowPermissionsInfo",
       "TypeName": "RowPermissionsInfo",
       "Keyword": "RowPermissions",
       "Members": [
@@ -9437,7 +9440,7 @@
       "$id": "639",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.RowPermissionsInheritExtensionReadInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "RowPermissionsInheritExtensionReadInfo",
+      "RootTypeName": "RowPermissionsInheritExtensionReadInfo",
       "TypeName": "RowPermissionsInheritExtensionReadInfo",
       "Keyword": null,
       "Members": [
@@ -9447,7 +9450,7 @@
             "$id": "641",
             "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.RowPermissionsInheritReadInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
             "BaseTypesAssemblyQualifiedName": [],
-            "BaseTypeName": "RowPermissionsInheritReadInfo",
+            "RootTypeName": "RowPermissionsInheritReadInfo",
             "TypeName": "RowPermissionsInheritReadInfo",
             "Keyword": null,
             "Members": [
@@ -9457,7 +9460,7 @@
                   "$id": "643",
                   "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.RowPermissionsInheritFromInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
                   "BaseTypesAssemblyQualifiedName": [],
-                  "BaseTypeName": "RowPermissionsInheritFromInfo",
+                  "RootTypeName": "RowPermissionsInheritFromInfo",
                   "TypeName": "RowPermissionsInheritFromInfo",
                   "Keyword": null,
                   "Members": [
@@ -9467,7 +9470,7 @@
                         "$id": "645",
                         "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.RowPermissionsPluginableFiltersInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
                         "BaseTypesAssemblyQualifiedName": [],
-                        "BaseTypeName": "RowPermissionsPluginableFiltersInfo",
+                        "RootTypeName": "RowPermissionsPluginableFiltersInfo",
                         "TypeName": "RowPermissionsPluginableFiltersInfo",
                         "Keyword": "RowPermissions",
                         "Members": [
@@ -9559,7 +9562,7 @@
                     "Rhetos.Dsl.DefaultConcepts.QueryFilterInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
                     "Rhetos.Dsl.DefaultConcepts.ComposableFilterByInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null"
                   ],
-                  "BaseTypeName": "QueryFilterInfo",
+                  "RootTypeName": "QueryFilterInfo",
                   "TypeName": "RowPermissionsReadInfo",
                   "Keyword": "RowPermissionsRead",
                   "Members": [
@@ -9679,7 +9682,7 @@
       "$id": "656",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.RowPermissionsInheritExtensionWriteInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "RowPermissionsInheritExtensionWriteInfo",
+      "RootTypeName": "RowPermissionsInheritExtensionWriteInfo",
       "TypeName": "RowPermissionsInheritExtensionWriteInfo",
       "Keyword": null,
       "Members": [
@@ -9689,7 +9692,7 @@
             "$id": "658",
             "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.RowPermissionsInheritWriteInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
             "BaseTypesAssemblyQualifiedName": [],
-            "BaseTypeName": "RowPermissionsInheritWriteInfo",
+            "RootTypeName": "RowPermissionsInheritWriteInfo",
             "TypeName": "RowPermissionsInheritWriteInfo",
             "Keyword": null,
             "Members": [
@@ -9719,7 +9722,7 @@
                     "Rhetos.Dsl.DefaultConcepts.QueryFilterInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
                     "Rhetos.Dsl.DefaultConcepts.ComposableFilterByInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null"
                   ],
-                  "BaseTypeName": "QueryFilterInfo",
+                  "RootTypeName": "QueryFilterInfo",
                   "TypeName": "RowPermissionsWriteInfo",
                   "Keyword": "RowPermissionsWrite",
                   "Members": [
@@ -9839,7 +9842,7 @@
       "$id": "667",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.RowPermissionsInheritFromBaseInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "RowPermissionsInheritFromBaseInfo",
+      "RootTypeName": "RowPermissionsInheritFromBaseInfo",
       "TypeName": "RowPermissionsInheritFromBaseInfo",
       "Keyword": "InheritFromBase",
       "Members": [
@@ -9870,7 +9873,7 @@
       "$id": "669",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.RowPermissionsInheritFromReferenceInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "RowPermissionsInheritFromReferenceInfo",
+      "RootTypeName": "RowPermissionsInheritFromReferenceInfo",
       "TypeName": "RowPermissionsInheritFromReferenceInfo",
       "Keyword": "InheritFrom",
       "Members": [
@@ -9918,7 +9921,7 @@
       "$id": "672",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.RowPermissionsInheritReadSameMemberInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "RowPermissionsInheritReadSameMemberInfo",
+      "RootTypeName": "RowPermissionsInheritReadSameMemberInfo",
       "TypeName": "RowPermissionsInheritReadSameMemberInfo",
       "Keyword": null,
       "Members": [
@@ -9979,7 +9982,7 @@
       "$id": "676",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.RowPermissionsInheritWriteSameMemberInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "RowPermissionsInheritWriteSameMemberInfo",
+      "RootTypeName": "RowPermissionsInheritWriteSameMemberInfo",
       "TypeName": "RowPermissionsInheritWriteSameMemberInfo",
       "Keyword": null,
       "Members": [
@@ -10046,7 +10049,7 @@
         "Rhetos.Dsl.DefaultConcepts.RowPermissionsRuleInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
         "Rhetos.Dsl.DefaultConcepts.RowPermissionsSingleFunctionRuleInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null"
       ],
-      "BaseTypeName": "RowPermissionsRuleInfo",
+      "RootTypeName": "RowPermissionsRuleInfo",
       "TypeName": "RowPermissionsRuleAllowInfo",
       "Keyword": "Allow",
       "Members": [
@@ -10141,7 +10144,7 @@
         "Rhetos.Dsl.DefaultConcepts.RowPermissionsRuleInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
         "Rhetos.Dsl.DefaultConcepts.RowPermissionsSingleFunctionRuleInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null"
       ],
-      "BaseTypeName": "RowPermissionsRuleInfo",
+      "RootTypeName": "RowPermissionsRuleInfo",
       "TypeName": "RowPermissionsRuleAllowReadInfo",
       "Keyword": "AllowRead",
       "Members": [
@@ -10236,7 +10239,7 @@
         "Rhetos.Dsl.DefaultConcepts.RowPermissionsRuleInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
         "Rhetos.Dsl.DefaultConcepts.RowPermissionsSingleFunctionRuleInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null"
       ],
-      "BaseTypeName": "RowPermissionsRuleInfo",
+      "RootTypeName": "RowPermissionsRuleInfo",
       "TypeName": "RowPermissionsRuleAllowWriteInfo",
       "Keyword": "AllowWrite",
       "Members": [
@@ -10331,7 +10334,7 @@
         "Rhetos.Dsl.DefaultConcepts.RowPermissionsRuleInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
         "Rhetos.Dsl.DefaultConcepts.RowPermissionsSingleFunctionRuleInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null"
       ],
-      "BaseTypeName": "RowPermissionsRuleInfo",
+      "RootTypeName": "RowPermissionsRuleInfo",
       "TypeName": "RowPermissionsRuleDenyInfo",
       "Keyword": "Deny",
       "Members": [
@@ -10426,7 +10429,7 @@
         "Rhetos.Dsl.DefaultConcepts.RowPermissionsRuleInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
         "Rhetos.Dsl.DefaultConcepts.RowPermissionsSingleFunctionRuleInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null"
       ],
-      "BaseTypeName": "RowPermissionsRuleInfo",
+      "RootTypeName": "RowPermissionsRuleInfo",
       "TypeName": "RowPermissionsRuleDenyReadInfo",
       "Keyword": "DenyRead",
       "Members": [
@@ -10521,7 +10524,7 @@
         "Rhetos.Dsl.DefaultConcepts.RowPermissionsRuleInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
         "Rhetos.Dsl.DefaultConcepts.RowPermissionsSingleFunctionRuleInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null"
       ],
-      "BaseTypeName": "RowPermissionsRuleInfo",
+      "RootTypeName": "RowPermissionsRuleInfo",
       "TypeName": "RowPermissionsRuleDenyWriteInfo",
       "Keyword": "DenyWrite",
       "Members": [
@@ -10613,7 +10616,7 @@
       "$id": "716",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.RowPermissionsRuleInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "RowPermissionsRuleInfo",
+      "RootTypeName": "RowPermissionsRuleInfo",
       "TypeName": "RowPermissionsRuleInfo",
       "Keyword": null,
       "Members": [
@@ -10658,7 +10661,7 @@
       "BaseTypesAssemblyQualifiedName": [
         "Rhetos.Dsl.DefaultConcepts.RowPermissionsRuleInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null"
       ],
-      "BaseTypeName": "RowPermissionsRuleInfo",
+      "RootTypeName": "RowPermissionsRuleInfo",
       "TypeName": "RowPermissionsSingleFunctionRuleInfo",
       "Keyword": null,
       "Members": [
@@ -10756,7 +10759,7 @@
         "Rhetos.Dsl.DefaultConcepts.DataStructureInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
         "Rhetos.Dsl.DefaultConcepts.ParameterInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null"
       ],
-      "BaseTypeName": "DataStructureInfo",
+      "RootTypeName": "DataStructureInfo",
       "TypeName": "ActionInfo",
       "Keyword": "Action",
       "Members": [
@@ -10814,7 +10817,7 @@
       "$id": "729",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.AllPropertiesLoggingInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "AllPropertiesLoggingInfo",
+      "RootTypeName": "AllPropertiesLoggingInfo",
       "TypeName": "AllPropertiesLoggingInfo",
       "Keyword": "AllProperties",
       "Members": [
@@ -10824,7 +10827,7 @@
             "$id": "731",
             "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.EntityLoggingInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
             "BaseTypesAssemblyQualifiedName": [],
-            "BaseTypeName": "EntityLoggingInfo",
+            "RootTypeName": "EntityLoggingInfo",
             "TypeName": "EntityLoggingInfo",
             "Keyword": "Logging",
             "Members": [
@@ -10867,7 +10870,7 @@
       "$id": "733",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.AutoCodeCachedInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "AutoCodeCachedInfo",
+      "RootTypeName": "AutoCodeCachedInfo",
       "TypeName": "AutoCodeCachedInfo",
       "Keyword": "AutoCodeCached",
       "Members": [
@@ -10897,7 +10900,7 @@
       "BaseTypesAssemblyQualifiedName": [
         "Rhetos.Dsl.DefaultConcepts.AutoCodeCachedInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null"
       ],
-      "BaseTypeName": "AutoCodeCachedInfo",
+      "RootTypeName": "AutoCodeCachedInfo",
       "TypeName": "AutoCodeForEachCachedInfo",
       "Keyword": "AutoCodeForEachCached",
       "Members": [
@@ -10944,7 +10947,7 @@
       "BaseTypesAssemblyQualifiedName": [
         "Rhetos.Dsl.DefaultConcepts.AutoCodePropertyInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null"
       ],
-      "BaseTypeName": "AutoCodePropertyInfo",
+      "RootTypeName": "AutoCodePropertyInfo",
       "TypeName": "AutoCodeForEachInfo",
       "Keyword": "AutoCodeForEach",
       "Members": [
@@ -10989,7 +10992,7 @@
       "$id": "741",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.AutoCodePropertyInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "AutoCodePropertyInfo",
+      "RootTypeName": "AutoCodePropertyInfo",
       "TypeName": "AutoCodePropertyInfo",
       "Keyword": "AutoCode",
       "Members": [
@@ -11017,7 +11020,7 @@
       "$id": "743",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.BeforeActionInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "BeforeActionInfo",
+      "RootTypeName": "BeforeActionInfo",
       "TypeName": "BeforeActionInfo",
       "Keyword": "BeforeAction",
       "Members": [
@@ -11075,7 +11078,7 @@
       "$id": "747",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.BrowseTakeNamedPropertyInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "BrowseTakeNamedPropertyInfo",
+      "RootTypeName": "BrowseTakeNamedPropertyInfo",
       "TypeName": "BrowseTakeNamedPropertyInfo",
       "Keyword": "Take",
       "Members": [
@@ -11135,7 +11138,7 @@
       "BaseTypesAssemblyQualifiedName": [
         "Rhetos.Dsl.DefaultConcepts.BrowseTakeNamedPropertyInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null"
       ],
-      "BaseTypeName": "BrowseTakeNamedPropertyInfo",
+      "RootTypeName": "BrowseTakeNamedPropertyInfo",
       "TypeName": "BrowseTakePropertyInfo",
       "Keyword": "Take",
       "Members": [
@@ -11193,7 +11196,7 @@
       "$id": "755",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.CreatedByInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "CreatedByInfo",
+      "RootTypeName": "CreatedByInfo",
       "TypeName": "CreatedByInfo",
       "Keyword": "CreatedBy",
       "Members": [
@@ -11221,7 +11224,7 @@
       "$id": "757",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.CreationTimeInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "CreationTimeInfo",
+      "RootTypeName": "CreationTimeInfo",
       "TypeName": "CreationTimeInfo",
       "Keyword": "CreationTime",
       "Members": [
@@ -11249,7 +11252,7 @@
       "$id": "759",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.CustomClaimInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "CustomClaimInfo",
+      "RootTypeName": "CustomClaimInfo",
       "TypeName": "CustomClaimInfo",
       "Keyword": "CustomClaim",
       "Members": [
@@ -11292,7 +11295,7 @@
       "BaseTypesAssemblyQualifiedName": [
         "Rhetos.Dsl.DefaultConcepts.RangeInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null"
       ],
-      "BaseTypeName": "RangeInfo",
+      "RootTypeName": "RangeInfo",
       "TypeName": "DateRangeInfo",
       "Keyword": "DateRange",
       "Members": [
@@ -11354,7 +11357,7 @@
       "BaseTypesAssemblyQualifiedName": [
         "Rhetos.Dsl.DefaultConcepts.RangeInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null"
       ],
-      "BaseTypeName": "RangeInfo",
+      "RootTypeName": "RangeInfo",
       "TypeName": "DateTimeRangeInfo",
       "Keyword": "DateTimeRange",
       "Members": [
@@ -11414,7 +11417,7 @@
       "$id": "770",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.DeactivatableInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "DeactivatableInfo",
+      "RootTypeName": "DeactivatableInfo",
       "TypeName": "DeactivatableInfo",
       "Keyword": "Deactivatable",
       "Members": [
@@ -11442,7 +11445,7 @@
       "$id": "772",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.DefaultValueInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "DefaultValueInfo",
+      "RootTypeName": "DefaultValueInfo",
       "TypeName": "DefaultValueInfo",
       "Keyword": "DefaultValue",
       "Members": [
@@ -11484,7 +11487,7 @@
             "$id": "776",
             "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.DefaultValuesInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
             "BaseTypesAssemblyQualifiedName": [],
-            "BaseTypeName": "DefaultValuesInfo",
+            "RootTypeName": "DefaultValuesInfo",
             "TypeName": "DefaultValuesInfo",
             "Keyword": null,
             "Members": [
@@ -11530,7 +11533,7 @@
       "$id": "778",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.DenyUserEditDataStructureInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "DenyUserEditDataStructureInfo",
+      "RootTypeName": "DenyUserEditDataStructureInfo",
       "TypeName": "DenyUserEditDataStructureInfo",
       "Keyword": "DenyUserEdit",
       "Members": [
@@ -11558,7 +11561,7 @@
       "$id": "780",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.DenyUserEditPropertyInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "DenyUserEditPropertyInfo",
+      "RootTypeName": "DenyUserEditPropertyInfo",
       "TypeName": "DenyUserEditPropertyInfo",
       "Keyword": "DenyUserEdit",
       "Members": [
@@ -11591,7 +11594,7 @@
       "BaseTypesAssemblyQualifiedName": [
         "Rhetos.Dsl.DefaultConcepts.RangeInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null"
       ],
-      "BaseTypeName": "RangeInfo",
+      "RootTypeName": "RangeInfo",
       "TypeName": "IntegerRangeInfo",
       "Keyword": "IntegerRange",
       "Members": [
@@ -11651,7 +11654,7 @@
       "$id": "786",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.LegacyPropertyInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "LegacyPropertyInfo",
+      "RootTypeName": "LegacyPropertyInfo",
       "TypeName": "LegacyPropertyInfo",
       "Keyword": null,
       "Members": [
@@ -11698,7 +11701,7 @@
       "BaseTypesAssemblyQualifiedName": [
         "Rhetos.Dsl.DefaultConcepts.LegacyPropertyInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null"
       ],
-      "BaseTypeName": "LegacyPropertyInfo",
+      "RootTypeName": "LegacyPropertyInfo",
       "TypeName": "LegacyPropertyReadOnlyInfo",
       "Keyword": "LegacyPropertyReadOnly",
       "Members": [
@@ -11760,7 +11763,7 @@
       "BaseTypesAssemblyQualifiedName": [
         "Rhetos.Dsl.DefaultConcepts.LegacyPropertyInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null"
       ],
-      "BaseTypeName": "LegacyPropertyInfo",
+      "RootTypeName": "LegacyPropertyInfo",
       "TypeName": "LegacyPropertyReferenceInfo",
       "Keyword": "LegacyProperty",
       "Members": [
@@ -11852,7 +11855,7 @@
       "BaseTypesAssemblyQualifiedName": [
         "Rhetos.Dsl.DefaultConcepts.LegacyPropertyInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null"
       ],
-      "BaseTypeName": "LegacyPropertyInfo",
+      "RootTypeName": "LegacyPropertyInfo",
       "TypeName": "LegacyPropertySimpleInfo",
       "Keyword": "LegacyProperty",
       "Members": [
@@ -11912,7 +11915,7 @@
       "$id": "803",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.LoggingRelatedItemInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "LoggingRelatedItemInfo",
+      "RootTypeName": "LoggingRelatedItemInfo",
       "TypeName": "LoggingRelatedItemInfo",
       "Keyword": "RelatedItem",
       "Members": [
@@ -11985,7 +11988,7 @@
       "$id": "808",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.LogReaderAdditionalSourceInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "LogReaderAdditionalSourceInfo",
+      "RootTypeName": "LogReaderAdditionalSourceInfo",
       "TypeName": "LogReaderAdditionalSourceInfo",
       "Keyword": "LogReaderAdditionalSource",
       "Members": [
@@ -12043,7 +12046,7 @@
       "$id": "812",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.MaxLengthInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "MaxLengthInfo",
+      "RootTypeName": "MaxLengthInfo",
       "TypeName": "MaxLengthInfo",
       "Keyword": "MaxLength",
       "Members": [
@@ -12086,7 +12089,7 @@
       "$id": "815",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.MaxValueInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "MaxValueInfo",
+      "RootTypeName": "MaxValueInfo",
       "TypeName": "MaxValueInfo",
       "Keyword": "MaxValue",
       "Members": [
@@ -12129,7 +12132,7 @@
       "$id": "818",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.MinLengthInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "MinLengthInfo",
+      "RootTypeName": "MinLengthInfo",
       "TypeName": "MinLengthInfo",
       "Keyword": "MinLength",
       "Members": [
@@ -12172,7 +12175,7 @@
       "$id": "821",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.MinValueInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "MinValueInfo",
+      "RootTypeName": "MinValueInfo",
       "TypeName": "MinValueInfo",
       "Keyword": "MinValue",
       "Members": [
@@ -12215,7 +12218,7 @@
       "$id": "824",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.ModificationTimeOfInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "ModificationTimeOfInfo",
+      "RootTypeName": "ModificationTimeOfInfo",
       "TypeName": "ModificationTimeOfInfo",
       "Keyword": "ModificationTimeOf",
       "Members": [
@@ -12259,7 +12262,7 @@
             "$id": "828",
             "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.ModificationTimeOfInfrastructureInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
             "BaseTypesAssemblyQualifiedName": [],
-            "BaseTypeName": "ModificationTimeOfInfrastructureInfo",
+            "RootTypeName": "ModificationTimeOfInfrastructureInfo",
             "TypeName": "ModificationTimeOfInfrastructureInfo",
             "Keyword": null,
             "Members": [
@@ -12305,7 +12308,7 @@
       "$id": "830",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.ModuleExternalReferenceInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "ModuleExternalReferenceInfo",
+      "RootTypeName": "ModuleExternalReferenceInfo",
       "TypeName": "ModuleExternalReferenceInfo",
       "Keyword": "ExternalReference",
       "Members": [
@@ -12348,7 +12351,7 @@
       "$id": "833",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.PessimisticLockingInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "PessimisticLockingInfo",
+      "RootTypeName": "PessimisticLockingInfo",
       "TypeName": "PessimisticLockingInfo",
       "Keyword": "PessimisticLocking",
       "Members": [
@@ -12376,7 +12379,7 @@
       "$id": "835",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.PessimisticLockingParentInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "PessimisticLockingParentInfo",
+      "RootTypeName": "PessimisticLockingParentInfo",
       "TypeName": "PessimisticLockingParentInfo",
       "Keyword": "PessimisticLockingParent",
       "Members": [
@@ -12421,7 +12424,7 @@
       "$id": "838",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.PrerequisiteAllProperties, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "PrerequisiteAllProperties",
+      "RootTypeName": "PrerequisiteAllProperties",
       "TypeName": "PrerequisiteAllProperties",
       "Keyword": "PrerequisiteAllProperties",
       "Members": [
@@ -12449,7 +12452,7 @@
       "$id": "840",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.PropertyLoggingInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "PropertyLoggingInfo",
+      "RootTypeName": "PropertyLoggingInfo",
       "TypeName": "PropertyLoggingInfo",
       "Keyword": "Log",
       "Members": [
@@ -12494,7 +12497,7 @@
       "$id": "843",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.RangeInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "RangeInfo",
+      "RootTypeName": "RangeInfo",
       "TypeName": "RangeInfo",
       "Keyword": "Range",
       "Members": [
@@ -12539,7 +12542,7 @@
       "$id": "846",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.ReferenceCascadeDeleteDbInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "ReferenceCascadeDeleteDbInfo",
+      "RootTypeName": "ReferenceCascadeDeleteDbInfo",
       "TypeName": "ReferenceCascadeDeleteDbInfo",
       "Keyword": "CascadeDeleteInDatabase",
       "Members": [
@@ -12567,7 +12570,7 @@
       "$id": "848",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.ReferenceCascadeDeleteInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "ReferenceCascadeDeleteInfo",
+      "RootTypeName": "ReferenceCascadeDeleteInfo",
       "TypeName": "ReferenceCascadeDeleteInfo",
       "Keyword": "CascadeDelete",
       "Members": [
@@ -12595,7 +12598,7 @@
       "$id": "850",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.ReferenceCascadeDeletePolymorphicInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "ReferenceCascadeDeletePolymorphicInfo",
+      "RootTypeName": "ReferenceCascadeDeletePolymorphicInfo",
       "TypeName": "ReferenceCascadeDeletePolymorphicInfo",
       "Keyword": null,
       "Members": [
@@ -12640,7 +12643,7 @@
       "$id": "853",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.ReferenceDetailInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "ReferenceDetailInfo",
+      "RootTypeName": "ReferenceDetailInfo",
       "TypeName": "ReferenceDetailInfo",
       "Keyword": "Detail",
       "Members": [
@@ -12670,7 +12673,7 @@
       "BaseTypesAssemblyQualifiedName": [
         "Rhetos.Dsl.DefaultConcepts.RegExMatchInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null"
       ],
-      "BaseTypeName": "RegExMatchInfo",
+      "RootTypeName": "RegExMatchInfo",
       "TypeName": "RegExMatchDefaultMessageInfo",
       "Keyword": "RegExMatch",
       "Members": [
@@ -12728,7 +12731,7 @@
       "$id": "859",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.RegExMatchInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "RegExMatchInfo",
+      "RootTypeName": "RegExMatchInfo",
       "TypeName": "RegExMatchInfo",
       "Keyword": "RegExMatch",
       "Members": [
@@ -12786,7 +12789,7 @@
       "$id": "863",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.RequiredAllowSaveInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "RequiredAllowSaveInfo",
+      "RootTypeName": "RequiredAllowSaveInfo",
       "TypeName": "RequiredAllowSaveInfo",
       "Keyword": "RequiredAllowSave",
       "Members": [
@@ -12814,7 +12817,7 @@
       "$id": "865",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.RequiredPropertyInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "RequiredPropertyInfo",
+      "RootTypeName": "RequiredPropertyInfo",
       "TypeName": "RequiredPropertyInfo",
       "Keyword": "Required",
       "Members": [
@@ -12845,7 +12848,7 @@
         "Rhetos.Dsl.DefaultConcepts.PropertyInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
         "Rhetos.Dsl.DefaultConcepts.ReferencePropertyInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null"
       ],
-      "BaseTypeName": "PropertyInfo",
+      "RootTypeName": "PropertyInfo",
       "TypeName": "SimpleReferencePropertyInfo",
       "Keyword": "Reference",
       "Members": [
@@ -12905,7 +12908,7 @@
       "$id": "871",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.SystemRequiredInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "SystemRequiredInfo",
+      "RootTypeName": "SystemRequiredInfo",
       "TypeName": "SystemRequiredInfo",
       "Keyword": "SystemRequired",
       "Members": [
@@ -12936,7 +12939,7 @@
       "$id": "873",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.UniqueMultiplePropertyInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "UniqueMultiplePropertyInfo",
+      "RootTypeName": "UniqueMultiplePropertyInfo",
       "TypeName": "UniqueMultiplePropertyInfo",
       "Keyword": null,
       "Members": [
@@ -12981,7 +12984,7 @@
       "$id": "876",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.UniqueProperties3Info, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "UniqueProperties3Info",
+      "RootTypeName": "UniqueProperties3Info",
       "TypeName": "UniqueProperties3Info",
       "Keyword": "Unique",
       "Members": [
@@ -13060,7 +13063,7 @@
       "$id": "881",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.UniquePropertiesInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "UniquePropertiesInfo",
+      "RootTypeName": "UniquePropertiesInfo",
       "TypeName": "UniquePropertiesInfo",
       "Keyword": "Unique",
       "Members": [
@@ -13122,7 +13125,7 @@
       "$id": "885",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.UniquePropertyInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "UniquePropertyInfo",
+      "RootTypeName": "UniquePropertyInfo",
       "TypeName": "UniquePropertyInfo",
       "Keyword": "Unique",
       "Members": [
@@ -13150,7 +13153,7 @@
       "$id": "887",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.UniqueReferenceCascadeDeleteDbInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "UniqueReferenceCascadeDeleteDbInfo",
+      "RootTypeName": "UniqueReferenceCascadeDeleteDbInfo",
       "TypeName": "UniqueReferenceCascadeDeleteDbInfo",
       "Keyword": "CascadeDeleteInDatabase",
       "Members": [
@@ -13178,7 +13181,7 @@
       "$id": "889",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.UniqueReferenceCascadeDeleteInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "UniqueReferenceCascadeDeleteInfo",
+      "RootTypeName": "UniqueReferenceCascadeDeleteInfo",
       "TypeName": "UniqueReferenceCascadeDeleteInfo",
       "Keyword": "CascadeDelete",
       "Members": [
@@ -13206,7 +13209,7 @@
       "$id": "891",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.UniqueReferenceCascadeDeletePolymorphicInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "UniqueReferenceCascadeDeletePolymorphicInfo",
+      "RootTypeName": "UniqueReferenceCascadeDeletePolymorphicInfo",
       "TypeName": "UniqueReferenceCascadeDeletePolymorphicInfo",
       "Keyword": null,
       "Members": [
@@ -13251,7 +13254,7 @@
       "$id": "894",
       "AssemblyQualifiedName": "Rhetos.Dsl.DefaultConcepts.UserRequiredPropertyInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null",
       "BaseTypesAssemblyQualifiedName": [],
-      "BaseTypeName": "UserRequiredPropertyInfo",
+      "RootTypeName": "UserRequiredPropertyInfo",
       "TypeName": "UserRequiredPropertyInfo",
       "Keyword": "UserRequired",
       "Members": [
@@ -13274,9 +13277,81 @@
         }
       ],
       "KeywordOrTypeName": "UserRequired"
+    },
+    {
+      "$id": "896",
+      "AssemblyQualifiedName": "RhetosTestAppConcepts.WithParentInfo, RhetosTestAppConcepts, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+      "BaseTypesAssemblyQualifiedName": [],
+      "RootTypeName": "WithParentInfo",
+      "TypeName": "WithParentInfo",
+      "Keyword": "WithParent",
+      "Members": [
+        {
+          "$id": "897",
+          "ConceptType": {
+            "$ref": "18"
+          },
+          "Index": 0,
+          "Name": "DataStructure",
+          "IsConceptInfo": true,
+          "IsKey": true,
+          "IsParentNested": false,
+          "SortOrder1": 0,
+          "SortOrder2": 385875969,
+          "IsDerived": false,
+          "IsStringType": false,
+          "IsConceptInfoInterface": false,
+          "IsParsable": true
+        },
+        {
+          "$id": "898",
+          "ConceptType": null,
+          "Index": 1,
+          "Name": "Name",
+          "IsConceptInfo": false,
+          "IsKey": true,
+          "IsParentNested": false,
+          "SortOrder1": 0,
+          "SortOrder2": 385875970,
+          "IsDerived": false,
+          "IsStringType": true,
+          "IsConceptInfoInterface": false,
+          "IsParsable": true
+        },
+        {
+          "$id": "899",
+          "ConceptType": {
+            "$ref": "10"
+          },
+          "Index": 2,
+          "Name": "ModuleParent",
+          "IsConceptInfo": true,
+          "IsKey": false,
+          "IsParentNested": true,
+          "SortOrder1": 0,
+          "SortOrder2": 385875971,
+          "IsDerived": false,
+          "IsStringType": false,
+          "IsConceptInfoInterface": false,
+          "IsParsable": true
+        },
+        {
+          "$id": "900",
+          "ConceptType": null,
+          "Index": 3,
+          "Name": "Parameter",
+          "IsConceptInfo": false,
+          "IsKey": false,
+          "IsParentNested": false,
+          "SortOrder1": 0,
+          "SortOrder2": 385875972,
+          "IsDerived": false,
+          "IsStringType": true,
+          "IsConceptInfoInterface": false,
+          "IsParsable": true
+        }
+      ],
+      "KeywordOrTypeName": "WithParent"
     }
-  ],
-  "ExcessDotInKey": 0,
-  "DatabaseLanguage": "MsSql",
-  "Version": "5.0.0-dev2105152101af4261"
+  ]
 }

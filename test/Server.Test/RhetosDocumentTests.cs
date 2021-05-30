@@ -191,7 +191,7 @@ Module module1 // comment
 
         [DataTestMethod]
         
-        [DataRow(1, 0, 171, null, null)]
+        [DataRow(1, 0, 172, null, null)]
         [DataRow(1, 8, 0, null, null)]
         [DataRow(1, 10, 0, null, null)]
         [DataRow(1, 30, 0, null, null)]
@@ -347,7 +347,6 @@ Module module1
         [DataRow(5, 0, false)]
         [DataRow(6, 20, true)]
         [DataRow(8, 0, true)]
-        [Ignore("Need 'WithParent' concept as a part of DslSyntax.")]
         public void CompletionForConceptParent(int line, int chr, bool shouldContainWithParent)
         {
             var script =
@@ -383,7 +382,7 @@ WithParent Module2.Entity2 name2 ParentModule param2;
                 .OrderBy(a => a)
                 .ToList();
             Console.WriteLine($"Keywords: [{completion.Count}] {string.Join(",", completion)}");
-            Assert.AreEqual(171, completion.Count);
+            Assert.AreEqual(172, completion.Count);
         }
 
         [TestMethod]
@@ -394,7 +393,7 @@ WithParent Module2.Entity2 name2 ParentModule param2;
 
             var completion = rhetosDocument.GetCompletionKeywordsAtPosition(lineChr);
             Console.WriteLine($"Keywords: [{completion.Count}] {string.Join(",", completion)}");
-            Assert.AreEqual(171, completion.Count);
+            Assert.AreEqual(172, completion.Count);
         }
 
         [DataTestMethod]
