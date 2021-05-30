@@ -37,8 +37,7 @@ namespace Rhetos.LanguageServices.CodeAnalysis.Test
 
         public RhetosDocumentTests()
         {
-            serviceProvider = TestCommon.CreateTestServiceProvider();
-            serviceProvider.GetRequiredService<RhetosProjectContext>().InitializeFromPath("./");
+            serviceProvider = TestCommon.CreateTestServiceProvider("./");
             rhetosDocumentFactory = serviceProvider.GetRequiredService<RhetosDocumentFactory>();
         }
 

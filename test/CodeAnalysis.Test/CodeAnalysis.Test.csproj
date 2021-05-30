@@ -41,7 +41,7 @@
     <None Update="RhetosAppFolder\FolderWithApp\doc.rhe">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="RhetosAppFolder\FolderWithApp\MockObj\Rhetos\rhetos-project.assets.json">
+    <None Update="RhetosAppFolder\FolderWithApp\MockObj\Rhetos\DslSyntax.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="RhetosAppFolder\FolderWithApp\SubFolder\doc.rhe">

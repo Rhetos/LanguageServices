@@ -71,8 +71,8 @@ namespace Rhetos.LanguageServices.CodeAnalysis.Parsing
 
         private void UpdateRootPathConfiguration()
         {
-            Console.WriteLine($"ROOT PATH CONFIGURATION!!! '{rhetosProjectContext.RootPath}'");
-            RootPathConfiguration = new RootPathConfiguration(rhetosProjectContext.RootPath, RootPathConfigurationType.DetectedRhetosApp, "");
+            Console.WriteLine($"ROOT PATH CONFIGURATION!!! '{rhetosProjectContext.ProjectRootPath}'");
+            RootPathConfiguration = new RootPathConfiguration(rhetosProjectContext.ProjectRootPath, RootPathConfigurationType.DetectedRhetosApp, "");
             //throw new NotImplementedException();
             /*
             var directiveConfiguration = rhetosAppContext.GetRhetosProjectRootPath(this, true);
@@ -151,9 +151,9 @@ namespace Rhetos.LanguageServices.CodeAnalysis.Parsing
                 analysisResult.DslParserErrors.Add(new CodeAnalysisError() { Message = "Waiting for Rhetos Project initialization.", Severity = CodeAnalysisError.ErrorSeverity.Warning });
             }
             // document's root path is different than path used to initialize RhetosAppContext
-            else if (isInitialized && !string.Equals(rhetosProjectContext.RootPath, RootPathConfiguration?.RootPath, StringComparison.InvariantCultureIgnoreCase))
+            else if (isInitialized && !string.Equals(rhetosProjectContext.ProjectRootPath, RootPathConfiguration?.RootPath, StringComparison.InvariantCultureIgnoreCase))
             {
-                var message = $"Language Services have been initialized with Rhetos app at '{rhetosProjectContext.RootPath}'. "
+                var message = $"Language Services have been initialized with Rhetos app at '{rhetosProjectContext.ProjectRootPath}'. "
                               + $"This document is configured to use different Rhetos app at '{RootPathConfiguration.RootPath}'. No code analysis will be performed. "
                               + "Restart Visual Studio if you want to use a different Rhetos app.";
                 analysisResult.DslParserErrors.Add(new CodeAnalysisError() { Message = message, Severity = CodeAnalysisError.ErrorSeverity.Warning });

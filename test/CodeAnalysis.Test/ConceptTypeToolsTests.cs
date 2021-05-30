@@ -32,8 +32,7 @@ namespace Rhetos.LanguageServices.CodeAnalysis.Test
 
         public ConceptTypeToolsTests()
         {
-            serviceProvider = TestCommon.CreateTestServiceProvider();
-            serviceProvider.GetRequiredService<RhetosProjectContext>().InitializeFromPath("./");
+            serviceProvider = TestCommon.CreateTestServiceProvider("./");
         }
 
         [DataTestMethod]

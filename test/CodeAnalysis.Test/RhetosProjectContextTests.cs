@@ -37,7 +37,6 @@ namespace Rhetos.LanguageServices.CodeAnalysis.Test
         public RhetosProjectContextTests()
         {
             serviceProvider = TestCommon.CreateTestServiceProvider();
-            serviceProvider.GetService<RhetosProjectContext>().InitializeFromPath("");
         }
 
         [DataTestMethod]
@@ -56,12 +55,12 @@ namespace Rhetos.LanguageServices.CodeAnalysis.Test
             Console.WriteLine($"Opening file '{uri.LocalPath}.'");
             var text = File.ReadAllText(uri.LocalPath);
             Console.WriteLine($"File contents:\n{text}\n*****************\n");
-            var rhetosProjectContext =  serviceProvider.GetRequiredService<RhetosProjectContext>();
+            var rhetosProjectRootPathResolver =  serviceProvider.GetRequiredService<RhetosProjectRootPathResolver>();
             var documentFactory = serviceProvider.GetRequiredService<RhetosDocumentFactory>();
             var rhetosDocument = documentFactory.CreateNew(uri);
             rhetosDocument.UpdateText(text);
 
-            var rootPathConfiguration = rhetosProjectContext.GetRhetosProjectRootPath(rhetosDocument);
+            var rootPathConfiguration = rhetosProjectRootPathResolver.ResolveRootPathForDocument(rhetosDocument);
             Console.WriteLine($"\nRoot Path Configuration:\n{rootPathConfiguration?.ConfigurationType} = {rootPathConfiguration?.RootPath}\n  from {rootPathConfiguration?.Context}");
 
             Assert.AreEqual(expectedConfigurationType, rootPathConfiguration.ConfigurationType);

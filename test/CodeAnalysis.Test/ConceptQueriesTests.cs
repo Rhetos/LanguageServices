@@ -36,8 +36,7 @@ namespace Rhetos.LanguageServices.CodeAnalysis.Test
 
         public ConceptQueriesTests()
         {
-            serviceProvider = TestCommon.CreateTestServiceProvider();
-            serviceProvider.GetRequiredService<RhetosProjectContext>().InitializeFromPath("./");
+            serviceProvider = TestCommon.CreateTestServiceProvider("./");
         }
 
         // Derived ConceptInfo classes without own keywords should not be included

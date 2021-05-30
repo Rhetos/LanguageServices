@@ -14,7 +14,7 @@ namespace Rhetos.LanguageServices.CodeAnalysis.Parsing
         public bool IsInitialized { get; private set; }
 
         // TODO: make dynamic
-        public string RootPath { get; private set; }
+        public string ProjectRootPath { get; private set; }
         public DateTime LastContextUpdateTime { get; private set; }
 
         public DslSyntax DslSyntax { get; private set; }
@@ -26,30 +26,19 @@ namespace Rhetos.LanguageServices.CodeAnalysis.Parsing
         {
         }
 
-        public void InitializeFromDslSyntax(DslSyntax dslSyntax)
+        public void Initialize(DslSyntax dslSyntax, string projectRootPath)
         {
             DslSyntax = dslSyntax;
             keywords = new Lazy<Dictionary<string, ConceptType[]>>(ExtractKeywords);
             IsInitialized = true;
             LastContextUpdateTime = DateTime.Now;
+            ProjectRootPath = projectRootPath;
         }
 
-        public void InitializeFromPath(string path)
+        public void Initialize(string projectRootPath)
         {
-            var dslSyntaxFile = Path.Combine(path, "DslSyntax.json");
-            var dslSyntaxSerialized = File.ReadAllText(dslSyntaxFile);
-
-            var serializerSettings = new JsonSerializerSettings
-            {
-                PreserveReferencesHandling = PreserveReferencesHandling.All,
-                ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
-                TypeNameHandling = TypeNameHandling.Auto,
-                Formatting = Formatting.Indented,
-            };
-
-            var dslSyntax = JsonConvert.DeserializeObject<DslSyntax>(dslSyntaxSerialized, serializerSettings);
-            InitializeFromDslSyntax(dslSyntax);
-            RootPath = path;
+            var dslSyntaxProvider = new DslSyntaxProvider(projectRootPath);
+            Initialize(dslSyntaxProvider.Load(), projectRootPath);
         }
 
         private Dictionary<string, ConceptType[]> ExtractKeywords()
@@ -61,11 +50,6 @@ namespace Rhetos.LanguageServices.CodeAnalysis.Parsing
                 .ToDictionary(group => group.Key, group => group.Select(info => info.type).ToArray(), StringComparer.InvariantCultureIgnoreCase);
 
             return keywordDictionary;
-        }
-
-        public RootPathConfiguration GetRhetosProjectRootPath(RhetosDocument rhetosDocument)
-        {
-            throw new NotImplementedException();
         }
     }
 }

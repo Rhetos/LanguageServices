@@ -31,18 +31,28 @@ namespace Rhetos.LanguageServices.CodeAnalysis.Test
     {
         public static Uri UriMock => new Uri("file://\\stub.txt");
 
-        public static IServiceProvider CreateTestServiceProvider()
+        public static IServiceProvider CreateTestServiceProvider(string initializeContextFromFolder = null)
         {
             var services = new ServiceCollection()
                 .AddSingleton<RhetosWorkspace>()
                 .AddTransient<RhetosDocumentFactory>()
                 .AddSingleton<RhetosProjectContext>()
+                .AddSingleton<RhetosProjectRootPathResolver>()
                 .AddSingleton<XmlDocumentationProvider>()
                 .AddSingleton<ILogProvider, RhetosNetCoreLogProvider>()
                 .AddSingleton<ConceptQueries>()
                 .AddLogging(cfg => cfg.AddConsole());
 
-            return services.BuildServiceProvider();
+            var serviceProvider = services.BuildServiceProvider();
+
+            if (initializeContextFromFolder != null)
+            {
+                var rhetosProjectContext = serviceProvider.GetRequiredService<RhetosProjectContext>();
+                var dslSyntax = DslSyntaxProvider.LoadFromFolder(initializeContextFromFolder);
+                rhetosProjectContext.Initialize(dslSyntax, initializeContextFromFolder);
+            }
+
+            return serviceProvider;
         }
 
         public static RhetosDocument CreateWithTestUri(this RhetosDocumentFactory rhetosDocumentFactory, string text = null, LineChr? showPosition = null)
