@@ -20,14 +20,13 @@
 using System;
 using System.Globalization;
 using System.Linq;
-using System.Reflection;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json;
 using Rhetos.LanguageServices.CodeAnalysis.Parsing;
 using Rhetos.LanguageServices.CodeAnalysis.Services;
 
-namespace Rhetos.LanguageServices.Server.Test
+namespace Rhetos.LanguageServices.CodeAnalysis.Test
 {
     [TestClass]
     [DeploymentItem("DslSyntax.json")]

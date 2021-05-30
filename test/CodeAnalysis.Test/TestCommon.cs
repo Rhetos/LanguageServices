@@ -25,7 +25,7 @@ using Rhetos.LanguageServices.CodeAnalysis.Services;
 using Rhetos.LanguageServices.CodeAnalysis.Tools;
 using Rhetos.Logging;
 
-namespace Rhetos.LanguageServices.Server.Test
+namespace Rhetos.LanguageServices.CodeAnalysis.Test
 {
     public static class TestCommon
     {

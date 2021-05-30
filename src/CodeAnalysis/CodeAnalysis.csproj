@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFramework>net5.0</TargetFramework>
     <AssemblyName>Rhetos.LanguageServices.CodeAnalysis</AssemblyName>
     <RootNamespace>Rhetos.LanguageServices.CodeAnalysis</RootNamespace>
   </PropertyGroup>
@@ -10,6 +10,7 @@
     <PackageReference Include="Microsoft.Extensions.Logging" Version="5.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="5.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
+    <PackageReference Include="Rhetos" Version="5.0.0-dev2105301522eea541" />
   </ItemGroup>
 
   <ItemGroup>

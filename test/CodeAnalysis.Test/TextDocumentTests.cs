@@ -21,7 +21,7 @@ using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Rhetos.LanguageServices.CodeAnalysis.Parsing;
 
-namespace Rhetos.LanguageServices.Server.Test
+namespace Rhetos.LanguageServices.CodeAnalysis.Test
 {
     [TestClass]
     public class TextDocumentTests

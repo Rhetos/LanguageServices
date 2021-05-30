@@ -25,7 +25,7 @@ using Rhetos.LanguageServices.CodeAnalysis.Parsing;
 using Rhetos.LanguageServices.CodeAnalysis.Services;
 using Rhetos.LanguageServices.CodeAnalysis.Tools;
 
-namespace Rhetos.LanguageServices.Server.Test
+namespace Rhetos.LanguageServices.CodeAnalysis.Test
 {
     [TestClass]
     [DeploymentItem("RhetosAppFolder\\", "RhetosAppFolder")]

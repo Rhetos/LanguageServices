@@ -17,24 +17,11 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace Rhetos.LanguageServices.Server.Tools
+namespace Rhetos.LanguageServices.CodeAnalysis.Test
 {
-    public struct LineChr
+    public enum EndingsStyle
     {
-        public readonly int Line;
-        public readonly int Chr;
-
-        public static readonly LineChr Zero = new LineChr(0, 0);
-
-        public LineChr(int line, int chr)
-        {
-            this.Line = line;
-            this.Chr = chr;
-        }
-
-        public override string ToString()
-        {
-            return $"({Line}, {Chr})";
-        }
+        Windows, 
+        Linux
     }
 }
