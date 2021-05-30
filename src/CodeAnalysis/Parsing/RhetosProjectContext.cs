@@ -17,7 +17,7 @@ namespace Rhetos.LanguageServices.CodeAnalysis.Parsing
         public string RootPath { get; private set; }
         public DateTime LastContextUpdateTime { get; private set; }
 
-        public IDslSyntax DslSyntax { get; private set; }
+        public DslSyntax DslSyntax { get; private set; }
         public Dictionary<string, ConceptType[]> Keywords => keywords.Value;
 
         private Lazy<Dictionary<string, ConceptType[]>> keywords;
@@ -26,7 +26,7 @@ namespace Rhetos.LanguageServices.CodeAnalysis.Parsing
         {
         }
 
-        public void InitializeFromDslSyntax(IDslSyntax dslSyntax)
+        public void InitializeFromDslSyntax(DslSyntax dslSyntax)
         {
             DslSyntax = dslSyntax;
             keywords = new Lazy<Dictionary<string, ConceptType[]>>(ExtractKeywords);

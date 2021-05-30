@@ -64,7 +64,7 @@ namespace Rhetos.LanguageServices.Server.Test
 
             {
                 var dataStructureInfo = rhetosProjectContext.DslSyntax.ConceptTypes.Single(a => a.TypeName == "DataStructureInfo");
-                conceptQueries.IsInstanceOfType(entityInfoType, dataStructureInfo);
+                dataStructureInfo.IsAssignableFrom(entityInfoType);
             }
 
             {

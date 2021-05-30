@@ -24,6 +24,7 @@ using System.Linq;
 using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Newtonsoft.Json;
 using Rhetos.LanguageServices.CodeAnalysis.Parsing;
 using Rhetos.LanguageServices.CodeAnalysis.Services;
 
@@ -34,12 +35,13 @@ namespace Rhetos.LanguageServices.Server.Test
     public class RhetosDocumentTests
     {
         private readonly RhetosDocumentFactory rhetosDocumentFactory;
+        private readonly IServiceProvider serviceProvider;
 
         public RhetosDocumentTests()
         {
-            var serviceProvider = TestCommon.CreateTestServiceProvider();
-            serviceProvider.GetService<RhetosProjectContext>().InitializeFromPath("./");
-            rhetosDocumentFactory = serviceProvider.GetService<RhetosDocumentFactory>();
+            serviceProvider = TestCommon.CreateTestServiceProvider();
+            serviceProvider.GetRequiredService<RhetosProjectContext>().InitializeFromPath("./");
+            rhetosDocumentFactory = serviceProvider.GetRequiredService<RhetosDocumentFactory>();
         }
 
         private readonly string scriptSimple = @"
@@ -196,10 +198,10 @@ Module module1 // comment
         [DataRow(4, 0, 31, "WithParent", "Reference")]
         [DataRow(9, 0, 9, "AllProperties", "Logging")]
         [DataRow(8, 30, 9, "AllProperties", "Logging")]
-        [DataRow(11, 0, 66, "Logging", "AllProperties")]
+        [DataRow(11, 0, 67, "Logging", "AllProperties")]
         [DataRow(2, 30, 6, "Ent", "Entity")]
         [DataRow(13, 19, 6, "Ent", "Entity")]
-        [DataRow(13, 21, 66, "Logging", "AllProperties")]
+        [DataRow(13, 21, 67, "Logging", "AllProperties")]
         [DataRow(14, 7, 31, "WithParent", "Reference")]
         [DataRow(15, 9, 0, null, null)] // shouldn't work after errorline
         [DataRow(16, 30, 0, null, null)]
@@ -244,6 +246,51 @@ Module module1
                 Console.WriteLine($"Should NOT contain: {shouldNotContainKeyword}");
                 CollectionAssert.DoesNotContain(completion, shouldNotContainKeyword);
             }
+        }
+
+        [DataTestMethod]
+        [DataRow(9, 0, 9, "AllProperties,Log,RelatedItem,SqlDependsOn,SqlDependsOnFunction,SqlDependsOnID,SqlDependsOnIndex,SqlDependsOnSqlObject,SqlDependsOnView")]
+        [DataRow(14, 7, 31, "Action,AutodetectSqlDependencies,AutoInheritRowPermissions,AutoInheritRowPermissionsInternally,Browse,Computed,DataStructure,Entity,ExternalReference,Hardcoded,LegacyEntity,Parameter,Persisted,Polymorphic,QueryableExtension,ReportData,ReportFile,Snowflake,SqlDependsOn,SqlDependsOnFunction,SqlDependsOnID,SqlDependsOnIndex,SqlDependsOnSqlObject,SqlDependsOnView,SqlFunction,SqlImplementation,SqlObject,SqlProcedure,SqlQueryable,SqlView,WithParent")]
+        [DataRow(13, 21, 67, "AllPropertiesFrom,AllPropertiesWithCascadeDeleteFrom,ApplyFilterOnClientRead,Binary,Bool,ChangesOnBaseItem,ChangesOnChangedItems,ChangesOnLinkedItems,ChangesOnReferenced,Clustered,ComposableFilterBy,ComposableFilterByReferenced,ComputedFrom,Date,DateTime,Deactivatable,Decimal,DenySave,DenyUserEdit,Extends,FilterBy,FilterByBase,FilterByLinkedItems,FilterByReferenced,Guid,Hierarchy,History,Implements,ImplementsQueryable,Integer,InvalidData,Is,ItemFilter,ItemFilterReferenced,LinkedItems,Lock,LockExcept,Logging,LongString,Money,PessimisticLocking,PrerequisiteAllProperties,PropertyFrom,Query,QueryFilter,Reference,RepositoryMember,RepositoryUses,RowPermissions,RowPermissionsRead,RowPermissionsWrite,SaveMethod,ShortString,SqlDependsOn,SqlDependsOnFunction,SqlDependsOnID,SqlDependsOnIndex,SqlDependsOnSqlObject,SqlDependsOnView,SqlIndex,SqlIndexMultiple,SqlTrigger,Unique,UniqueMultiple,UniqueReference,UseExecutionContext,Write")]
+        public void FullCompletionList(int line, int chr, int expectedCount, string expectedFullList)
+        {
+            var script = @"
+        // comment
+Module module1
+{
+
+    Entity entity1
+    {
+        Logging
+        {
+
+        }
+
+    }
+    Entity SameLine { }
+    Ent 
+    Entit 
+    error '
+}";
+            
+
+            var lineChr = new LineChr(line, chr);
+            var rhetosDocument = rhetosDocumentFactory.CreateWithTestUri(script, lineChr);
+
+            {
+                var rhetosProjectContext = serviceProvider.GetRequiredService<RhetosProjectContext>();
+                var sqlDependsOn = rhetosProjectContext.DslSyntax.ConceptTypes.Where(a => a.Keyword == "SqlDependsOn");
+                Console.WriteLine(sqlDependsOn.Count());
+                Console.WriteLine(string.Join(",", sqlDependsOn.Select(a => a.TypeName)));
+            }
+
+            var completion = rhetosDocument.GetCompletionKeywordsAtPosition(lineChr);
+            var fullList = string.Join(",", completion);
+            Console.WriteLine($"Keywords: [{completion.Count}] {fullList}");
+            Console.WriteLine($"Expected: [{expectedCount}] {expectedFullList}");
+            Assert.AreEqual(expectedCount, completion.Count);
+
+            Assert.AreEqual(expectedFullList, fullList);
         }
 
         [DataTestMethod]

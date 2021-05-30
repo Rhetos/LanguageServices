@@ -90,22 +90,14 @@ namespace Rhetos.LanguageServices.CodeAnalysis.Services
                 var parentMember = parentNestedMember ?? firstMember;
                 if (parentMember == null) continue;
 
-                if (IsInstanceOfType(parentConceptType, parentMember.ConceptType))
+                if (parentMember.IsConceptInfoInterface
+                    || (parentMember.ConceptType?.IsAssignableFrom(parentConceptType) ?? false))
+                {
                     result.Add(conceptType);
+                }
             }
 
             return result;
         }
-
-        public bool IsInstanceOfType(ConceptType conceptType, ConceptType derivedConceptType)
-        {
-            if (conceptType == null || derivedConceptType == null)
-                return false;
-
-            return
-                string.Equals(derivedConceptType.AssemblyQualifiedName, conceptType.AssemblyQualifiedName)
-                || conceptType.BaseTypesAssemblyQualifiedName.Contains(derivedConceptType.AssemblyQualifiedName, StringComparer.Ordinal);
-        }
-
     }
 }

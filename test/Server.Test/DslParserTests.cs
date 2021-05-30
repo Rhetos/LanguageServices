@@ -42,7 +42,7 @@ namespace Rhetos.LanguageServices.Server.Test
         [TestMethod]
         public void InitializeFromCurrentDomain()
         {
-            Console.WriteLine($"Keywords: {rhetosProjectContext.Keywords.Count}, ConceptTypes: {rhetosProjectContext.DslSyntax.ConceptTypes.Length}.");
+            Console.WriteLine($"Keywords: {rhetosProjectContext.Keywords.Count}, ConceptTypes: {rhetosProjectContext.DslSyntax.ConceptTypes.Count}.");
         }
     }
 }

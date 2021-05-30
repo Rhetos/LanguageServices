@@ -36,7 +36,7 @@ namespace Rhetos.LanguageServices.CodeAnalysis.Parsing
         private readonly TextDocument fullTextDocument;
         private readonly RhetosProjectContext rhetosProjectContext;
         private TextDocument textDocument;
-        private Tokenizer tokenizer;
+        private ITokenizer tokenizer;
         private readonly ILogProvider rhetosLogProvider;
 
         public CodeAnalysisRun(TextDocument textDocument, RhetosProjectContext rhetosProjectContext, ILoggerFactory logFactory)
@@ -54,7 +54,7 @@ namespace Rhetos.LanguageServices.CodeAnalysis.Parsing
         public CodeAnalysisResult RunForPosition(LineChr? lineChr)
         {
             InitializeResult(lineChr);
-            InitializeTokenizers();
+            InitializeTokenizer();
 
             // run-scoped variables needed for parse and callbacks
             targetPos = textDocument.GetPosition(result.Line, result.Chr);
@@ -82,11 +82,11 @@ namespace Rhetos.LanguageServices.CodeAnalysis.Parsing
                 : new CodeAnalysisResult(textDocument, lineChr.Value.Line, lineChr.Value.Chr);
         }
 
-        private void InitializeTokenizers()
+        private void InitializeTokenizer()
         {
             var (createdTokenizer, capturedErrors) = CreateTokenizerWithCapturedErrors();
             tokenizer = createdTokenizer;
-            result.Tokens = tokenizer.GetTokens();
+            result.Tokens = tokenizer.GetTokens().Tokens;
             result.TokenizerErrors.AddRange(capturedErrors);
 
             result.CommentTokens = ParseCommentTokens();
@@ -113,7 +113,7 @@ namespace Rhetos.LanguageServices.CodeAnalysis.Parsing
                 dslParser.OnKeyword += OnKeyword;
                 dslParser.OnMemberRead += OnMemberRead;
                 dslParser.OnUpdateContext += OnUpdateContext;
-                _ = dslParser.ParsedConcepts;
+                _ = dslParser.GetConcepts().ToList();
             }
             catch (DslSyntaxException e)
             {
@@ -164,7 +164,6 @@ namespace Rhetos.LanguageServices.CodeAnalysis.Parsing
 
         private void OnMemberRead(ITokenReader iTokenReader, ConceptSyntaxNode conceptInfo, ConceptMemberSyntax conceptMember, ValueOrError<object> valueOrError)
         {
-            Console.WriteLine($"OnMemberRead: {conceptInfo.Concept?.TypeName}, {conceptMember.ConceptType?.TypeName}");
             // have we reached a new keyword after target pos? if so, prevent further member parsing
             if (result.NextKeywordToken != null)
                 return;
@@ -196,7 +195,6 @@ namespace Rhetos.LanguageServices.CodeAnalysis.Parsing
 
         private void OnUpdateContext(ITokenReader iTokenReader, Stack<ConceptSyntaxNode> context, bool isOpening)
         {
-            Console.WriteLine($"OnUpdateContext: {context.LastOrDefault()?.Concept.TypeName}");
             var tokenReader = (TokenReader)iTokenReader;
             var lastToken = result.Tokens[tokenReader.PositionInTokenList - 1];
             var contextPos = lastToken.PositionEndInDslScript;
@@ -209,7 +207,6 @@ namespace Rhetos.LanguageServices.CodeAnalysis.Parsing
 
         private void OnKeyword(ITokenReader iTokenReader, string keyword)
         {
-            Console.WriteLine($"OnKeyword: '{keyword}'");
             var tokenReader = (TokenReader)iTokenReader;
             if (tokenReader.PositionInTokenList >= result.Tokens.Count) return;
 
@@ -265,7 +262,7 @@ namespace Rhetos.LanguageServices.CodeAnalysis.Parsing
             }
             catch
             {
-                // we will ignore all errors as any relevant ones are capture by CreateTokenizerWithCapturedErrors()
+                // we will ignore all errors as any relevant ones are captured by CreateTokenizerWithCapturedErrors()
             }
 
             return commentTokens;
@@ -273,24 +270,26 @@ namespace Rhetos.LanguageServices.CodeAnalysis.Parsing
 
         // Due to unusual way the tokenizer works, if we capture errors during initial call to GetToken(),
         // valid tokens will be returned without error in subsequent calls
-        private (Tokenizer tokenizer, List<CodeAnalysisError> capturedErrors) CreateTokenizerWithCapturedErrors()
+        private (ITokenizer tokenizer, List<CodeAnalysisError> capturedErrors) CreateTokenizerWithCapturedErrors()
         {
             var capturedErrors = new List<CodeAnalysisError>();
-            var safeTokenizer = new Tokenizer(textDocument, new FilesUtility(rhetosLogProvider), rhetosProjectContext.DslSyntax);
             try
             {
-                safeTokenizer.GetTokens();
-            }
-            catch (DslSyntaxException e)
-            {
-                var lineChr = new LineChr(e.FilePosition.BeginLine - 1, e.FilePosition.BeginColumn - 1);
-                capturedErrors.Add(new CodeAnalysisError() { LineChr = lineChr, Message = e.Message });
+                var safeTokenizer = new Tokenizer(textDocument, new FilesUtility(rhetosLogProvider), rhetosProjectContext.DslSyntax);
+                var tokenizerResult = safeTokenizer.GetTokens();
+                if (tokenizerResult.SyntaxError != null)
+                {
+                    var lineChr = new LineChr(tokenizerResult.SyntaxError.FilePosition.BeginLine - 1, tokenizerResult.SyntaxError.FilePosition.BeginColumn - 1);
+                    capturedErrors.Add(new CodeAnalysisError() { LineChr = lineChr, Message = tokenizerResult.SyntaxError.Message });
+                }
+                return (new TokenizerExplicitTokens(tokenizerResult.Tokens), capturedErrors);
             }
             catch (Exception e)
             {
                 capturedErrors.Add(new CodeAnalysisError() { Message = e.Message });
             }
-            return (safeTokenizer, capturedErrors);
+
+            return (new TokenizerExplicitTokens(new List<Token>()), capturedErrors);
         }
     }
 }
