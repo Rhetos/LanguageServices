@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using Newtonsoft.Json;
 using Rhetos.Dsl;
 using Rhetos.LanguageServices.CodeAnalysis.Tools;
 
-namespace Rhetos.LanguageServices.CodeAnalysis.Parsing
+namespace Rhetos.LanguageServices.CodeAnalysis.Services
 {
     public class RhetosProjectContext
     {

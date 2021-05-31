@@ -27,18 +27,21 @@ namespace Rhetos.LanguageServices.CodeAnalysis.Services
     {
         private readonly RhetosProjectContext rhetosProjectContext;
         private readonly ConceptQueries conceptQueries;
+        private readonly IRhetosProjectRootPathResolver rhetosProjectRootPathResolver;
         private readonly ILoggerFactory logFactory;
 
-        public RhetosDocumentFactory(RhetosProjectContext rhetosProjectContext, ConceptQueries conceptQueries, ILoggerFactory logFactory)
+        public RhetosDocumentFactory(RhetosProjectContext rhetosProjectContext, ConceptQueries conceptQueries, IRhetosProjectRootPathResolver rhetosProjectRootPathResolver,
+            ILoggerFactory logFactory)
         {
             this.rhetosProjectContext = rhetosProjectContext;
             this.conceptQueries = conceptQueries;
+            this.rhetosProjectRootPathResolver = rhetosProjectRootPathResolver;
             this.logFactory = logFactory;
         }
 
         public RhetosDocument CreateNew(Uri documentUri)
         {
-            return new RhetosDocument(rhetosProjectContext, conceptQueries, logFactory, documentUri);
+            return new RhetosDocument(rhetosProjectContext, conceptQueries, rhetosProjectRootPathResolver, logFactory, documentUri);
         }
     }
 }

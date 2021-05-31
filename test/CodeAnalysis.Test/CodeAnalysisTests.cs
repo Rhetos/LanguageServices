@@ -198,6 +198,7 @@ Reference a.b.x p ";
 ";
             var rhe = rhetosDocumentFactory.CreateWithTestUri(scriptTokenError);
             var analysisResult = rhe.GetAnalysis();
+            Console.WriteLine(string.Join("\n", analysisResult.AllErrors));
             Assert.AreEqual(1, analysisResult.TokenizerErrors.Count);
             Console.WriteLine(JsonConvert.SerializeObject(analysisResult.TokenizerErrors[0], Formatting.Indented));
             StringAssert.Contains(analysisResult.TokenizerErrors[0].Message, "Missing closing character");
@@ -323,7 +324,7 @@ Reference a.b.x p ";
         {
             var rhe = rhetosDocumentFactory.CreateWithTestUri(script + scriptPostfix);
 
-            var conceptQueries = serviceProvider.GetService<ConceptQueries>();
+            var conceptQueries = serviceProvider.GetRequiredService<ConceptQueries>();
             Console.WriteLine(conceptQueries.GetFullDescription("Reference"));
             Console.WriteLine();
 
@@ -365,7 +366,7 @@ Reference a.b.x p ";
         [TestMethod]
         public void ConceptSignatureHelpSortOrder()
         {
-            var script = @"// <rhetosRootPath=""c:\SomeFolder"" />
+            var script = @"// <rhetosProjectRootPath=""c:\SomeFolder"" />
 
 Reference a.b.xpa     
 Module sasa
@@ -377,7 +378,7 @@ Module sasa
 ";
             var rhe = rhetosDocumentFactory.CreateWithTestUri(script);
 
-            var conceptQueries = serviceProvider.GetService<ConceptQueries>();
+            var conceptQueries = serviceProvider.GetRequiredService<ConceptQueries>();
             Console.WriteLine(conceptQueries.GetFullDescription("Reference"));
             Console.WriteLine();
 
@@ -385,6 +386,12 @@ Module sasa
                 var lineChr = new LineChr(2, 20);
                 Console.WriteLine(rhe.TextDocument.ShowPosition(lineChr));
                 var signatureHelp = rhe.GetSignatureHelpAtPosition(lineChr);
+                if (signatureHelp.signatures == null)
+                {
+                    var analysisResult = rhe.GetAnalysis(lineChr);
+                    Console.WriteLine(string.Join("\n", analysisResult.AllErrors));
+                    throw new InvalidOperationException("Unexpected errors while analyzing document.");
+                }
                 Console.WriteLine($"Chosen signature: {signatureHelp.signatures[0].Signature}\nActive parameter: {signatureHelp.activeParameter}\n");
                 Assert.AreEqual("ReferencePropertyInfo", signatureHelp.signatures[0].ConceptType.TypeName);
                 Assert.AreEqual(2, signatureHelp.activeParameter);

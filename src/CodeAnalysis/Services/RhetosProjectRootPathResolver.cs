@@ -10,7 +10,7 @@ using Rhetos.LanguageServices.CodeAnalysis.Tools;
 
 namespace Rhetos.LanguageServices.CodeAnalysis.Services
 {
-    public class RhetosProjectRootPathResolver
+    public class RhetosProjectRootPathResolver : IRhetosProjectRootPathResolver
     {
         private static readonly string _configurationFilename = "rhetos-language-services.settings.json";
         private static readonly string _rhetosProjectRootPathConfigurationKey = "RhetosProjectRootPath";

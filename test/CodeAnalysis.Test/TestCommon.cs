@@ -37,11 +37,14 @@ namespace Rhetos.LanguageServices.CodeAnalysis.Test
                 .AddSingleton<RhetosWorkspace>()
                 .AddTransient<RhetosDocumentFactory>()
                 .AddSingleton<RhetosProjectContext>()
-                .AddSingleton<RhetosProjectRootPathResolver>()
+                .AddSingleton<IRhetosProjectRootPathResolver, RhetosProjectRootPathResolver>()
                 .AddSingleton<XmlDocumentationProvider>()
                 .AddSingleton<ILogProvider, RhetosNetCoreLogProvider>()
                 .AddSingleton<ConceptQueries>()
                 .AddLogging(cfg => cfg.AddConsole());
+
+            if (initializeContextFromFolder != null)
+                services.AddSingleton<IRhetosProjectRootPathResolver, RootPathResolverMock>();
 
             var serviceProvider = services.BuildServiceProvider();
 

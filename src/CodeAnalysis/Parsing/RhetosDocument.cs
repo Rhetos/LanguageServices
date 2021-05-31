@@ -39,12 +39,15 @@ namespace Rhetos.LanguageServices.CodeAnalysis.Parsing
         private static readonly object _syncAnalysis = new object();
         private readonly ILoggerFactory logFactory;
         private readonly ConceptQueries conceptQueries;
+        private readonly IRhetosProjectRootPathResolver rhetosProjectRootPathResolver;
         private readonly Dictionary<int, CodeAnalysisResult> cachedAnalysisResults = new Dictionary<int, CodeAnalysisResult>();
 
-        public RhetosDocument(RhetosProjectContext rhetosProjectContext, ConceptQueries conceptQueries, ILoggerFactory logFactory, Uri documentUri)
+        public RhetosDocument(RhetosProjectContext rhetosProjectContext, ConceptQueries conceptQueries, IRhetosProjectRootPathResolver rhetosProjectRootPathResolver,
+            ILoggerFactory logFactory, Uri documentUri)
         {
             this.rhetosProjectContext = rhetosProjectContext;
             this.conceptQueries = conceptQueries;
+            this.rhetosProjectRootPathResolver = rhetosProjectRootPathResolver;
             this.logFactory = logFactory;
             this.DocumentUri = documentUri;
             UpdateText("");
@@ -71,11 +74,7 @@ namespace Rhetos.LanguageServices.CodeAnalysis.Parsing
 
         private void UpdateRootPathConfiguration()
         {
-            Console.WriteLine($"ROOT PATH CONFIGURATION!!! '{rhetosProjectContext.ProjectRootPath}'");
-            RootPathConfiguration = new RootPathConfiguration(rhetosProjectContext.ProjectRootPath, RootPathConfigurationType.DetectedRhetosApp, "");
-            //throw new NotImplementedException();
-            /*
-            var directiveConfiguration = rhetosAppContext.GetRhetosProjectRootPath(this, true);
+            var directiveConfiguration = rhetosProjectRootPathResolver.ResolveRootPathFromDocumentDirective(this);
             var deletedDirective = RootPathConfiguration?.ConfigurationType == RootPathConfigurationType.SourceDirective
                                    && directiveConfiguration.ConfigurationType == RootPathConfigurationType.None;
 
@@ -83,14 +82,13 @@ namespace Rhetos.LanguageServices.CodeAnalysis.Parsing
             // OR we have never ran a full configuration for this document
             if (RootPathConfiguration == null || deletedDirective)
             {
-                RootPathConfiguration = rhetosAppContext.GetRhetosProjectRootPath(this);
+                RootPathConfiguration = rhetosProjectRootPathResolver.ResolveRootPathForDocument(this);
             }
             // else just update directive configuration if present
-            else if (directiveConfiguration.ConfigurationType == RootPathConfigurationType.SourceDirective)
+            else if (directiveConfiguration?.ConfigurationType == RootPathConfigurationType.SourceDirective)
             {
                 RootPathConfiguration = directiveConfiguration;
             }
-            */
         }
 
         public CodeAnalysisResult GetAnalysis()

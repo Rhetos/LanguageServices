@@ -49,13 +49,13 @@ namespace Rhetos.LanguageServices.CodeAnalysis.Test
         [DataRow(@"RhetosAppFolder\FolderWithConfiguration\FaultyConfiguration\directive.rhe", @"C:\SomeFolder\SomeSubFolder\MyRhetosAppFolder\", RootPathConfigurationType.SourceDirective)]
         [DataRow(@"RhetosAppFolder\FolderWithConfiguration\doc.rhe", @"c:\FolderFromJson\Rhetos", RootPathConfigurationType.ConfigurationFile)]
         [DataRow(@"RhetosAppFolder\FolderWithConfiguration\SubFolder\doc.rhe", @"c:\FolderFromJson\Rhetos", RootPathConfigurationType.ConfigurationFile)]
-        public void RhetoRootAppPathFromDocument(string documentRelativePath, string expectedRootAppPath, RootPathConfigurationType expectedConfigurationType)
+        public void RhetosRootAppPathFromDocument(string documentRelativePath, string expectedRootAppPath, RootPathConfigurationType expectedConfigurationType)
         {
             var uri = new Uri(Path.Combine(Environment.CurrentDirectory, documentRelativePath));
             Console.WriteLine($"Opening file '{uri.LocalPath}.'");
             var text = File.ReadAllText(uri.LocalPath);
             Console.WriteLine($"File contents:\n{text}\n*****************\n");
-            var rhetosProjectRootPathResolver =  serviceProvider.GetRequiredService<RhetosProjectRootPathResolver>();
+            var rhetosProjectRootPathResolver =  serviceProvider.GetRequiredService<IRhetosProjectRootPathResolver>();
             var documentFactory = serviceProvider.GetRequiredService<RhetosDocumentFactory>();
             var rhetosDocument = documentFactory.CreateNew(uri);
             rhetosDocument.UpdateText(text);
