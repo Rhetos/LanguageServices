@@ -22,16 +22,19 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using OmniSharp.Extensions.LanguageServer.Protocol.Client.Capabilities;
+using OmniSharp.Extensions.LanguageServer.Protocol.Document;
 using OmniSharp.Extensions.LanguageServer.Protocol.Models;
 using OmniSharp.Extensions.LanguageServer.Protocol.Server;
 using Rhetos.Dsl;
-using Rhetos.LanguageServices.Server.Parsing;
+using Rhetos.LanguageServices.CodeAnalysis.Parsing;
+using Rhetos.LanguageServices.CodeAnalysis.Services;
 using Rhetos.LanguageServices.Server.Services;
 using Rhetos.LanguageServices.Server.Tools;
 
 namespace Rhetos.LanguageServices.Server.Handlers
 {
-    public class RhetosSignatureHelpHandler : SignatureHelpHandler
+    public class RhetosSignatureHelpHandler : ISignatureHelpHandler
     {
         private static readonly SignatureHelpRegistrationOptions _registrationOptions = new SignatureHelpRegistrationOptions()
         {
@@ -42,16 +45,21 @@ namespace Rhetos.LanguageServices.Server.Handlers
         private readonly RhetosWorkspace rhetosWorkspace;
         private readonly ILogger<RhetosSignatureHelpHandler> log;
 
-        public RhetosSignatureHelpHandler(RhetosWorkspace rhetosWorkspace, ILogger<RhetosSignatureHelpHandler> log) : base(_registrationOptions)
+        public RhetosSignatureHelpHandler(RhetosWorkspace rhetosWorkspace, ILogger<RhetosSignatureHelpHandler> log)
         {
             this.rhetosWorkspace = rhetosWorkspace;
             this.log = log;
         }
 
-        public override Task<SignatureHelp> Handle(SignatureHelpParams request, CancellationToken cancellationToken)
+        public SignatureHelpRegistrationOptions GetRegistrationOptions(SignatureHelpCapability capability, ClientCapabilities clientCapabilities)
+        {
+            return _registrationOptions;
+        }
+
+        public Task<SignatureHelp> Handle(SignatureHelpParams request, CancellationToken cancellationToken)
         {
             log.LogDebug($"SignatureHelp requested at {request.Position.ToLineChr()}.");
-            var rhetosDocument = rhetosWorkspace.GetRhetosDocument(request.TextDocument.Uri);
+            var rhetosDocument = rhetosWorkspace.GetRhetosDocument(request.TextDocument.Uri.ToUri());
             if (rhetosDocument == null)
                 return Task.FromResult<SignatureHelp>(null);
 
@@ -59,10 +67,10 @@ namespace Rhetos.LanguageServices.Server.Handlers
             if (signatures.signatures == null)
                 return Task.FromResult<SignatureHelp>(null);
 
-            ParameterInformation FromRhetosParameter(ConceptMember conceptMember) => new ParameterInformation()
+            ParameterInformation FromRhetosParameter(ConceptMemberSyntax conceptMember) => new ParameterInformation()
             {
                 Documentation = "",
-                Label = new ParameterInformationLabel(ConceptInfoType.ConceptMemberDescription(conceptMember))
+                Label = new ParameterInformationLabel(ConceptTypeTools.ConceptMemberDescription(conceptMember))
             };
 
             SignatureInformation FromRhetosSignature(RhetosSignature rhetosSignature) => new SignatureInformation()

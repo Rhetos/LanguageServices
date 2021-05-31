@@ -25,10 +25,14 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using OmniSharp.Extensions.JsonRpc;
 using OmniSharp.Extensions.LanguageServer.Protocol;
 using OmniSharp.Extensions.LanguageServer.Protocol.Models;
+using OmniSharp.Extensions.LanguageServer.Protocol.Server;
 using OmniSharp.Extensions.LanguageServer.Server;
-using Rhetos.LanguageServices.Server.Parsing;
+using Rhetos.LanguageServices.CodeAnalysis.Parsing;
+using Rhetos.LanguageServices.CodeAnalysis.Services;
+using Range = OmniSharp.Extensions.LanguageServer.Protocol.Models.Range;
 
 namespace Rhetos.LanguageServices.Server.Services
 {

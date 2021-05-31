@@ -21,31 +21,38 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using OmniSharp.Extensions.LanguageServer.Protocol.Client.Capabilities;
+using OmniSharp.Extensions.LanguageServer.Protocol.Document;
 using OmniSharp.Extensions.LanguageServer.Protocol.Models;
-using OmniSharp.Extensions.LanguageServer.Protocol.Server;
-using Rhetos.LanguageServices.Server.Parsing;
-using Rhetos.LanguageServices.Server.Services;
+using Rhetos.LanguageServices.CodeAnalysis.Parsing;
+using Rhetos.LanguageServices.CodeAnalysis.Services;
+using Range = OmniSharp.Extensions.LanguageServer.Protocol.Models.Range;
 
 namespace Rhetos.LanguageServices.Server.Handlers
 {
-    public class RhetosHoverHandler : HoverHandler
+    public class RhetosHoverHandler : IHoverHandler
     {
         private readonly RhetosWorkspace rhetosWorkspace;
         private readonly ILogger<RhetosHoverHandler> log;
 
-        public RhetosHoverHandler(RhetosWorkspace rhetosWorkspace, ILogger<RhetosHoverHandler> log) : base(TextDocumentHandler.RhetosTextDocumentRegistrationOptions)
+        public RhetosHoverHandler(RhetosWorkspace rhetosWorkspace, ILogger<RhetosHoverHandler> log) : base()
         {
             this.rhetosWorkspace = rhetosWorkspace;
             this.log = log;
         }
 
-        public override Task<Hover> Handle(HoverParams request, CancellationToken cancellationToken)
+        public HoverRegistrationOptions GetRegistrationOptions(HoverCapability capability, ClientCapabilities clientCapabilities)
+        {
+            return new HoverRegistrationOptions() {DocumentSelector = TextDocumentHandler.RhetosDocumentSelector};
+        }
+
+        public Task<Hover> Handle(HoverParams request, CancellationToken cancellationToken)
         {
             RhetosDocument rhetosDocument;
             // Visual Studio may issue hover before DidOpen if hover happens before solution is fully loaded
             try
             {
-                rhetosDocument = rhetosWorkspace.GetRhetosDocument(request.TextDocument.Uri);
+                rhetosDocument = rhetosWorkspace.GetRhetosDocument(request.TextDocument.Uri.ToUri());
             }
             catch (InvalidOperationException)
             {

@@ -22,13 +22,16 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using OmniSharp.Extensions.LanguageServer.Protocol.Client.Capabilities;
+using OmniSharp.Extensions.LanguageServer.Protocol.Document;
 using OmniSharp.Extensions.LanguageServer.Protocol.Models;
 using OmniSharp.Extensions.LanguageServer.Protocol.Server;
+using Rhetos.LanguageServices.CodeAnalysis.Services;
 using Rhetos.LanguageServices.Server.Services;
 
 namespace Rhetos.LanguageServices.Server.Handlers
 {
-    public class RhetosCompletionHandler : CompletionHandler
+    public class RhetosCompletionHandler : ICompletionHandler
     {
         private readonly ILogger<RhetosCompletionHandler> log;
         private readonly RhetosWorkspace rhetosWorkspace;
@@ -43,23 +46,27 @@ namespace Rhetos.LanguageServices.Server.Handlers
         };
 
         public RhetosCompletionHandler(RhetosWorkspace rhetosWorkspace, ConceptQueries conceptQueries, ILogger<RhetosCompletionHandler> log)
-            : base(_completionRegistrationOptions)
         {
             this.log = log;
             this.rhetosWorkspace = rhetosWorkspace;
             this.conceptQueries = conceptQueries;
         }
 
-        public override bool CanResolve(CompletionItem value)
+        public CompletionRegistrationOptions GetRegistrationOptions(CompletionCapability capability, ClientCapabilities clientCapabilities)
+        {
+            return _completionRegistrationOptions;
+        }
+
+        public bool CanResolve(CompletionItem value)
         {
             return true;
         }
 
-        public override Task<CompletionList> Handle(CompletionParams request, CancellationToken cancellationToken)
+        public Task<CompletionList> Handle(CompletionParams request, CancellationToken cancellationToken)
         {
             log.LogDebug($"Completion requested at {request.Position.ToLineChr()}.");
 
-            var document = rhetosWorkspace.GetRhetosDocument(request.TextDocument.Uri);
+            var document = rhetosWorkspace.GetRhetosDocument(request.TextDocument.Uri.ToUri());
             if (document == null)
                 return Task.FromResult<CompletionList>(null);
 
@@ -74,7 +81,7 @@ namespace Rhetos.LanguageServices.Server.Handlers
             return Task.FromResult(completionList);
         }
 
-        public override Task<CompletionItem> Handle(CompletionItem request, CancellationToken cancellationToken)
+        public Task<CompletionItem> Handle(CompletionItem request, CancellationToken cancellationToken)
         {
             return Task.FromResult(request);
         }

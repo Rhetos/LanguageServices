@@ -19,25 +19,26 @@
 
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using Rhetos.LanguageServices.CodeAnalysis.Services;
 using Rhetos.LanguageServices.Server.Services;
 
 namespace Rhetos.LanguageServices.Server.Handlers
 {
     public class ServerEventHandler
     {
-        private readonly RhetosAppContext rhetosContext;
+        private readonly RhetosProjectContext rhetosProjectContext;
         private readonly ILogger<ServerEventHandler> log;
 
-        public ServerEventHandler(RhetosAppContext rhetosContext, ILogger<ServerEventHandler> log)
+        public ServerEventHandler(RhetosProjectContext rhetosProjectContext, ILogger<ServerEventHandler> log)
         {
-            this.rhetosContext = rhetosContext;
+            this.rhetosProjectContext = rhetosProjectContext;
             this.log = log;
         }
 
         public Task InitializeRhetosContext(string rootPath)
         {
             log.LogInformation($"Initializing RhetosContext with rootPath='{rootPath}'.");
-            var initializeTask = Task.Run(() => rhetosContext.InitializeFromRhetosProjectPath(rootPath))
+            var initializeTask = Task.Run(() => rhetosProjectContext.Initialize(rootPath))
                 .ContinueWith(result =>
                 {
                     var status = result.Status == TaskStatus.RanToCompletion

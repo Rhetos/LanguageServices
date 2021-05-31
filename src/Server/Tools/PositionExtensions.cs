@@ -17,7 +17,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using Rhetos.LanguageServices.Server.Tools;
+using Rhetos.LanguageServices.CodeAnalysis.Parsing;
 
 namespace OmniSharp.Extensions.LanguageServer.Protocol.Models
 {

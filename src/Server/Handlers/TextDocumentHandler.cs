@@ -25,9 +25,11 @@ using MediatR;
 using Microsoft.Extensions.Logging;
 using OmniSharp.Extensions.LanguageServer.Protocol;
 using OmniSharp.Extensions.LanguageServer.Protocol.Client.Capabilities;
+using OmniSharp.Extensions.LanguageServer.Protocol.Document;
 using OmniSharp.Extensions.LanguageServer.Protocol.Models;
 using OmniSharp.Extensions.LanguageServer.Protocol.Server;
 using OmniSharp.Extensions.LanguageServer.Protocol.Server.Capabilities;
+using Rhetos.LanguageServices.CodeAnalysis.Services;
 using Rhetos.LanguageServices.Server.Services;
 
 namespace Rhetos.LanguageServices.Server.Handlers
@@ -67,14 +69,14 @@ namespace Rhetos.LanguageServices.Server.Handlers
         public Task<Unit> Handle(DidChangeTextDocumentParams notification, CancellationToken token)
         {
             var text = notification.ContentChanges.First().Text;
-            rhetosWorkspace.UpdateDocumentText(notification.TextDocument.Uri, text);
+            rhetosWorkspace.UpdateDocumentText(notification.TextDocument.Uri.ToUri(), text);
             return Unit.Task;
         }
 
         public Task<Unit> Handle(DidOpenTextDocumentParams notification, CancellationToken token)
         {
             var text = notification.TextDocument.Text;
-            var uri = notification.TextDocument.Uri;
+            var uri = notification.TextDocument.Uri.ToUri();
 
             log.LogDebug($"Document opened: {uri}.");
             rhetosWorkspace.UpdateDocumentText(uri, text);
@@ -84,8 +86,8 @@ namespace Rhetos.LanguageServices.Server.Handlers
 
         public Task<Unit> Handle(DidCloseTextDocumentParams notification, CancellationToken token)
         {
-            log.LogDebug($"Document closed: {notification.TextDocument.Uri}.");
-            rhetosWorkspace.CloseDocument(notification.TextDocument.Uri);
+            log.LogDebug($"Document closed: {notification.TextDocument.Uri.ToUri()}.");
+            rhetosWorkspace.CloseDocument(notification.TextDocument.Uri.ToUri());
             return Unit.Task;
         }
 
