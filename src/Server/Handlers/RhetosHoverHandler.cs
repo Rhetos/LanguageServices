@@ -20,10 +20,12 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using OmniSharp.Extensions.LanguageServer.Protocol.Client.Capabilities;
 using OmniSharp.Extensions.LanguageServer.Protocol.Document;
 using OmniSharp.Extensions.LanguageServer.Protocol.Models;
+using OmniSharp.Extensions.LanguageServer.Protocol.Server;
 using Rhetos.LanguageServices.CodeAnalysis.Parsing;
 using Rhetos.LanguageServices.CodeAnalysis.Services;
 using Range = OmniSharp.Extensions.LanguageServer.Protocol.Models.Range;
@@ -32,13 +34,13 @@ namespace Rhetos.LanguageServices.Server.Handlers
 {
     public class RhetosHoverHandler : IHoverHandler
     {
-        private readonly RhetosWorkspace rhetosWorkspace;
         private readonly ILogger<RhetosHoverHandler> log;
+        private readonly Lazy<RhetosWorkspace> rhetosWorkspace;
 
-        public RhetosHoverHandler(RhetosWorkspace rhetosWorkspace, ILogger<RhetosHoverHandler> log) : base()
+        public RhetosHoverHandler(ILogger<RhetosHoverHandler> log, ILanguageServerFacade serverFacade)
         {
-            this.rhetosWorkspace = rhetosWorkspace;
             this.log = log;
+            this.rhetosWorkspace = new Lazy<RhetosWorkspace>(serverFacade.GetRequiredService<RhetosWorkspace>);
         }
 
         public HoverRegistrationOptions GetRegistrationOptions(HoverCapability capability, ClientCapabilities clientCapabilities)
@@ -52,7 +54,7 @@ namespace Rhetos.LanguageServices.Server.Handlers
             // Visual Studio may issue hover before DidOpen if hover happens before solution is fully loaded
             try
             {
-                rhetosDocument = rhetosWorkspace.GetRhetosDocument(request.TextDocument.Uri.ToUri());
+                rhetosDocument = rhetosWorkspace.Value.GetRhetosDocument(request.TextDocument.Uri.ToUri());
             }
             catch (InvalidOperationException)
             {

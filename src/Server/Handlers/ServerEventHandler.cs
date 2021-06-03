@@ -17,6 +17,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Rhetos.LanguageServices.CodeAnalysis.Services;
@@ -24,6 +25,7 @@ using Rhetos.LanguageServices.Server.Services;
 
 namespace Rhetos.LanguageServices.Server.Handlers
 {
+    [Obsolete("Not used anywhere?")]
     public class ServerEventHandler
     {
         private readonly RhetosProjectContext rhetosProjectContext;

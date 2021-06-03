@@ -24,9 +24,12 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using NLog.LayoutRenderers;
 using OmniSharp.Extensions.JsonRpc;
 using OmniSharp.Extensions.LanguageServer.Protocol;
+using OmniSharp.Extensions.LanguageServer.Protocol.Document;
 using OmniSharp.Extensions.LanguageServer.Protocol.Models;
 using OmniSharp.Extensions.LanguageServer.Protocol.Server;
 using OmniSharp.Extensions.LanguageServer.Server;
@@ -40,18 +43,18 @@ namespace Rhetos.LanguageServices.Server.Services
     {
         private static readonly TimeSpan _cycleInterval = TimeSpan.FromMilliseconds(300);
 
-        private readonly RhetosWorkspace rhetosWorkspace;
-        private readonly ILanguageServer languageServer;
+        private readonly Lazy<RhetosWorkspace> rhetosWorkspace;
+        private readonly ILanguageServerFacade languageServerFacade;
         private readonly ILogger<PublishDiagnosticsRunner> log;
 
         private DateTime lastPublishTime = DateTime.MinValue;
         private readonly CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
         private Task publishLoopTask;
 
-        public PublishDiagnosticsRunner(RhetosWorkspace rhetosWorkspace, ILanguageServer languageServer, ILogger<PublishDiagnosticsRunner> log)
+        public PublishDiagnosticsRunner(ILanguageServerFacade languageServerFacade, ILogger<PublishDiagnosticsRunner> log)
         {
-            this.rhetosWorkspace = rhetosWorkspace;
-            this.languageServer = languageServer;
+            this.rhetosWorkspace = new Lazy<RhetosWorkspace>(languageServerFacade.GetRequiredService<RhetosWorkspace>);
+            this.languageServerFacade = languageServerFacade;
             this.log = log;
         }
 
@@ -104,10 +107,10 @@ namespace Rhetos.LanguageServices.Server.Services
             var startPublishCheckTime = DateTime.Now;
             var publishTasks = new List<Task>();
 
-            var publishDiagnosticsChanged = rhetosWorkspace.GetUpdatedDocuments(lastPublishTime)
+            var publishDiagnosticsChanged = rhetosWorkspace.Value.GetUpdatedDocuments(lastPublishTime)
                 .Select(DiagnosticParamsFromRhetosDocument);
 
-            var publishDiagnosticsRemoved = rhetosWorkspace.GetClosedDocuments(lastPublishTime)
+            var publishDiagnosticsRemoved = rhetosWorkspace.Value.GetClosedDocuments(lastPublishTime)
                 .Select(documentUri => new PublishDiagnosticsParams() {Uri = documentUri, Diagnostics = new Container<Diagnostic>()});
 
             var allPublishDiagnostics = publishDiagnosticsChanged
@@ -120,7 +123,7 @@ namespace Rhetos.LanguageServices.Server.Services
             foreach (var diagnostics in allPublishDiagnostics)
             {
                 log.LogTrace($"Publish new diagnostics for '{diagnostics.Uri}'.");
-                var publishTask = languageServer.SendRequest(DocumentNames.PublishDiagnostics, diagnostics);
+                var publishTask = new Task(() => languageServerFacade.SendNotification(diagnostics));
                 publishTasks.Add(publishTask);
             }
 
@@ -131,7 +134,7 @@ namespace Rhetos.LanguageServices.Server.Services
 
         private PublishDiagnosticsParams DiagnosticParamsFromRhetosDocument(Uri documentUri)
         {
-            var rhetosDocument = rhetosWorkspace.GetRhetosDocument(documentUri);
+            var rhetosDocument = rhetosWorkspace.Value.GetRhetosDocument(documentUri);
             var analysisResult = rhetosDocument.GetAnalysis();
 
             var diagnostics = analysisResult.AllErrors

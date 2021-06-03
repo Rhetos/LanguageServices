@@ -17,10 +17,12 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using OmniSharp.Extensions.LanguageServer.Protocol.Client.Capabilities;
 using OmniSharp.Extensions.LanguageServer.Protocol.Document;
@@ -29,8 +31,6 @@ using OmniSharp.Extensions.LanguageServer.Protocol.Server;
 using Rhetos.Dsl;
 using Rhetos.LanguageServices.CodeAnalysis.Parsing;
 using Rhetos.LanguageServices.CodeAnalysis.Services;
-using Rhetos.LanguageServices.Server.Services;
-using Rhetos.LanguageServices.Server.Tools;
 
 namespace Rhetos.LanguageServices.Server.Handlers
 {
@@ -42,13 +42,13 @@ namespace Rhetos.LanguageServices.Server.Handlers
             TriggerCharacters = new Container<string>(".", " ")
         };
 
-        private readonly RhetosWorkspace rhetosWorkspace;
         private readonly ILogger<RhetosSignatureHelpHandler> log;
+        private readonly Lazy<RhetosWorkspace> rhetosWorkspace;
 
-        public RhetosSignatureHelpHandler(RhetosWorkspace rhetosWorkspace, ILogger<RhetosSignatureHelpHandler> log)
+        public RhetosSignatureHelpHandler(ILogger<RhetosSignatureHelpHandler> log, ILanguageServerFacade serverFacade)
         {
-            this.rhetosWorkspace = rhetosWorkspace;
             this.log = log;
+            this.rhetosWorkspace = new Lazy<RhetosWorkspace>(serverFacade.GetRequiredService<RhetosWorkspace>);
         }
 
         public SignatureHelpRegistrationOptions GetRegistrationOptions(SignatureHelpCapability capability, ClientCapabilities clientCapabilities)
@@ -59,7 +59,7 @@ namespace Rhetos.LanguageServices.Server.Handlers
         public Task<SignatureHelp> Handle(SignatureHelpParams request, CancellationToken cancellationToken)
         {
             log.LogDebug($"SignatureHelp requested at {request.Position.ToLineChr()}.");
-            var rhetosDocument = rhetosWorkspace.GetRhetosDocument(request.TextDocument.Uri.ToUri());
+            var rhetosDocument = rhetosWorkspace.Value.GetRhetosDocument(request.TextDocument.Uri.ToUri());
             if (rhetosDocument == null)
                 return Task.FromResult<SignatureHelp>(null);
 

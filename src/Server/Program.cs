@@ -28,32 +28,12 @@ namespace Rhetos.LanguageServices.Server
     {
         public static async Task Main(string[] args)
         {
-            if (AppDomain.CurrentDomain.IsDefaultAppDomain())
-            {
-                var setup = new AppDomainSetup();
-                setup.ShadowCopyFiles = "true";
+            var programLogger = LogManager.GetLogger("Program");
+            var rhetosLanguageServer = new RhetosLanguageServer(programLogger);
 
-                var domain = AppDomain.CreateDomain("Rhetos.LanguageServices.Server SubDomain", AppDomain.CurrentDomain.Evidence, setup);
+            await rhetosLanguageServer.Run();
 
-                try
-                {
-                    domain.ExecuteAssembly(Assembly.GetExecutingAssembly().Location, args);
-                }
-                finally
-                {
-                    AppDomain.Unload(domain);
-                }
-            }
-            else
-            {
-                var programLogger = LogManager.GetLogger("Program");
-
-                var rhetosLanguageServer = new RhetosLanguageServer(programLogger);
-
-                await rhetosLanguageServer.Run();
-
-                LogManager.Flush();
-            }
+            LogManager.Flush();
         }
     }
 }

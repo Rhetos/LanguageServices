@@ -67,6 +67,7 @@ namespace Rhetos.LanguageServices.Server
             catch (Exception e)
             {
                 log.Error($"Exception running language server: {e}");
+                throw;
             }
 
             log.Info($"SERVER END");
@@ -74,12 +75,7 @@ namespace Rhetos.LanguageServices.Server
 
         private async Task RunAndWaitExit(Stream input, Stream output)
         {
-            var server = await BuildLanguageServer(input, output,
-                builder => builder
-                    .AddNLog()
-                    .AddLanguageServer(LogLevel.Information)
-                    .SetMinimumLevel(LogLevel.Trace)
-            );
+            var server = await BuildLanguageServer(input, output);
 
             log.Info("Language Server built and started.");
 
@@ -99,30 +95,37 @@ namespace Rhetos.LanguageServices.Server
             await server.WaitForExit;
         }
 
-        public static async Task<ILanguageServer> BuildLanguageServer(Stream inputStream, Stream outputStream, Action<ILoggingBuilder> logBuilderAction)
+        public static async Task<ILanguageServer> BuildLanguageServer(Stream inputStream, Stream outputStream)
         {
             var server = await LanguageServer.From(options =>
                 options
                     .WithInput(inputStream)
                     .WithOutput(outputStream)
-                    .ConfigureLogging(logBuilderAction)
+                    .ConfigureLogging(builder => builder
+                        .AddProvider(new NLogLoggerProvider())
+                        .AddLanguageProtocolLogging()
+                        .SetMinimumLevel(LogLevel.Trace)
+                    )
                     .WithHandler<TextDocumentHandler>()
                     .WithHandler<RhetosHoverHandler>()
                     .WithHandler<RhetosSignatureHelpHandler>()
                     .WithHandler<RhetosCompletionHandler>()
                     .WithServices(services =>
                     {
-                        services.AddTransient<ServerEventHandler>();
+                        // used by handlers
                         services.AddSingleton<RhetosWorkspace>();
-                        services.AddTransient<RhetosDocumentFactory>();
+                        services.AddSingleton<ConceptQueries>();
+                        services.AddSingleton<RhetosDocumentFactory>();
                         services.AddSingleton<RhetosProjectContext>();
                         services.AddSingleton<XmlDocumentationProvider>();
+                        services.AddSingleton<IRhetosProjectRootPathResolver, RhetosProjectRootPathResolver>();
+
+                        // services.AddTransient<ServerEventHandler>();
                         services.AddSingleton<ILogProvider, RhetosNetCoreLogProvider>();
                         services.AddSingleton<PublishDiagnosticsRunner>();
                         services.AddSingleton<RhetosProjectMonitor>();
-                        services.AddSingleton<ConceptQueries>();
                     })
-                    .OnInitialize((languageServer, request) =>
+                    .OnInitialize((languageServer, request, cancellationToken) =>
                     {
                         var log = languageServer.Services.GetRequiredService<ILoggerFactory>().CreateLogger("Init");
                         var logFileMessage = GetLogFilePath();
@@ -134,14 +137,16 @@ namespace Rhetos.LanguageServices.Server
                         var localPath = new Uri(Assembly.GetExecutingAssembly().CodeBase).LocalPath;
                         log.LogInformation($"Initialized. Running server '{localPath}'. {logFileMessage}");
                         log.LogDebug(JsonConvert.SerializeObject(request, Formatting.Indented));
+
                         return Task.CompletedTask;
                     })
-                    .OnInitialized((languageServer, request, response) =>
+                    .OnInitialized((languageServer, request, response, cancellationToken) =>
                     {
                         response.Capabilities.TextDocumentSync.Kind = TextDocumentSyncKind.Full;
-                        response.Capabilities.TextDocumentSync.Options.Change = TextDocumentSyncKind.Full;
-                        languageServer.Services.GetService<PublishDiagnosticsRunner>().Start();
-                        languageServer.Services.GetService<RhetosProjectMonitor>().Start();
+                        response.Capabilities.TextDocumentSync.Options!.Change = TextDocumentSyncKind.Full;
+                        languageServer.Services.GetRequiredService<PublishDiagnosticsRunner>().Start();
+                        languageServer.Services.GetRequiredService<RhetosProjectMonitor>().Start();
+
                         return Task.CompletedTask;
                     })
             );

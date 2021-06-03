@@ -26,6 +26,8 @@ using OmniSharp.Extensions.LanguageServer.Server;
 
 namespace Rhetos.LanguageServices.Server.Tools
 {
+    // TODO: remove completely if not needed
+    /*
     public class DebugReceiver : ILspReciever
     {
         private readonly Logger _logger;
@@ -53,4 +55,5 @@ namespace Rhetos.LanguageServices.Server.Tools
             return _default.IsValid(container);
         }
     }
+    */
 }

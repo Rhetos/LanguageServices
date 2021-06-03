@@ -21,7 +21,9 @@ using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using OmniSharp.Extensions.LanguageServer.Protocol.Server;
 using Rhetos.LanguageServices.CodeAnalysis.Services;
 
 namespace Rhetos.LanguageServices.Server.Services
@@ -29,15 +31,15 @@ namespace Rhetos.LanguageServices.Server.Services
     public class RhetosProjectMonitor
     {
         private static readonly TimeSpan _cycleInterval = TimeSpan.FromMilliseconds(1000);
-        private readonly RhetosWorkspace rhetosWorkspace;
+        private readonly Lazy<RhetosWorkspace> rhetosWorkspace;
         private readonly ILogger<RhetosProjectMonitor> log;
 
         private readonly CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
         private Task monitorLoopTask;
 
-        public RhetosProjectMonitor(RhetosWorkspace rhetosWorkspace, ILogger<RhetosProjectMonitor> log)
+        public RhetosProjectMonitor(ILanguageServerFacade languageServerFacade, ILogger<RhetosProjectMonitor> log)
         {
-            this.rhetosWorkspace = rhetosWorkspace;
+            this.rhetosWorkspace = new Lazy<RhetosWorkspace>(languageServerFacade.GetRequiredService<RhetosWorkspace>);
             this.log = log;
         }
 
@@ -75,7 +77,7 @@ namespace Rhetos.LanguageServices.Server.Services
 
                 try
                 {
-                    rhetosWorkspace.UpdateRhetosContextStatus();
+                    rhetosWorkspace.Value.UpdateRhetosContextStatus();
                 }
                 catch (Exception e)
                 {

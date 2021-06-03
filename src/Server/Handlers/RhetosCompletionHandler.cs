@@ -17,10 +17,12 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using OmniSharp.Extensions.LanguageServer.Protocol.Client.Capabilities;
 using OmniSharp.Extensions.LanguageServer.Protocol.Document;
@@ -34,8 +36,8 @@ namespace Rhetos.LanguageServices.Server.Handlers
     public class RhetosCompletionHandler : ICompletionHandler
     {
         private readonly ILogger<RhetosCompletionHandler> log;
-        private readonly RhetosWorkspace rhetosWorkspace;
-        private readonly ConceptQueries conceptQueries;
+        private readonly Lazy<RhetosWorkspace> rhetosWorkspace;
+        private readonly Lazy<ConceptQueries> conceptQueries;
 
         private static readonly CompletionRegistrationOptions _completionRegistrationOptions = new CompletionRegistrationOptions()
         {
@@ -45,11 +47,11 @@ namespace Rhetos.LanguageServices.Server.Handlers
             AllCommitCharacters = new Container<string>(" ", ".")
         };
 
-        public RhetosCompletionHandler(RhetosWorkspace rhetosWorkspace, ConceptQueries conceptQueries, ILogger<RhetosCompletionHandler> log)
+        public RhetosCompletionHandler(ILogger<RhetosCompletionHandler> log, ILanguageServerFacade serverFacade)
         {
             this.log = log;
-            this.rhetosWorkspace = rhetosWorkspace;
-            this.conceptQueries = conceptQueries;
+            this.rhetosWorkspace = new Lazy<RhetosWorkspace>(serverFacade.GetRequiredService<RhetosWorkspace>);
+            this.conceptQueries = new Lazy<ConceptQueries>(serverFacade.GetRequiredService<ConceptQueries>);
         }
 
         public CompletionRegistrationOptions GetRegistrationOptions(CompletionCapability capability, ClientCapabilities clientCapabilities)
@@ -66,14 +68,14 @@ namespace Rhetos.LanguageServices.Server.Handlers
         {
             log.LogDebug($"Completion requested at {request.Position.ToLineChr()}.");
 
-            var document = rhetosWorkspace.GetRhetosDocument(request.TextDocument.Uri.ToUri());
+            var document = rhetosWorkspace.Value.GetRhetosDocument(request.TextDocument.Uri.ToUri());
             if (document == null)
                 return Task.FromResult<CompletionList>(null);
 
             var keywords = document.GetCompletionKeywordsAtPosition(request.Position.ToLineChr());
 
             var completionItems = keywords
-                .Select(keyword => new CompletionItem() {Label = keyword, Kind = CompletionItemKind.Keyword, Detail = conceptQueries.GetFullDescription(keyword)})
+                .Select(keyword => new CompletionItem() {Label = keyword, Kind = CompletionItemKind.Keyword, Detail = conceptQueries.Value.GetFullDescription(keyword)})
                 .ToList();
 
             var completionList = new CompletionList(completionItems);
