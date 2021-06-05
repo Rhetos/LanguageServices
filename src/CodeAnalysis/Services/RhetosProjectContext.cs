@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.Extensions.Logging;
 using Rhetos.Dsl;
 using Rhetos.LanguageServices.CodeAnalysis.Tools;
 
@@ -8,35 +9,45 @@ namespace Rhetos.LanguageServices.CodeAnalysis.Services
 {
     public class RhetosProjectContext
     {
-        // TODO: make dynamic
-        public bool IsInitialized { get; private set; }
+        public bool IsInitialized => ProjectRootPath != null;
+        public string ProjectRootPath => currentDslSyntaxProvider?.ProjectRootPath;
 
-        // TODO: make dynamic
-        public string ProjectRootPath { get; private set; }
         public DateTime LastContextUpdateTime { get; private set; }
-
         public DslSyntax DslSyntax { get; private set; }
-        public Dictionary<string, ConceptType[]> Keywords => keywords.Value;
+        public Dictionary<string, ConceptType[]> Keywords { get; private set; }
+        private IDslSyntaxProvider currentDslSyntaxProvider;
 
-        private Lazy<Dictionary<string, ConceptType[]>> keywords;
+        private readonly ILogger<RhetosProjectContext> log;
 
-        public RhetosProjectContext()
+        public RhetosProjectContext(ILogger<RhetosProjectContext> log)
         {
+            this.log = log;
         }
 
-        public void Initialize(DslSyntax dslSyntax, string projectRootPath)
+        public void Initialize(IDslSyntaxProvider dslSyntaxProvider)
         {
-            DslSyntax = dslSyntax;
-            keywords = new Lazy<Dictionary<string, ConceptType[]>>(ExtractKeywords);
-            IsInitialized = true;
+            if (dslSyntaxProvider == null)
+                throw new ArgumentNullException(nameof(dslSyntaxProvider));
+
+            if (string.IsNullOrEmpty(dslSyntaxProvider.ProjectRootPath))
+                throw new ArgumentNullException(nameof(dslSyntaxProvider.ProjectRootPath));
+
+            if (ProjectRootPath == dslSyntaxProvider.ProjectRootPath)
+                throw new InvalidOperationException(
+                    $"Trying to initialize with rootPath='{dslSyntaxProvider.ProjectRootPath}', but {nameof(RhetosProjectContext)} is already successfully initialized with same rootPath.");
+
+            DslSyntax = dslSyntaxProvider.Load();
+            Keywords = ExtractKeywords();
             LastContextUpdateTime = DateTime.Now;
-            ProjectRootPath = projectRootPath;
+            currentDslSyntaxProvider = dslSyntaxProvider;
+
+            log.LogDebug($"Initialized with RootPath='{ProjectRootPath}'.");
         }
 
-        public void Initialize(string projectRootPath)
+        public void UpdateDslSyntax()
         {
-            var dslSyntaxProvider = new DslSyntaxProvider(projectRootPath);
-            Initialize(dslSyntaxProvider.Load(), projectRootPath);
+            // change to IDslSyntaxProvider pattern?
+            throw new NotImplementedException();
         }
 
         private Dictionary<string, ConceptType[]> ExtractKeywords()

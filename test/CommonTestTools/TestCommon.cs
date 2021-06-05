@@ -25,7 +25,7 @@ using Rhetos.LanguageServices.CodeAnalysis.Services;
 using Rhetos.LanguageServices.CodeAnalysis.Tools;
 using Rhetos.Logging;
 
-namespace Rhetos.LanguageServices.CodeAnalysis.Test
+namespace Rhetos.LanguageServices.CommonTestTools
 {
     public static class TestCommon
     {
@@ -51,8 +51,7 @@ namespace Rhetos.LanguageServices.CodeAnalysis.Test
             if (initializeContextFromFolder != null)
             {
                 var rhetosProjectContext = serviceProvider.GetRequiredService<RhetosProjectContext>();
-                var dslSyntax = DslSyntaxProvider.LoadFromFolder(initializeContextFromFolder);
-                rhetosProjectContext.Initialize(dslSyntax, initializeContextFromFolder);
+                rhetosProjectContext.Initialize(new DslSyntaxProviderMock(initializeContextFromFolder));
             }
 
             return serviceProvider;

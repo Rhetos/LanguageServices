@@ -17,6 +17,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\CodeAnalysis\CodeAnalysis.csproj" />
+    <ProjectReference Include="..\CommonTestTools\CommonTestTools.csproj" />
   </ItemGroup>
 
   <ItemGroup>

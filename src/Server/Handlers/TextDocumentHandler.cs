@@ -30,6 +30,7 @@ using OmniSharp.Extensions.LanguageServer.Protocol.Document;
 using OmniSharp.Extensions.LanguageServer.Protocol.Models;
 using OmniSharp.Extensions.LanguageServer.Protocol.Server;
 using OmniSharp.Extensions.LanguageServer.Protocol.Server.Capabilities;
+using OmniSharp.Extensions.LanguageServer.Protocol.Window;
 using Rhetos.LanguageServices.CodeAnalysis.Services;
 using Rhetos.LanguageServices.Server.Services;
 
@@ -52,11 +53,13 @@ namespace Rhetos.LanguageServices.Server.Handlers
         public override TextDocumentAttributes GetTextDocumentAttributes(DocumentUri uri) => new TextDocumentAttributes(uri, "csharp");
 
         private readonly ILogger<TextDocumentHandler> log;
+        private readonly ILanguageServerFacade serverFacade;
         private readonly Lazy<RhetosWorkspace> rhetosWorkspace;
 
         public TextDocumentHandler(ILogger<TextDocumentHandler> log, ILanguageServerFacade serverFacade)
         {
             this.log = log;
+            this.serverFacade = serverFacade;
             this.rhetosWorkspace = new Lazy<RhetosWorkspace>(serverFacade.GetRequiredService<RhetosWorkspace>);
         }
 
@@ -72,7 +75,7 @@ namespace Rhetos.LanguageServices.Server.Handlers
             var text = request.TextDocument.Text;
             var uri = request.TextDocument.Uri.ToUri();
 
-            log.LogDebug($"Document opened: {uri}.");
+            log.LogTrace($"Document opened: {uri}.");
             rhetosWorkspace.Value.UpdateDocumentText(uri, text);
 
             return Unit.Task;

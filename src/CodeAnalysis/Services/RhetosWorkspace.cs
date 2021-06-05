@@ -22,6 +22,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Extensions.Logging;
 using Rhetos.LanguageServices.CodeAnalysis.Parsing;
+using Rhetos.LanguageServices.CodeAnalysis.Tools;
 
 namespace Rhetos.LanguageServices.CodeAnalysis.Services
 {
@@ -99,66 +100,85 @@ namespace Rhetos.LanguageServices.CodeAnalysis.Services
             lock (rhetosDocuments)
             {
                 if (!rhetosDocuments.TryGetValue(documentUri, out var rhetosDocument))
-                    throw new InvalidOperationException($"No document with uri '{documentUri}' found in workspace.");
+                    throw new InvalidOperationException($"No document with uri '{documentUri.AbsolutePath}' found in workspace.");
 
                 return rhetosDocument;
             }
         }
-
-        private bool lastProjectConfigurationDirtyStatus;
-        
-        public void UpdateRhetosContextStatus()
+       
+        public void UpdateRhetosProjectContext()
         {
-            throw new NotImplementedException();
-            /*
             lock (rhetosDocuments)
             {
-                if (rhetosProjectContext.IsInitialized)
-                {
-                    rhetosAppContext.UpdateProjectConfigurationDirtyStatus();
-                    if (lastProjectConfigurationDirtyStatus != rhetosAppContext.ProjectConfigurationDirty)
-                    {
-                        foreach (var rhetosDocument in rhetosDocuments)
-                        {
-                            rhetosDocument.Value.InvalidateAnalysisCache();
-                            documentChangeTimes[rhetosDocument.Key] = DateTime.Now;
-                        }
-                    }
-                    lastProjectConfigurationDirtyStatus = rhetosAppContext.ProjectConfigurationDirty;
+                var contextUpdateTime = rhetosProjectContext.LastContextUpdateTime;
+                UpdateProjectContextRootPath();
+                rhetosProjectContext.UpdateDslSyntax();
+
+                if (rhetosProjectContext.LastContextUpdateTime == contextUpdateTime)
                     return;
-                }
-
-                var documentsWithValidRootPath = rhetosDocuments.Values
-                    .Where(document => !string.IsNullOrEmpty(document.RootPathConfiguration?.RootPath))
-                    .ToList();
-                    
-                // try to initialize with each open document with valid rootPath
-                foreach (var rhetosDocument in documentsWithValidRootPath)
+                
+                foreach (var (uri, rhetosDocument) in rhetosDocuments)
                 {
-                    log.LogTrace($"Trying to initialize context with rootPath='{rhetosDocument.RootPathConfiguration.RootPath}' from document '{rhetosDocument.DocumentUri}'.");
-                    rhetosAppContext.InitializeFromRhetosProjectPath(rhetosDocument.RootPathConfiguration.RootPath);
-
-                    if (rhetosDocument.RhetosAppContextInitializeError?.Message != rhetosAppContext.LastInitializeError?.Message)
-                    {
-                        rhetosDocument.RhetosAppContextInitializeError = rhetosAppContext.LastInitializeError;
-                        rhetosDocument.InvalidateAnalysisCache();
-                        documentChangeTimes[rhetosDocument.DocumentUri] = DateTime.Now;
-                    }
-
-                    if (rhetosProjectContext.IsInitialized) break;
-                }
-
-                if (!rhetosProjectContext.IsInitialized) return;
-
-                // we have just initialized, reset all documents' analysis states
-                foreach (var rhetosDocument in documentsWithValidRootPath)
-                {
-                    log.LogTrace($"Reset code analysis for {rhetosDocument.DocumentUri}. LastError = {rhetosAppContext.LastInitializeError?.Message}");
-                    rhetosDocument.RhetosAppContextInitializeError = null;
+                    log.LogTrace($"Reset code analysis for {uri.AbsolutePath}.");
                     rhetosDocument.InvalidateAnalysisCache();
-                    documentChangeTimes[rhetosDocument.DocumentUri] = DateTime.Now;
+                    documentChangeTimes[uri] = DateTime.Now;
                 }
-            }*/
+            }
+        }
+
+        private void UpdateProjectContextRootPath()
+        {
+            var documentRootPaths = GetRootPathsFromDocuments();
+
+            if (rhetosProjectContext.IsInitialized && documentRootPaths.Contains(rhetosProjectContext.ProjectRootPath))
+                return;
+
+            if (rhetosProjectContext.IsInitialized)
+                log.LogDebug($"Changing current rootPath='{rhetosProjectContext.ProjectRootPath}' since it is no longer used.");
+
+            TryInitializeWithRootPaths(documentRootPaths);
+        }
+
+        private void TryInitializeWithRootPaths(IEnumerable<string> rootPaths)
+        {
+            foreach (var rootPath in rootPaths)
+            {
+                try
+                {
+                    if (!DslSyntaxProvider.IsValidProjectRootPath(rootPath))
+                    {
+                        log.LogTrace($"Path '{rootPath}' is not a valid Rhetos Project path, skipping.");
+                        continue;
+                    }
+                        
+                    log.LogTrace($"Trying to initialize RhetosProjectContext with rootPath='{rootPath}'.");
+                    rhetosProjectContext.Initialize(new DslSyntaxProvider(rootPath));
+
+                    if (rhetosProjectContext.ProjectRootPath == rootPath)
+                        break;
+                }
+                catch (Exception e)
+                {
+                    log.LogTrace($"RhetosProjectContext initialize failed at rootPath='{rootPath}'. {e}");
+                }
+            }
+        }
+
+        private List<string> GetRootPathsFromDocuments()
+        {
+            lock (rhetosDocuments)
+            {
+                var rootPaths = rhetosDocuments.Values
+                    .Select(a => a.RootPathConfiguration?.RootPath)
+                    .Where(a => !string.IsNullOrEmpty(a))
+                    .GroupBy(a => a)
+                    .Select(a => (rootPath: a.Key, count: a.Count()))
+                    .OrderByDescending(a => a.count)
+                    .Select(a => a.rootPath)
+                    .ToList();
+
+                return rootPaths;
+            }
         }
     }
 }

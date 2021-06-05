@@ -5,34 +5,32 @@ using Rhetos.Utilities;
 
 namespace Rhetos.LanguageServices.CodeAnalysis.Tools
 {
-    public class DslSyntaxProvider
+    public class DslSyntaxProvider : IDslSyntaxProvider
     {
-        private readonly string projectRootPath;
+        public string ProjectRootPath { get; }
 
         public DslSyntaxProvider(string projectRootPath)
         {
-            this.projectRootPath = projectRootPath;
-        }
-
-        public bool IsValidProjectRootPath()
-        {
-            return File.Exists(Path.Combine(CacheFolder(), DslSyntaxFile.DslSyntaxFileName));
+            ProjectRootPath = projectRootPath;
         }
 
         public DslSyntax Load()
         {
-            return LoadFromFolder(CacheFolder());
-        }
+            if (!IsValidProjectRootPath(ProjectRootPath))
+                throw new InvalidOperationException($"Can't load {nameof(DslSyntax)} from '{ProjectRootPath}', because it is not a valid project root path.");
 
-        public static DslSyntax LoadFromFolder(string folder)
-        {
-            var rhetosBuildEnvironment = new RhetosBuildEnvironment() {CacheFolder = folder};
+            var rhetosBuildEnvironment = new RhetosBuildEnvironment() { CacheFolder = BuildCacheFolder(ProjectRootPath) };
             return new DslSyntaxFile(rhetosBuildEnvironment).Load();
         }
 
-        private string CacheFolder()
+        public static bool IsValidProjectRootPath(string folder)
         {
-            return Path.Combine(projectRootPath, "obj", "Rhetos");
+            return File.Exists(Path.Combine(BuildCacheFolder(folder), DslSyntaxFile.DslSyntaxFileName));
+        }
+
+        private static string BuildCacheFolder(string projectFolder)
+        {
+            return Path.Combine(projectFolder, "obj", "Rhetos");
         }
     }
 }

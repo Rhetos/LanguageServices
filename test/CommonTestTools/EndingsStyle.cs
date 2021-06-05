@@ -17,7 +17,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace Rhetos.LanguageServices.CodeAnalysis.Test
+namespace Rhetos.LanguageServices.CommonTestTools
 {
     public enum EndingsStyle
     {

@@ -79,8 +79,7 @@ namespace Rhetos.LanguageServices.CodeAnalysis.Services
 
         private bool IsValidRhetosProjectFolder(string folder)
         {
-            var dslSyntaxProvider = new DslSyntaxProvider(folder);
-            return dslSyntaxProvider.IsValidProjectRootPath();
+            return DslSyntaxProvider.IsValidProjectRootPath(folder);
         }
 
         private (string rootPath, string configurationPath) GetRootPathFromConfigurationInParentFolders(string startingFolder)

@@ -24,6 +24,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Rhetos.LanguageServices.CodeAnalysis.Parsing;
 using Rhetos.LanguageServices.CodeAnalysis.Services;
 using Rhetos.LanguageServices.CodeAnalysis.Tools;
+using Rhetos.LanguageServices.CommonTestTools;
 
 namespace Rhetos.LanguageServices.CodeAnalysis.Test
 {

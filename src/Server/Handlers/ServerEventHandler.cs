@@ -21,6 +21,7 @@ using System;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Rhetos.LanguageServices.CodeAnalysis.Services;
+using Rhetos.LanguageServices.CodeAnalysis.Tools;
 using Rhetos.LanguageServices.Server.Services;
 
 namespace Rhetos.LanguageServices.Server.Handlers
@@ -40,7 +41,7 @@ namespace Rhetos.LanguageServices.Server.Handlers
         public Task InitializeRhetosContext(string rootPath)
         {
             log.LogInformation($"Initializing RhetosContext with rootPath='{rootPath}'.");
-            var initializeTask = Task.Run(() => rhetosProjectContext.Initialize(rootPath))
+            var initializeTask = Task.Run(() => rhetosProjectContext.Initialize(new DslSyntaxProvider(rootPath)))
                 .ContinueWith(result =>
                 {
                     var status = result.Status == TaskStatus.RanToCompletion

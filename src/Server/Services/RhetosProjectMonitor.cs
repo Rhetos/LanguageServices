@@ -77,11 +77,11 @@ namespace Rhetos.LanguageServices.Server.Services
 
                 try
                 {
-                    rhetosWorkspace.Value.UpdateRhetosContextStatus();
+                    rhetosWorkspace.Value.UpdateRhetosProjectContext();
                 }
                 catch (Exception e)
                 {
-                    log.LogWarning($"Error occured during monitoring RhetosAppContext state: {e}");
+                    log.LogWarning($"Error occurred during monitoring RhetosAppContext state: {e}");
                 }
             }
         }
