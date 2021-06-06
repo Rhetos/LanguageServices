@@ -17,6 +17,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Server\Server.csproj" />
+    <ProjectReference Include="..\CommonTestTools\CommonTestTools.csproj" />
+    <ProjectReference Include="..\RhetosMockAppContents\RhetosMockAppContents.csproj" />
   </ItemGroup>
 
 </Project>

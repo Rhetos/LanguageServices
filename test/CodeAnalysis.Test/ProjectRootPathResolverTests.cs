@@ -20,8 +20,8 @@
 using System;
 using System.IO;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Rhetos.LanguageServices.CodeAnalysis.Parsing;
 using Rhetos.LanguageServices.CodeAnalysis.Services;
 using Rhetos.LanguageServices.CodeAnalysis.Tools;
 using Rhetos.LanguageServices.CommonTestTools;
@@ -31,11 +31,12 @@ namespace Rhetos.LanguageServices.CodeAnalysis.Test
     [TestClass]
     [DeploymentItem("RhetosAppFolder\\", "RhetosAppFolder")]
     [DeploymentItem("RhetosAppFolder\\FolderWithApp\\MockObj\\Rhetos\\", "RhetosAppFolder\\FolderWithApp\\obj\\Rhetos")]
-    public class RhetosProjectContextTests
+    [DeploymentItem("DslSyntax.json", "RhetosAppFolder\\FolderWithApp\\obj\\Rhetos\\")]
+    public class ProjectRootPathResolverTests
     {
         private readonly IServiceProvider serviceProvider;
 
-        public RhetosProjectContextTests()
+        public ProjectRootPathResolverTests()
         {
             serviceProvider = TestCommon.CreateTestServiceProvider();
         }

@@ -25,7 +25,10 @@ namespace Rhetos.LanguageServices.CodeAnalysis.Services
             {
                 var fromDirective = GetRootPathFromText(rhetosDocument.TextDocument.Text);
                 if (fromDirective != null)
-                    return new RootPathConfiguration(fromDirective, RootPathConfigurationType.SourceDirective, rhetosDocument.DocumentUri.LocalPath);
+                {
+                    var absolutePath = Path.GetFullPath(Path.Combine(Path.GetDirectoryName(rhetosDocument.DocumentUri.LocalPath), fromDirective));
+                    return new RootPathConfiguration(absolutePath, RootPathConfigurationType.SourceDirective, rhetosDocument.DocumentUri.LocalPath);
+                }
 
                 return null;
             }
@@ -63,7 +66,7 @@ namespace Rhetos.LanguageServices.CodeAnalysis.Services
         {
             var pathMatch = Regex.Match(text, @"^\s*//\s*<rhetosProjectRootPath=""(.+)""\s*/>");
             var rootPath = pathMatch.Success
-                ? Path.GetFullPath(pathMatch.Groups[1].Value)
+                ? pathMatch.Groups[1].Value
                 : null;
 
             return rootPath;

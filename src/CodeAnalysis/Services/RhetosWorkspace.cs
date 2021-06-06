@@ -112,7 +112,9 @@ namespace Rhetos.LanguageServices.CodeAnalysis.Services
             {
                 var contextUpdateTime = rhetosProjectContext.LastContextUpdateTime;
                 UpdateProjectContextRootPath();
-                rhetosProjectContext.UpdateDslSyntax();
+
+                if (rhetosProjectContext.IsInitialized)
+                    rhetosProjectContext.UpdateDslSyntax();
 
                 if (rhetosProjectContext.LastContextUpdateTime == contextUpdateTime)
                     return;

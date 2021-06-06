@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -31,6 +32,7 @@ using NLog.Extensions.Logging;
 using NLog.Targets;
 using NLog.Targets.Wrappers;
 using OmniSharp.Extensions.LanguageServer.Protocol.Client;
+using OmniSharp.Extensions.LanguageServer.Protocol.General;
 using OmniSharp.Extensions.LanguageServer.Protocol.Models;
 using OmniSharp.Extensions.LanguageServer.Protocol.Server;
 using OmniSharp.Extensions.LanguageServer.Protocol.Server.Capabilities;
@@ -83,9 +85,16 @@ namespace Rhetos.LanguageServices.Server
 
             log.Info("Language Server built and started.");
 
+            AddServerCleanupHandlers(server, log);
+
+            await server.WaitForExit;
+        }
+
+        public static void AddServerCleanupHandlers(ILanguageServer server, ILogger log = null)
+        {
             server.Shutdown.Subscribe(next =>
             {
-                log.Debug($"Shutdown requested: {next}");
+                log?.Debug($"Shutdown requested.");
                 server.Services.GetRequiredService<PublishDiagnosticsRunner>().Stop();
                 server.Services.GetRequiredService<RhetosProjectMonitor>().Stop();
                 Task.Delay(500).Wait();
@@ -93,10 +102,8 @@ namespace Rhetos.LanguageServices.Server
 
             server.Exit.Subscribe(next =>
             {
-                log.Info($"Exit requested: {next}");
+                log?.Info($"Exit requested: {next}");
             });
-
-            await server.WaitForExit;
         }
 
         public static async Task<ILanguageServer> BuildLanguageServer(Stream inputStream, Stream outputStream)
@@ -155,7 +162,7 @@ namespace Rhetos.LanguageServices.Server
             services.AddSingleton<XmlDocumentationProvider>();
             services.AddSingleton<IRhetosProjectRootPathResolver, RhetosProjectRootPathResolver>();
 
-            // services.AddTransient<ServerEventHandler>();
+            //services.AddTransient<ServerEventHandler>();
             services.AddSingleton<ILogProvider, RhetosNetCoreLogProvider>();
             services.AddSingleton<PublishDiagnosticsRunner>();
             services.AddSingleton<RhetosProjectMonitor>();
@@ -164,7 +171,7 @@ namespace Rhetos.LanguageServices.Server
 
         private static Task OnInitializeAsync(ILanguageServer languageServer, InitializeParams request, CancellationToken cancellationToken)
         {
-            var log = languageServer.Services.GetRequiredService<ILoggerFactory>().CreateLogger("Init");
+            var log = languageServer.Services.GetRequiredService<ILoggerFactory>().CreateLogger<RhetosLanguageServer>();
             var logFileMessage = GetLogFilePath();
             if (string.IsNullOrEmpty(logFileMessage))
                 logFileMessage = "No log file configuration found. Edit 'NLog.config' to add log file target.";
@@ -173,7 +180,7 @@ namespace Rhetos.LanguageServices.Server
 
             var localPath = new Uri(Assembly.GetExecutingAssembly().CodeBase).LocalPath;
             log.LogInformation($"Initialized. Running server '{localPath}'. {logFileMessage}");
-            log.LogDebug(JsonConvert.SerializeObject(request, Formatting.Indented));
+            // log.LogDebug(JsonConvert.SerializeObject(request, Formatting.Indented));
 
             return Task.CompletedTask;
         }

@@ -123,7 +123,7 @@ namespace Rhetos.LanguageServices.Server.Services
             foreach (var diagnostics in allPublishDiagnostics)
             {
                 log.LogTrace($"Publish new diagnostics for '{diagnostics.Uri}'.");
-                var publishTask = new Task(() => languageServerFacade.SendNotification(diagnostics));
+                var publishTask = Task.Run(() => languageServerFacade.SendNotification(diagnostics));
                 publishTasks.Add(publishTask);
             }
 
@@ -170,5 +170,6 @@ namespace Rhetos.LanguageServices.Server.Services
                 Range = new Range(start, end),
             };
         }
+
     }
 }

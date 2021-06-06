@@ -9,15 +9,31 @@ namespace Rhetos.LanguageServices.CodeAnalysis.Services
 {
     public class RhetosProjectContext
     {
-        public bool IsInitialized => ProjectRootPath != null;
-        public string ProjectRootPath => currentDslSyntaxProvider?.ProjectRootPath;
-
-        public DateTime LastContextUpdateTime { get; private set; }
-        public DslSyntax DslSyntax { get; private set; }
-        public Dictionary<string, ConceptType[]> Keywords { get; private set; }
-        private IDslSyntaxProvider currentDslSyntaxProvider;
+        public string ProjectRootPath => current?.DslSyntaxProvider.ProjectRootPath;
+        public bool IsInitialized => current != null;
+        public DateTime LastContextUpdateTime => current?.CreatedTime ?? DateTime.MinValue;
+        public DslSyntax DslSyntax => current?.DslSyntax;
+        public Dictionary<string, ConceptType[]> Keywords => current?.Keywords;
 
         private readonly ILogger<RhetosProjectContext> log;
+        private static readonly object _syncRoot = new();
+        private Context current;
+
+        private class Context
+        {
+            public IDslSyntaxProvider DslSyntaxProvider { get; }
+            public DslSyntax DslSyntax { get; }
+            public Dictionary<string, ConceptType[]> Keywords { get; }
+            public DateTime CreatedTime { get; }
+
+            public Context(IDslSyntaxProvider dslSyntaxProvider)
+            {
+                DslSyntaxProvider = dslSyntaxProvider;
+                DslSyntax = DslSyntaxProvider.Load();
+                Keywords = ExtractKeywords(DslSyntax);
+                CreatedTime = DateTime.Now;
+            }
+        }
 
         public RhetosProjectContext(ILogger<RhetosProjectContext> log)
         {
@@ -26,33 +42,33 @@ namespace Rhetos.LanguageServices.CodeAnalysis.Services
 
         public void Initialize(IDslSyntaxProvider dslSyntaxProvider)
         {
-            if (dslSyntaxProvider == null)
-                throw new ArgumentNullException(nameof(dslSyntaxProvider));
+            lock (_syncRoot)
+            {
+                if (dslSyntaxProvider == null)
+                    throw new ArgumentNullException(nameof(dslSyntaxProvider));
 
-            if (string.IsNullOrEmpty(dslSyntaxProvider.ProjectRootPath))
-                throw new ArgumentNullException(nameof(dslSyntaxProvider.ProjectRootPath));
+                if (string.IsNullOrEmpty(dslSyntaxProvider.ProjectRootPath))
+                    throw new ArgumentNullException(nameof(dslSyntaxProvider.ProjectRootPath));
 
-            if (ProjectRootPath == dslSyntaxProvider.ProjectRootPath)
-                throw new InvalidOperationException(
-                    $"Trying to initialize with rootPath='{dslSyntaxProvider.ProjectRootPath}', but {nameof(RhetosProjectContext)} is already successfully initialized with same rootPath.");
+                if (ProjectRootPath == dslSyntaxProvider.ProjectRootPath)
+                    throw new InvalidOperationException(
+                        $"Trying to initialize with rootPath='{dslSyntaxProvider.ProjectRootPath}', but {nameof(RhetosProjectContext)} is already successfully initialized with same rootPath.");
 
-            DslSyntax = dslSyntaxProvider.Load();
-            Keywords = ExtractKeywords();
-            LastContextUpdateTime = DateTime.Now;
-            currentDslSyntaxProvider = dslSyntaxProvider;
+                current = new Context(dslSyntaxProvider);
 
-            log.LogDebug($"Initialized with RootPath='{ProjectRootPath}'.");
+                log.LogDebug($"Initialized with RootPath='{ProjectRootPath}'.");
+            }
         }
 
         public void UpdateDslSyntax()
         {
-            // change to IDslSyntaxProvider pattern?
-            throw new NotImplementedException();
+            // TODO: implement reload if lastModified changed
+            // throw new NotImplementedException();
         }
 
-        private Dictionary<string, ConceptType[]> ExtractKeywords()
+        private static Dictionary<string, ConceptType[]> ExtractKeywords(DslSyntax dslSyntax)
         {
-            var keywordDictionary = DslSyntax.ConceptTypes
+            var keywordDictionary = dslSyntax.ConceptTypes
                 .Select(type => (keyword: type.Keyword, type))
                 .Where(info => !string.IsNullOrEmpty(info.keyword))
                 .GroupBy(info => info.keyword)

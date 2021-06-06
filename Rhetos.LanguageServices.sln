@@ -23,6 +23,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LspIntegration.Test", "test
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CommonTestTools", "test\CommonTestTools\CommonTestTools.csproj", "{081AE508-AC71-4390-92DD-0D7CD89D4087}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RhetosMockAppContents", "test\RhetosMockAppContents\RhetosMockAppContents.csproj", "{96C22556-190F-4029-990B-FD2CF6DA1FF9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -61,6 +63,10 @@ Global
 		{081AE508-AC71-4390-92DD-0D7CD89D4087}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{081AE508-AC71-4390-92DD-0D7CD89D4087}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{081AE508-AC71-4390-92DD-0D7CD89D4087}.Release|Any CPU.Build.0 = Release|Any CPU
+		{96C22556-190F-4029-990B-FD2CF6DA1FF9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{96C22556-190F-4029-990B-FD2CF6DA1FF9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{96C22556-190F-4029-990B-FD2CF6DA1FF9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{96C22556-190F-4029-990B-FD2CF6DA1FF9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -74,6 +80,7 @@ Global
 		{0A338581-3E84-4861-A4F5-4202D645649D} = {4A38AB36-9EB2-433E-ADD2-4EE75CE96673}
 		{9A7884AF-6FC8-4235-B77D-AED5E1630A5C} = {C716868E-A5D4-44C7-A58A-395ACAFC733E}
 		{081AE508-AC71-4390-92DD-0D7CD89D4087} = {C716868E-A5D4-44C7-A58A-395ACAFC733E}
+		{96C22556-190F-4029-990B-FD2CF6DA1FF9} = {C716868E-A5D4-44C7-A58A-395ACAFC733E}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {CBA9BC49-E4BD-4C94-BA69-AA6916D7AB1A}
