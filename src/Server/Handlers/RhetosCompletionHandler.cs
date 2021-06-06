@@ -33,8 +33,10 @@ using Rhetos.LanguageServices.Server.Services;
 
 namespace Rhetos.LanguageServices.Server.Handlers
 {
-    public class RhetosCompletionHandler : ICompletionHandler
+    public class RhetosCompletionHandler : ICompletionHandler, ICompletionResolveHandler
     {
+        public Guid Id { get; }
+
         private readonly ILogger<RhetosCompletionHandler> log;
         private readonly Lazy<RhetosWorkspace> rhetosWorkspace;
         private readonly Lazy<ConceptQueries> conceptQueries;
@@ -58,10 +60,9 @@ namespace Rhetos.LanguageServices.Server.Handlers
         {
             return _completionRegistrationOptions;
         }
-
-        public bool CanResolve(CompletionItem value)
+        
+        public void SetCapability(CompletionCapability capability, ClientCapabilities clientCapabilities)
         {
-            return true;
         }
 
         public Task<CompletionList> Handle(CompletionParams request, CancellationToken cancellationToken)
@@ -75,14 +76,19 @@ namespace Rhetos.LanguageServices.Server.Handlers
             var keywords = document.GetCompletionKeywordsAtPosition(request.Position.ToLineChr());
 
             var completionItems = keywords
-                .Select(keyword => new CompletionItem() {Label = keyword, Kind = CompletionItemKind.Keyword, Detail = conceptQueries.Value.GetFullDescription(keyword)})
+                .Select(keyword => new CompletionItem()
+                {
+                    Label = keyword,
+                    Kind = CompletionItemKind.Keyword,
+                    Detail = conceptQueries.Value.GetFullDescription(keyword),
+                })
                 .ToList();
 
             var completionList = new CompletionList(completionItems);
 
             return Task.FromResult(completionList);
         }
-
+        
         public Task<CompletionItem> Handle(CompletionItem request, CancellationToken cancellationToken)
         {
             return Task.FromResult(request);

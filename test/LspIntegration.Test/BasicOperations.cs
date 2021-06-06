@@ -63,6 +63,8 @@ namespace Rhetos.LanguageServices.LspIntegration.Test
                     Position = new Position(0, 32)
                 }).AsTask().Result;
 
+                Console.WriteLine(JsonConvert.SerializeObject(completionResult.Items.First(), Formatting.Indented));
+
                 Console.WriteLine(completionResult.Items.Count());
                 Assert.IsNotNull(completionResult);
                 Assert.AreEqual(67, completionResult.Count());

@@ -122,7 +122,6 @@ namespace Rhetos.LanguageServices.CodeAnalysis.Parsing
             }
             catch (Exception e)
             {
-                Console.WriteLine($"DslParser exception: {e}");
                 result.DslParserErrors.Add(new CodeAnalysisError() { LineChr = LineChr.Zero, Message = e.Message });
             }
             finally
