@@ -72,6 +72,23 @@ namespace Rhetos.LanguageServices.CodeAnalysis.Parsing
             }
         }
 
+        public bool UpdateRootPathIfChanged()
+        {
+            lock (_syncAnalysis)
+            {
+                var oldPath = RootPathConfiguration.RootPath;
+                UpdateRootPathConfiguration();
+
+                if (RootPathConfiguration.RootPath != oldPath)
+                {
+                    InvalidateAnalysisCache();
+                    return true;
+                }
+
+                return false;
+            }
+        }
+
         private void UpdateRootPathConfiguration()
         {
             var directiveConfiguration = rhetosProjectRootPathResolver.ResolveRootPathFromDocumentDirective(this);
@@ -79,8 +96,8 @@ namespace Rhetos.LanguageServices.CodeAnalysis.Parsing
                                    && directiveConfiguration.ConfigurationType == RootPathConfigurationType.None;
 
             // run full configuration scan if we have just deleted a source directive
-            // OR we have never ran a full configuration for this document
-            if (RootPathConfiguration == null || deletedDirective)
+            // OR we have never ran a successful configuration for this document
+            if (RootPathConfiguration?.RootPath == null || deletedDirective)
             {
                 RootPathConfiguration = rhetosProjectRootPathResolver.ResolveRootPathForDocument(this);
             }

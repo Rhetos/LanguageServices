@@ -22,6 +22,12 @@
     <None Update="RhetosAppFolder\EmptyFolder\include.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="RhetosAppFolder\FolderWithApp2\doc.rhe">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="RhetosAppFolder\RhetosAppDynamic\doc.rhe">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="RhetosAppFolder\FolderWithApp\doc.rhe">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -52,6 +58,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="RhetosAppFolder\FolderWithApp2\MockObj\Rhetos\" />
     <Folder Include="RhetosAppFolder\FolderWithApp\MockObj\Rhetos\" />
   </ItemGroup>
 

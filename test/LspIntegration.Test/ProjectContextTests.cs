@@ -20,6 +20,8 @@ namespace Rhetos.LanguageServices.LspIntegration.Test
     [DeploymentItem("RhetosAppFolder\\", "RhetosAppFolder")]
     [DeploymentItem("RhetosAppFolder\\FolderWithApp\\MockObj\\Rhetos\\", "RhetosAppFolder\\FolderWithApp\\obj\\Rhetos")]
     [DeploymentItem("DslSyntax.json", "RhetosAppFolder\\FolderWithApp\\obj\\Rhetos\\")]
+    [DeploymentItem("RhetosAppFolder\\FolderWithApp2\\MockObj\\Rhetos\\", "RhetosAppFolder\\FolderWithApp2\\obj\\Rhetos")]
+    [DeploymentItem("DslSyntax.json", "RhetosAppFolder\\FolderWithApp2\\obj\\Rhetos\\")]
     [DeploymentItem("RhetosAppFolder\\FolderWithApp\\doc.rhe", "RhetosAppFolder\\FolderWithApp\\1\\2\\3\\")]
 
     public class ProjectContextTests : IntegrationTestBase
@@ -42,9 +44,101 @@ namespace Rhetos.LanguageServices.LspIntegration.Test
         }
 
         [TestMethod]
+        public void WillReinitializeContextOnDslSyntaxModified()
+        {
+            client.TextDocument.DidOpenTextDocument(new DidOpenTextDocumentParams()
+            {
+                TextDocument = DocumentFromText("", "RhetosAppFolder\\FolderWithApp2\\doc.rhe")
+            });
+            Task.Delay(1500).Wait();
+
+            var projectContext = server.GetRequiredService<RhetosProjectContext>();
+            Assert.IsTrue(projectContext.IsInitialized);
+            Assert.IsTrue(projectContext.ProjectRootPath?.Contains("FolderWithApp2"));
+
+            var dslSyntaxFile = Path.Combine(Environment.CurrentDirectory, "RhetosAppFolder\\FolderWithApp2\\obj\\Rhetos", "DslSyntax.json");
+            Assert.IsTrue(File.Exists(dslSyntaxFile));
+            Assert.AreEqual(1, CountContainsAll(ServerLogs, "Initialized with RootPath", "FolderWithApp2"));
+            
+            File.SetLastWriteTime(dslSyntaxFile, DateTime.Now);
+            Console.WriteLine($"Updating last modified of '{dslSyntaxFile}'.");
+            Task.Delay(1500).Wait();
+            Assert.AreEqual(2, CountContainsAll(ServerLogs, "Initialized with RootPath", "FolderWithApp2"));
+
+            DumpLogs(ServerLogs, "Server Logs");
+        }
+
+        [TestMethod]
+        public void WillSwitchOnUnusedProjectPath()
+        {
+            var initialDocument = DocumentFromText("", "RhetosAppFolder\\FolderWithApp\\doc.rhe");
+            client.TextDocument.DidOpenTextDocument(new DidOpenTextDocumentParams()
+            {
+                TextDocument = initialDocument
+            });
+            Task.Delay(1500).Wait();
+
+            var projectContext = server.GetRequiredService<RhetosProjectContext>();
+            Assert.IsTrue(projectContext.IsInitialized);
+            Assert.IsTrue(projectContext.ProjectRootPath?.Contains("FolderWithApp"));
+
+            client.TextDocument.DidOpenTextDocument(new DidOpenTextDocumentParams()
+            {
+                TextDocument = DocumentFromText("", "RhetosAppFolder\\FolderWithApp2\\doc.rhe")
+            });
+            Task.Delay(1500).Wait();
+
+            Assert.IsTrue(projectContext.IsInitialized);
+            Assert.IsFalse(projectContext.ProjectRootPath?.Contains("FolderWithApp2"));
+
+            client.TextDocument.DidCloseTextDocument(new DidCloseTextDocumentParams()
+            {
+                TextDocument = initialDocument.Uri
+            });
+            Task.Delay(1500).Wait();
+            Assert.IsTrue(projectContext.IsInitialized);
+            Assert.IsTrue(projectContext.ProjectRootPath?.Contains("FolderWithApp2"));
+
+            DumpLogs(ServerLogs, "Server Logs");
+        }
+
+        [TestMethod]
+        public void WillInitializeOnAssetsFolderNewlyCreated()
+        {
+            var projectFolder = Path.Combine(Environment.CurrentDirectory, "RhetosAppFolder\\RhetosAppDynamic");
+            Assert.IsTrue(Directory.Exists(projectFolder));
+
+            var objFolder = Path.Combine(projectFolder, "obj");
+            
+            if (Directory.Exists(objFolder))
+                Directory.Delete(objFolder, true);
+            
+            var assetsFolder = Path.Combine(objFolder, "Rhetos");
+            Assert.IsFalse(Directory.Exists(assetsFolder));
+
+            client.TextDocument.DidOpenTextDocument(new DidOpenTextDocumentParams()
+            {
+                TextDocument = DocumentFromText("", Path.Combine(projectFolder, "doc.rhe"))
+            });
+            Task.Delay(1500).Wait();
+
+            var projectContext = server.GetRequiredService<RhetosProjectContext>();
+            Assert.IsNull(projectContext.ProjectRootPath);
+
+            Directory.CreateDirectory(assetsFolder);
+            var dslSyntaxFilePath = Path.Combine(assetsFolder, "DslSyntax.json");
+            File.WriteAllText(dslSyntaxFilePath, "{ \"ConceptTypes\": [] }");
+
+            Task.Delay(1500).Wait();
+            Assert.IsTrue(projectFolder.Equals(projectContext.ProjectRootPath, StringComparison.InvariantCultureIgnoreCase));
+            
+            DumpLogs(ServerLogs, "Server Logs");
+        }
+
+        [TestMethod]
         public void NoRootPathIfNoDocumentsAdded()
         {
-            Task.Delay(1000).Wait();
+            Task.Delay(1500).Wait();
 
             var projectContext = server.GetRequiredService<RhetosProjectContext>();
             Assert.IsFalse(projectContext.IsInitialized);
@@ -58,7 +152,7 @@ namespace Rhetos.LanguageServices.LspIntegration.Test
             {
                 TextDocument = DocumentFromText("// <rhetosProjectRootPath=\"blipblop\"/>", "RhetosAppFolder\\FolderWithApp\\doc.rhe")
             });
-            Task.Delay(1000).Wait();
+            Task.Delay(1500).Wait();
 
             DumpLogs(ServerLogs, "Server Logs");
 
@@ -76,7 +170,7 @@ namespace Rhetos.LanguageServices.LspIntegration.Test
             {
                 TextDocument = DocumentFromText("// <rhetosProjectRootPath=\".\\\"/>", "RhetosAppFolder\\FolderWithApp\\doc.rhe")
             });
-            Task.Delay(1000).Wait();
+            Task.Delay(1500).Wait();
 
             DumpLogs(ServerLogs, "Server Logs");
 
@@ -94,7 +188,7 @@ namespace Rhetos.LanguageServices.LspIntegration.Test
             {
                 TextDocument = DocumentFromText("", "RhetosAppFolder\\FolderWithApp\\1\\2\\3\\doc.rhe")
             });
-            Task.Delay(1000).Wait();
+            Task.Delay(1500).Wait();
 
             DumpLogs(ServerLogs, "Server Logs");
 

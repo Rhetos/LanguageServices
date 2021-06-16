@@ -130,15 +130,23 @@ namespace Rhetos.LanguageServices.CodeAnalysis.Services
 
         private void UpdateProjectContextRootPath()
         {
-            var documentRootPaths = GetRootPathsFromDocuments();
+            lock (rhetosDocuments)
+            {
+                // each document has to refresh its root path in case there wasn't a valid path (not yet compiled rhetos app) and in the meantime it was created
+                // this ensures that in such scenario new available valid paths for documents are considered
+                foreach (var rhetosDocument in rhetosDocuments.Values)
+                    rhetosDocument.UpdateRootPathIfChanged();
 
-            if (rhetosProjectContext.IsInitialized && documentRootPaths.Contains(rhetosProjectContext.ProjectRootPath))
-                return;
+                var documentRootPaths = GetRootPathsFromDocuments();
 
-            if (rhetosProjectContext.IsInitialized)
-                log.LogDebug($"Changing current rootPath='{rhetosProjectContext.ProjectRootPath}' since it is no longer used.");
+                if (rhetosProjectContext.IsInitialized && documentRootPaths.Contains(rhetosProjectContext.ProjectRootPath))
+                    return;
 
-            TryInitializeWithRootPaths(documentRootPaths);
+                if (rhetosProjectContext.IsInitialized)
+                    log.LogDebug($"Changing current rootPath='{rhetosProjectContext.ProjectRootPath}' since it is no longer used.");
+
+                TryInitializeWithRootPaths(documentRootPaths);
+            }
         }
 
         private void TryInitializeWithRootPaths(IEnumerable<string> rootPaths)

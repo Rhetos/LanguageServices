@@ -23,6 +23,7 @@ namespace Rhetos.LanguageServices.CodeAnalysis.Services
         {
             public IDslSyntaxProvider DslSyntaxProvider { get; }
             public DslSyntax DslSyntax { get; }
+            public DateTime DslSyntaxLastModifiedTime { get; }
             public Dictionary<string, ConceptType[]> Keywords { get; }
             public DateTime CreatedTime { get; }
 
@@ -30,6 +31,7 @@ namespace Rhetos.LanguageServices.CodeAnalysis.Services
             {
                 DslSyntaxProvider = dslSyntaxProvider;
                 DslSyntax = DslSyntaxProvider.Load();
+                DslSyntaxLastModifiedTime = DslSyntaxProvider.GetLastModifiedTime();
                 Keywords = ExtractKeywords(DslSyntax);
                 CreatedTime = DateTime.Now;
             }
@@ -50,9 +52,9 @@ namespace Rhetos.LanguageServices.CodeAnalysis.Services
                 if (string.IsNullOrEmpty(dslSyntaxProvider.ProjectRootPath))
                     throw new ArgumentNullException(nameof(dslSyntaxProvider.ProjectRootPath));
 
-                if (ProjectRootPath == dslSyntaxProvider.ProjectRootPath)
+                if (ProjectRootPath == dslSyntaxProvider.ProjectRootPath && current.DslSyntaxLastModifiedTime == dslSyntaxProvider.GetLastModifiedTime())
                     throw new InvalidOperationException(
-                        $"Trying to initialize with rootPath='{dslSyntaxProvider.ProjectRootPath}', but {nameof(RhetosProjectContext)} is already successfully initialized with same rootPath.");
+                        $"Trying to initialize with rootPath='{dslSyntaxProvider.ProjectRootPath}', but {nameof(RhetosProjectContext)} is already successfully initialized with same rootPath and same file DslSyntax timestamps.");
 
                 current = new Context(dslSyntaxProvider);
 
@@ -62,12 +64,22 @@ namespace Rhetos.LanguageServices.CodeAnalysis.Services
 
         public void UpdateDslSyntax()
         {
-            // TODO: implement reload if lastModified changed
-            // throw new NotImplementedException();
+            lock (_syncRoot)
+            {
+                if (!IsInitialized)
+                    throw new InvalidOperationException($"Trying to update project context which is not initialized.");
+
+                var dslSyntaxProvider = new DslSyntaxProvider(ProjectRootPath);
+                if (current.DslSyntaxLastModifiedTime != dslSyntaxProvider.GetLastModifiedTime())
+                    Initialize(dslSyntaxProvider);
+            }
         }
 
         private static Dictionary<string, ConceptType[]> ExtractKeywords(DslSyntax dslSyntax)
         {
+            if (dslSyntax?.ConceptTypes == null)
+                throw new InvalidOperationException($"Provided DslSyntax.json is not valid. Property 'ConceptTypes' expected.");
+
             var keywordDictionary = dslSyntax.ConceptTypes
                 .Select(type => (keyword: type.Keyword, type))
                 .Where(info => !string.IsNullOrEmpty(info.keyword))

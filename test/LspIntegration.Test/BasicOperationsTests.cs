@@ -27,7 +27,7 @@ namespace Rhetos.LanguageServices.LspIntegration.Test
     [DeploymentItem("RhetosAppFolder\\", "RhetosAppFolder")]
     [DeploymentItem("RhetosAppFolder\\FolderWithApp\\MockObj\\Rhetos\\", "RhetosAppFolder\\FolderWithApp\\obj\\Rhetos")]
     [DeploymentItem("DslSyntax.json", "RhetosAppFolder\\FolderWithApp\\obj\\Rhetos\\")]
-    public class BasicOperations : IntegrationTestBase
+    public class BasicOperationsTests : IntegrationTestBase
     {
         private ILanguageServer server;
         private ILanguageClient client;

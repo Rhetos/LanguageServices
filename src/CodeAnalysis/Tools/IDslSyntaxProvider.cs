@@ -11,5 +11,6 @@ namespace Rhetos.LanguageServices.CodeAnalysis.Tools
     {
         string ProjectRootPath { get; }
         DslSyntax Load();
+        DateTime GetLastModifiedTime();
     }
 }
