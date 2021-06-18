@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using Rhetos.Dsl;
 using Rhetos.Utilities;
@@ -21,6 +22,24 @@ namespace Rhetos.LanguageServices.CodeAnalysis.Tools
 
             var rhetosBuildEnvironment = new RhetosBuildEnvironment() { CacheFolder = BuildCacheFolder(ProjectRootPath) };
             return new DslSyntaxFile(rhetosBuildEnvironment).Load();
+        }
+
+        public DslDocumentation LoadDocumentation()
+        {
+            if (!IsValidProjectRootPath(ProjectRootPath))
+                throw new InvalidOperationException($"Can't load {nameof(DslDocumentation)} from '{ProjectRootPath}', because it is not a valid project root path.");
+
+            // for now we are not sure if documentation file is a mandatory output file for Rhetos build process
+            // we assume it is not and in case of failure we silently return null
+            try
+            {
+                var rhetosBuildEnvironment = new RhetosBuildEnvironment() {CacheFolder = BuildCacheFolder(ProjectRootPath)};
+                return new DslDocumentationFile(rhetosBuildEnvironment).Load();
+            }
+            catch (Exception)
+            {
+                return null;
+            }
         }
 
         public DateTime GetLastModifiedTime()

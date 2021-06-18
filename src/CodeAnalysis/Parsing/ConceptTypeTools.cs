@@ -38,7 +38,7 @@ namespace Rhetos.LanguageServices.CodeAnalysis.Parsing
                     parameters.Add(ConceptMemberDescription(member));
             }
 
-            var keyword = conceptType.KeywordOrTypeName;
+            var keyword = conceptType.GetKeywordOrTypeName();
             var keysDesc = string.Join(".", keys.Select(key => $"<{key}>"));
             var paramDesc = string.Join(" ", parameters.Select(parameter => $"<{parameter}>"));
             return $"{keyword} {keysDesc} {paramDesc}";

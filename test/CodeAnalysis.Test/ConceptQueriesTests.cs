@@ -62,11 +62,6 @@ namespace Rhetos.LanguageServices.CodeAnalysis.Test
             var shortStringInfoType = rhetosProjectContext.Keywords["ShortString"].First();
 
             {
-                var dataStructureInfo = rhetosProjectContext.DslSyntax.ConceptTypes.Single(a => a.TypeName == "DataStructureInfo");
-                dataStructureInfo.IsAssignableFrom(entityInfoType);
-            }
-
-            {
                 var validTypes = conceptQueries.ValidConceptsForParent(moduleInfoType);
                 CollectionAssert.Contains(validTypes, browseInfoType);
                 CollectionAssert.Contains(validTypes, entityInfoType);

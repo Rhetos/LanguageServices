@@ -12,12 +12,12 @@ namespace Rhetos.LanguageServices.CommonTestTools
     public class DslSyntaxProviderMock : IDslSyntaxProvider
     {
         public string ProjectRootPath { get; }
-        private DateTime lastModifiedTime;
+        public DateTime LastModifiedTime { get; init; } = DateTime.Now;
+        public DslDocumentation DslDocumentation { get; init; }
 
-        public DslSyntaxProviderMock(string explicitFolderWithDslSyntax, DateTime? lastModifiedTime = null)
+        public DslSyntaxProviderMock(string explicitFolderWithDslSyntax)
         {
             ProjectRootPath = explicitFolderWithDslSyntax;
-            this.lastModifiedTime = lastModifiedTime ?? DateTime.Now;
         }
 
         public DslSyntax Load()
@@ -25,9 +25,14 @@ namespace Rhetos.LanguageServices.CommonTestTools
             return new DslSyntaxFile(new RhetosBuildEnvironment() {CacheFolder = ProjectRootPath}).Load();
         }
 
+        public DslDocumentation LoadDocumentation()
+        {
+            return DslDocumentation;
+        }
+
         public DateTime GetLastModifiedTime()
         {
-            return lastModifiedTime;
+            return LastModifiedTime;
         }
     }
 }

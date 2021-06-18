@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Rhetos.CommonConcepts" Version="5.0.0-dev2105301522eea541" />
+    <PackageReference Include="Rhetos.CommonConcepts" Version="5.0.0-dev*" />
     <PackageReference Include="Rhetos.MSBuild" Version="5.0.0-dev*" />
   </ItemGroup>
 
