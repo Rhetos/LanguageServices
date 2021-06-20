@@ -1,0 +1,755 @@
+{
+  "Concepts": {
+    "Rhetos.Dsl.DefaultConcepts.ActionInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "A custom server action that executes the code in the given lambda expression: (parameter, repository, userInfo) => { C# code }. \n            The properties on the action are available in the lambda expression as the first parameter. The action is available in Web API."
+    },
+    "Rhetos.Dsl.DefaultConcepts.AllPropertiesFromInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Copies all properties from another data structure, along with the associated Required, SqlIndex and Extends concepts"
+    },
+    "Rhetos.Dsl.DefaultConcepts.AllPropertiesLoggingInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Enables logging on all properties."
+    },
+    "Rhetos.Dsl.DefaultConcepts.AllPropertiesWithCascadeDeleteFromInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Copies all properties from another data structure, along with the associated Required, SqlIndex, Extends and CascadeDelete concepts."
+    },
+    "Rhetos.Dsl.DefaultConcepts.AlternativeKeyComparerInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {},
+    "Rhetos.Dsl.DefaultConcepts.ApplyFilterOnClientReadAllInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "The given filter will be automatically applied when executing ReadCommand server command\n            (the command is used in SOAP and REST API)."
+    },
+    "Rhetos.Dsl.DefaultConcepts.ApplyFilterOnClientReadWhereInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "The given filter will be automatically applied when executing ReadCommand server command\n            (the command is used in SOAP and REST API)."
+    },
+    "Rhetos.Dsl.DefaultConcepts.ArgumentValidationInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Verify if the parameters could break the rest of the Save method's business logic. Use OnSaveValidate instead for standard data validations."
+    },
+    "Rhetos.Dsl.DefaultConcepts.AutoCodeCachedInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "An optimized version of AutoCode for large tables.\n            It stores the latest used code, so it does not need to read the existing records when generating a new code,\n            but it requires manual initialization the persisted data at initial deployment or import database records."
+    },
+    "Rhetos.Dsl.DefaultConcepts.AutoCodeForEachCachedInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Equivalent to AutoCodeForEach with cached last code values."
+    },
+    "Rhetos.Dsl.DefaultConcepts.AutoCodeForEachInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Same as AutoCode, but the numbers are starting from 1 within each group of records. The group is defined by the second property value."
+    },
+    "Rhetos.Dsl.DefaultConcepts.AutoCodePropertyInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Automatically generate numeric codes. The codes can have a given string prefix and a fixed number of digits. It generates Unique constraint on the property."
+    },
+    "Rhetos.Dsl.DefaultConcepts.AutoInheritRowPermissionsInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Each detail data structure in the module will inherit row permissions from it's mater data structure.\n            Each extension in the module will inherit row permissions from it's base data structure.\n            Row permissions can be inherited from other modules to this module."
+    },
+    "Rhetos.Dsl.DefaultConcepts.AutoInheritRowPermissionsInternallyInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Each detail data structure in the module will inherit row permissions from it's mater data structure.\n            Each extension in the module will inherit row permissions from it's base data structure.\n            Row permissions will not be inherited from other modules to this module."
+    },
+    "Rhetos.Dsl.DefaultConcepts.AutoLegacyEntityDependsOnInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Automatically detects and generates dependencies (SqlDependsOn) for the given database object, by analyzing its SQL script."
+    },
+    "Rhetos.Dsl.DefaultConcepts.AutoSqlFunctionDependsOnInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Automatically detects and generates dependencies (SqlDependsOn) for the given database object, by analyzing its SQL script."
+    },
+    "Rhetos.Dsl.DefaultConcepts.AutoSqlProcedureDependsOnInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Automatically detects and generates dependencies (SqlDependsOn) for the given database object, by analyzing its SQL script."
+    },
+    "Rhetos.Dsl.DefaultConcepts.AutoSqlQueryableDependsOnInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Automatically detects and generates dependencies (SqlDependsOn) for the given database object, by analyzing its SQL script."
+    },
+    "Rhetos.Dsl.DefaultConcepts.AutoSqlTriggerDependsOnInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Automatically detects and generates dependencies (SqlDependsOn) for the given database object, by analyzing its SQL script."
+    },
+    "Rhetos.Dsl.DefaultConcepts.AutoSqlViewDependsOnInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Automatically detects and generates dependencies (SqlDependsOn) for the given database object, by analyzing its SQL script."
+    },
+    "Rhetos.Dsl.DefaultConcepts.BeforeActionInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "It allows you to add a code snippet that will be executed before the Action."
+    },
+    "Rhetos.Dsl.DefaultConcepts.BeforeQueryExpressionInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Low-level concept that adds custom code to be executed before each query."
+    },
+    "Rhetos.Dsl.DefaultConcepts.BinaryPropertyInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Byte array property"
+    },
+    "Rhetos.Dsl.DefaultConcepts.BoolPropertyInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Boolean property"
+    },
+    "Rhetos.Dsl.DefaultConcepts.BrowseDataStructureInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Data structure used for simple data queries, when we only need to select some properties from an entity and other referenced data structures."
+    },
+    "Rhetos.Dsl.DefaultConcepts.BrowseFromPropertyInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Select data for Browse property.\n            Consider using Take concept instead."
+    },
+    "Rhetos.Dsl.DefaultConcepts.BrowseTakeNamedPropertyInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Creates a property on the browse data structure that returns the property value from the base data structure.\n            Instead of a simple property, it is possible to specify a path across multiple references, separated by a dot.\n            Explicitly set the name of created property."
+    },
+    "Rhetos.Dsl.DefaultConcepts.BrowseTakePropertyInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Creates a property on the browse data structure that returns the property value from the base data structure.\n            Instead of a simple property, it is possible to specify a path across multiple references, separated by a dot.\n            The resulting property name is automatically generated by connecting the names from the path \n            (e.g. Take 'Parent.Organization.Name' will result with property ParentOrganizationName)."
+    },
+    "Rhetos.Dsl.DefaultConcepts.ChangesOnBaseItemInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "If the computation is an extension of a base entity: When a base record is saved, the related cache record should be recomputed."
+    },
+    "Rhetos.Dsl.DefaultConcepts.ChangesOnChangedItemsInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Programmable concept for defining dependency for computed items.\n            *  The \"filter snippet\" is a lambda expression that for an array modified dependent items returns filter parameter \"what cached items need to be recomputed\": DependentEntity[] changedItems => filter parameter.\n            *  The filter has to be applicable to both source and cache data structure.FilterAll, System.Guid[] and FilterCriteria are commonly used filters, supported by all entities."
+    },
+    "Rhetos.Dsl.DefaultConcepts.ChangesOnLinkedItemsInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "A helper for defining a computation dependency to the detail list, when computing an aggregate.\n            If the computation is an aggregation of a detail entity: When a detail record is saved, the related parent's cache record should be recomputed.\n            For example, if you are computing additional data about a document and that data depends on a detail entity(for example, the number of items, or the total amount)\n            then the parameter \"ReferenceProperty\" should be the full name of the reference property from the detail entity."
+    },
+    "Rhetos.Dsl.DefaultConcepts.ChangesOnReferencedInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "A helper for defining a computation dependency to the referenced entity.\n            * The ReferencePath can include the 'Base' reference from extended concepts.\n            * The ReferencePath can target a Polymorphic. This will generate a ChangesOnChangesItems for each Polymorphic implementation.\n            When a referenced entity record is saved, all cache records that reference it should be recomputed. Instead of a simple property,\n            it is possible to specify a path across multiple references, separated by a dot, including the Base and Extension_... navigation properties."
+    },
+    "Rhetos.Dsl.DefaultConcepts.ComposableFilterApplyOnClientReadInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "The given filter will be automatically applied when executing ReadCommand server command\n            (the command is used in SOAP and REST API)."
+    },
+    "Rhetos.Dsl.DefaultConcepts.ComposableFilterByInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "A read method that returns a filtered query for the given source query and the parameter value. \n            The code snippet should be a lambda expression that returns a subset of the given query:\n            (IQueryable<DataStructureType> query, repository, parameter) => filtered IQueryable<DataStructureType>.\n            The parameter type also represents the filter name."
+    },
+    "Rhetos.Dsl.DefaultConcepts.ComposableFilterByReferencedInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "For inheriting filters from referenced data structure.\n            Use subFilterExpression to additionally filter out some items or sort the items within a group with the same reference value."
+    },
+    "Rhetos.Dsl.DefaultConcepts.ComposableFilterByReferencedNoSubfilterInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "For inheriting filters from referenced data structure."
+    },
+    "Rhetos.Dsl.DefaultConcepts.ComposableFilterUseExecutionContextInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Adds an additional input parameter \"ExecutionContext\" to the filter's lambda expression."
+    },
+    "Rhetos.Dsl.DefaultConcepts.ComputationUseExecutionContextInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Adds an additional input parameter \"ExecutionContext\" to the Computed or QueryableExtension lambda expression."
+    },
+    "Rhetos.Dsl.DefaultConcepts.ComputedFromKeyPropertiesInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "List of properties for matching source and target records. It controls when to update an item or to delete old item and insert a new one."
+    },
+    "Rhetos.Dsl.DefaultConcepts.ComputedInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "A readably data structure, implemented with a C# code (the lambda expression) that returns an array of the records: repository => array of records."
+    },
+    "Rhetos.Dsl.DefaultConcepts.ComputeForNewBaseItemsInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Automatically updates cache properties when a record is inserted into the cache entity, for items that pass the given filter.\n            This feature is intended for \"hybrid\" entities that have some computed properties, but also allow direct data entry."
+    },
+    "Rhetos.Dsl.DefaultConcepts.ComputeForNewBaseItemsWithoutFilterInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Automatically updates cache properties when a record is inserted into the cache entity.\n            This feature is intended for \"hybrid\" entities that have some computed properties, but also allow direct data entry."
+    },
+    "Rhetos.Dsl.DefaultConcepts.ComputeForNewItemsInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Automatically updates cache properties when a record is inserted into the cache entity, but only for items that pass the given filter.\n            This feature is intended for \"hybrid\" entities that have some computed properties, but also allow direct data entry."
+    },
+    "Rhetos.Dsl.DefaultConcepts.ComputeForNewItemsWithoutFilterInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Automatically updates cache properties when a record is inserted into the cache entity. \n            This feature is intended for \"hybrid\" entities that have some computed properties, but also allow direct data entry."
+    },
+    "Rhetos.Dsl.DefaultConcepts.CreatedByInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Writes the current user's ID when saving a new record.\n            It should be applied on a Reference property that references Common.Principal.\n            It is often used together with concepts DenyUserEdit and SystemRequired."
+    },
+    "Rhetos.Dsl.DefaultConcepts.CreationTimeInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Automatically enters time when the records was created."
+    },
+    "Rhetos.Dsl.DefaultConcepts.CustomClaimInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Add an additional security claim. It can be assigned by administrator to a user or a role, and verified by IAuthorizationManager.\n            Note: in the DSL script it must be placed outside of a Module."
+    },
+    "Rhetos.Dsl.DefaultConcepts.DataStructureExtendsInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Marks first data structure as an extension of the base data structure (1:1 relationship). Often used to extend entity with additional computed data.\n            The extension records have the same primary key value as the base records.\n            \n            Inherits the 'UniqueReference' concept and additionally allows cascade delete and automatic inheritance of row permissions.\n            From a business perspective, the main difference between 'Extends' and 'UniqueReference' is that extension is considered a part of the base data structure.\n            In 1:1 relations, the 'Extends' concept is to 'UniqueReference' as 'Reference { Detail; }' is to 'Reference' in 1:N relations."
+    },
+    "Rhetos.Dsl.DefaultConcepts.DataStructureInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Basic concept for any data structure (e.g. Entity, Browse, Computed, ...) which may contain properties. It is usually not directly used in DSL scripts."
+    },
+    "Rhetos.Dsl.DefaultConcepts.DatePropertyInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Date property"
+    },
+    "Rhetos.Dsl.DefaultConcepts.DateRangeInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Inherits the Range concept and generates a Date property in case it does not exist already."
+    },
+    "Rhetos.Dsl.DefaultConcepts.DateTimePropertyInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "DateTime property"
+    },
+    "Rhetos.Dsl.DefaultConcepts.DateTimeRangeInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Inherits the Range concept and generates the DateTime properties in case they don't exist already."
+    },
+    "Rhetos.Dsl.DefaultConcepts.DeactivatableInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Allows tracking of active and deactivated records. Generates property Bool Active."
+    },
+    "Rhetos.Dsl.DefaultConcepts.DecimalPropertyInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Decimal property"
+    },
+    "Rhetos.Dsl.DefaultConcepts.DefaultValueInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Used for setting the default property values when inserting a new record."
+    },
+    "Rhetos.Dsl.DefaultConcepts.DefaultValuesInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "An aggregate concept for all DefaultValue concepts on a singe data structure."
+    },
+    "Rhetos.Dsl.DefaultConcepts.DenySaveForPropertyInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {},
+    "Rhetos.Dsl.DefaultConcepts.DenySaveInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {},
+    "Rhetos.Dsl.DefaultConcepts.DenyUserEditDataStructureInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Client application is not allowed to directly insert, update or delete the entity records (no condition)."
+    },
+    "Rhetos.Dsl.DefaultConcepts.DenyUserEditPropertyInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Client application is not allowed to directly insert or update the property."
+    },
+    "Rhetos.Dsl.DefaultConcepts.EntityComputedFromAllPropertiesInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Copies all properties from source data structure to the cache entity, along with the associated Required, SqlIndex, Extends and CascadeDelete concepts."
+    },
+    "Rhetos.Dsl.DefaultConcepts.EntityComputedFromDefaultLoadFilterInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Limits automatic computation on a subset of rows on KeepSynchronized."
+    },
+    "Rhetos.Dsl.DefaultConcepts.EntityComputedFromInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "A more flexible version of Persisted.\n            It allows a property-level recomputing instead of entity-level. \n            It is intended to be used as an internal concept for building simpler macro concepts."
+    },
+    "Rhetos.Dsl.DefaultConcepts.EntityHistoryAllPropertiesInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Includes all properties in temporal data management."
+    },
+    "Rhetos.Dsl.DefaultConcepts.EntityHistoryInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Enables temporal data management on the entity: Automatically keeps old versions of each records.\n            Allows reading record's state at a given point in time. Allow entering data values that were effective from a previous point in time."
+    },
+    "Rhetos.Dsl.DefaultConcepts.EntityHistoryPropertyInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Includes the entity's property in temporal data management."
+    },
+    "Rhetos.Dsl.DefaultConcepts.EntityInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Represents data entered by a user or generated by the system. Creates a C# class and database table. Inherits the DataStructure concept."
+    },
+    "Rhetos.Dsl.DefaultConcepts.EntityLoggingInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Creates a database trigger that monitors all inserts, updates and deletes, and writes them to Common.Log table."
+    },
+    "Rhetos.Dsl.DefaultConcepts.EntryInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Creates a row in the database for every entry inside a Hardcoded concept."
+    },
+    "Rhetos.Dsl.DefaultConcepts.EntryValueInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Adds the value to the column on Entry inside a Hardcoded concept."
+    },
+    "Rhetos.Dsl.DefaultConcepts.EntryWithGeneratedIdentifierInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Creates a row in the database for every entry inside a Hardcoded concept.\n            ID value is automatically generated based on the entry name."
+    },
+    "Rhetos.Dsl.DefaultConcepts.ExtensibleSubtypeSqlViewInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "This is one of the options for implementing a polymorphic in the subtype data structure,\n            i.e. defining a mapping between the polymorphic supertype and the subtype.\n            ExtensibleSubtypeSqlViewInfo allows an independent mapping definition implementation for each property,\n            also allowing for additional subtype properties (from a custom extension package, for example)\n            to be added to the subtype and mapped to the supertype."
+    },
+    "Rhetos.Dsl.DefaultConcepts.FilterByBaseInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Copies a FilterBy filter from base data structure."
+    },
+    "Rhetos.Dsl.DefaultConcepts.FilterByInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "A read method that loads and returns data for the given parameter value.\n            The code snippet should be a lambda expression that returns an array of records:\n            (repository, parameter) => DataStructureType[].\n            The parameter type also represents the filter name."
+    },
+    "Rhetos.Dsl.DefaultConcepts.FilterByLinkedItemsInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Copies a FilterBy filter from a detail data structure to the parent."
+    },
+    "Rhetos.Dsl.DefaultConcepts.FilterByReferencedInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Copies a FilterBy filter implementation from the parent data structure to the detail. \n            The lambda expression can contain additional data processing of the filtered items:\n            IEnumerable<Detail> => .. additional filter or sort from group with the same parent."
+    },
+    "Rhetos.Dsl.DefaultConcepts.FilterByReferencedNoSubfilterInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Copies a FilterBy filter implementation from the parent data structure to the detail."
+    },
+    "Rhetos.Dsl.DefaultConcepts.FilterInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Base concept for IEnumerable filters.\n            This concept assumes that there will be a Filter method implemented in the repository class,\n            with parameters (IEnumerable<DataStructureType> items, ParameterType filterParameter),\n            returning a subset of the given items.\n            The  property is the filterParameter type;\n            it also represents the filter name.\n            Note that in many cases it is preferred to use a  implementation instead;\n            it builds a LINQ query and executes the filter directly in database instead of in memory,\n            resulting with better performance."
+    },
+    "Rhetos.Dsl.DefaultConcepts.FilterUseExecutionContextInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Adds an additional input parameter \"ExecutionContext\" to the filter's lambda expression."
+    },
+    "Rhetos.Dsl.DefaultConcepts.GuidPropertyInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "GUID property"
+    },
+    "Rhetos.Dsl.DefaultConcepts.HardcodedEntityInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Data structure that represents a simple read-only entity or a code table."
+    },
+    "Rhetos.Dsl.DefaultConcepts.HierarchyInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Adds a self-reference property (for example, a superior in the employee hierarchy).\n            *  Generates a cached index for optimized recursive queries(for example, find all direct and indirect subordinates) in the extension <EntityName><HierarchyName>Hierarchy.\n            *  Generates ComposableFilters <HierarchyName>HierarchyDescendants and <HierarchyName>HierarchyAncestors for quick access of all direct and indirect child records or parents.\n            *  Generates validations to deny entering data with circular dependencies."
+    },
+    "Rhetos.Dsl.DefaultConcepts.HierarchySingleRootInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Limits insert to only one root record."
+    },
+    "Rhetos.Dsl.DefaultConcepts.HierarchySingleRootInternalInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {},
+    "Rhetos.Dsl.DefaultConcepts.HierarchyWithPathInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Adds a self-reference property (for example, a superior in the employee hierarchy), but with additionally cached full path for each record.\n            *  Generates a cached index for optimized recursive queries(for example, find all direct and indirect subordinates) in the extension <EntityName><HierarchyName>Hierarchy.\n            *  Generates ComposableFilters <HierarchyName>HierarchyDescendants and <HierarchyName>HierarchyAncestors for quick access of all direct and indirect child records or parents.\n            *  Generates validations to deny entering data with circular dependencies."
+    },
+    "Rhetos.Dsl.DefaultConcepts.ImplementsInterfaceInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Data structure's POCO class implements the given C# interface."
+    },
+    "Rhetos.Dsl.DefaultConcepts.ImplementsInterfacePropertyInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {},
+    "Rhetos.Dsl.DefaultConcepts.ImplementsQueryableInterfaceInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Data structure's queryable class implements the given C# interface."
+    },
+    "Rhetos.Dsl.DefaultConcepts.ImplementsQueryableInterfacePropertyInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {},
+    "Rhetos.Dsl.DefaultConcepts.IntegerPropertyInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Integer property"
+    },
+    "Rhetos.Dsl.DefaultConcepts.IntegerRangeInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Inherits the Range concept and generates the Integer properties in case they don't exist already."
+    },
+    "Rhetos.Dsl.DefaultConcepts.InvalidDataAllowSaveInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Modifies the InvalidData concept to suppress data validation on save.\n            Instead, the data validation can be excepted separately as a report."
+    },
+    "Rhetos.Dsl.DefaultConcepts.InvalidDataErrorMetadataInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Adds any custom metadata information to the error response. This metadata may be used in frontend to display the error message in a certain way."
+    },
+    "Rhetos.Dsl.DefaultConcepts.InvalidDataInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Standard data validation. When saving data, if any record matches the given filter,\n            the operation will be canceled with and the error message returned to the user."
+    },
+    "Rhetos.Dsl.DefaultConcepts.InvalidDataMarkProperty2Info, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "If the error is related to the single property, use this to add that information to the validation"
+    },
+    "Rhetos.Dsl.DefaultConcepts.InvalidDataMarkPropertyInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {},
+    "Rhetos.Dsl.DefaultConcepts.InvalidDataMessageFunctionInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Allows full control over validation's error message and metadata.\n            It is implemented as a lambda expression the returns the error message and metadata for a given list of invalid record IDs."
+    },
+    "Rhetos.Dsl.DefaultConcepts.InvalidDataMessageInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "This base class for different implementations of error messages is used to\n            ensure only one implementation will be used on a single InvalidData concept.\n            This concept will suppress default validation result (message, parameters and metadata) to allow custom implementation."
+    },
+    "Rhetos.Dsl.DefaultConcepts.InvalidDataMessageParametersConstantInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "It has subset of the features of MessageParametersItem. It works in a similar way, but it can only provide constant values.\n            Optimized version of \"MessageParameters\" concept; no need to query database to retrieve error message parameters.\n            \n            Example: InvalidData with error message 'Maximum value of property {0} is {1}.'\n            may contain MessageParametersConstant '\"Age\", 200'.\n            By separating the parameters from the error message, only one error message needs to be translated\n            for many different max-value constraints."
+    },
+    "Rhetos.Dsl.DefaultConcepts.InvalidDataMessageParametersItemInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Extends the validation's error message with custom parameter values.\n            Use this concept to separate message parameters from the error message, for easier translation to another language.\n            Example: InvalidData with error message 'Maximum value of property {0} is {1}. Current value ({2}) is {3} characters long.'\n            may contain MessageParameters 'item => new object[] { item.ID, P0 = \"Age\", P1 = 200, P2 = item.Age, P3 = item.Age.Length }'.\n            By separating the parameters from the error message, only one error message needs to be translated\n            for many different max-value constraints."
+    },
+    "Rhetos.Dsl.DefaultConcepts.IsSubtypeOfDefaultNameInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Data structure is a subtype (an implementation) of the given polymorphic."
+    },
+    "Rhetos.Dsl.DefaultConcepts.IsSubtypeOfInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Data structure is a subtype (an implementation) of the given polymorphic."
+    },
+    "Rhetos.Dsl.DefaultConcepts.ItemFilterApplyOnClientReadInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "The given filter will be automatically applied when executing ReadCommand server command\n            (the command is used in SOAP and REST API)."
+    },
+    "Rhetos.Dsl.DefaultConcepts.ItemFilterInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Helper concept for simplified definition of simple \"one-liner\" filters, that generates a ComposableFilterBy.\n            The lambda expression returns whether each records passes the filter: item => bool."
+    },
+    "Rhetos.Dsl.DefaultConcepts.ItemFilterReferencedInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "For inheriting filters from referenced data structure.\n            Use subFilterExpression to additionally filter out some items or sort the items within a group with the same reference value."
+    },
+    "Rhetos.Dsl.DefaultConcepts.ItemFilterReferencedNoSubfilterInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "For inheriting filters from referenced data structure."
+    },
+    "Rhetos.Dsl.DefaultConcepts.KeepSynchronizedInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Automatically updates cache when the source data is changed. This feature requires ChangesOnChangedItems defined on the source.\n            The \"save filter\" is a lambda expression (IEnumerable<Entity> items, repository) => IEnumerable<Entity>, \n            that returns subset of items which are allowed to be updated by the KeepSynchronized mechanism."
+    },
+    "Rhetos.Dsl.DefaultConcepts.KeepSynchronizedOnChangedItemsInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {},
+    "Rhetos.Dsl.DefaultConcepts.KeepSynchronizedWithoutFilteredSaveInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Automatically updates cache when the source data is changed. This feature requires ChangesOnChangedItems defined on the source."
+    },
+    "Rhetos.Dsl.DefaultConcepts.KeyPropertyComputedFromInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Property for matching source and target records. It controls when to update an item or to delete old item and insert a new one."
+    },
+    "Rhetos.Dsl.DefaultConcepts.KeyPropertyIDComputedFromInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "(Set by default) ID property will be used for matching source and target records. \n            It controls when to update an item or to delete old item and insert a new one."
+    },
+    "Rhetos.Dsl.DefaultConcepts.LegacyEntityInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Simplifies access from Rhetos application to legacy application database.\n             It maps a Rhetos data structure to the legacy database table or view.\n             It allows both read and write operations (either with updateable views or generated instead-of triggers).\n             It allows mapping of complex primary and foreign keys to standard Rhetos reference properties.\n             Prerequisites: The legacy table needs to be extended with uniqueidentifier ID column with default NEWID() and a unique index."
+    },
+    "Rhetos.Dsl.DefaultConcepts.LegacyEntityWithAutoCreatedViewInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Simplifies access from Rhetos application to legacy application database.\n             It maps a Rhetos data structure to the legacy database table or view.\n             It allows both read and write operations (either with updateable views or generated instead-of triggers).\n             It allows mapping of complex primary and foreign keys to standard Rhetos reference properties.\n             Prerequisites: The legacy table needs to be extended with uniqueidentifier ID column with default NEWID() and a unique index.\n             Automatically creates view with entity name and the corresponding instead-of triggers for writing data directly into that view."
+    },
+    "Rhetos.Dsl.DefaultConcepts.LegacyPropertyInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {},
+    "Rhetos.Dsl.DefaultConcepts.LegacyPropertyReadOnlyInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Mapping a read-only property to a column in source view."
+    },
+    "Rhetos.Dsl.DefaultConcepts.LegacyPropertyReferenceInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Mapping reference property to a FK column in source view.\n             It supports foreign keys over multiple columns;\n             they will be automatically mapped to a single uniqueidentifier value for standard Rhetos reference property."
+    },
+    "Rhetos.Dsl.DefaultConcepts.LegacyPropertySimpleInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Mapping a writable property to a column in source view. It also extends the generated triggers, making the view writable."
+    },
+    "Rhetos.Dsl.DefaultConcepts.LinkedItemsInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Adds a property that contains a list of detail items (records from another entity that references this entity)."
+    },
+    "Rhetos.Dsl.DefaultConcepts.LoadInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Base concept for loading data with provided input parameter.\n            This concept assumes that there will be a Load method implemented in the repository class,\n            with parameter of a given type (see ),\n            returning IEnumerable of the  type.\n            The  property also of represents the filter name."
+    },
+    "Rhetos.Dsl.DefaultConcepts.LoadOldItemsInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Simple helper for reading an old version of the data that can be reused in different business rules.\n            It will load the old data between Initialization and OldDataLoaded."
+    },
+    "Rhetos.Dsl.DefaultConcepts.LoadOldItemsTakeInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Explicitily selecting properties for LoadOldItems concept.\n            Read old value of the selected property. Path over references can be used here to select a property from a referenced entity."
+    },
+    "Rhetos.Dsl.DefaultConcepts.LockItemsExceptPropertiesInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Deny update (except for properties from the provided list) and delete of the entity records, for records in a certain state."
+    },
+    "Rhetos.Dsl.DefaultConcepts.LockItemsInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Deny update and delete of the entity records, for records in a certain state (provided by a filter)."
+    },
+    "Rhetos.Dsl.DefaultConcepts.LockItemsLockPropertyInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {},
+    "Rhetos.Dsl.DefaultConcepts.LockItemsMarkPropertyInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Deny update and delete of the entity records, for records in a certain state (provided by a filter).\n            The given property is not used in locking, it is just reported to the user (the client application) as a reason for the lock."
+    },
+    "Rhetos.Dsl.DefaultConcepts.LockPropertyInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Deny update of a property, for records in a certain state."
+    },
+    "Rhetos.Dsl.DefaultConcepts.LoggingRelatedItemInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Connect log records between two entities. \n            This concept is used automatically to include details and extension log records.\n            Read the connected log records with SqlQueryable Common.RelatedEventsSource."
+    },
+    "Rhetos.Dsl.DefaultConcepts.LogReaderAdditionalSourceInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Enables implementation of a custom Log archive.\n            The archive can be integrated into the existing auditing features by extending LogReader and LogRelatedItemReader.\n            A low-level concept that inserts the SQL code snippet to the log reader SqlQueryable at the place of the given tag (an SQL comment)."
+    },
+    "Rhetos.Dsl.DefaultConcepts.LongStringPropertyInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Unicode string property, intended for long multi-line text. Length is not limited by the application."
+    },
+    "Rhetos.Dsl.DefaultConcepts.MaxLengthInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Limits the highest string length in ShortString or LongString property."
+    },
+    "Rhetos.Dsl.DefaultConcepts.MaxValueInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Limits the largest allowed value of the property."
+    },
+    "Rhetos.Dsl.DefaultConcepts.MinLengthInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Limits the lowest string length in ShortString or LongString property."
+    },
+    "Rhetos.Dsl.DefaultConcepts.MinValueInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Limits the smallest allowed value of the property."
+    },
+    "Rhetos.Dsl.DefaultConcepts.ModificationTimeOfInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Automatically enters time when some given property was last updated."
+    },
+    "Rhetos.Dsl.DefaultConcepts.ModificationTimeOfInfrastructureInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {},
+    "Rhetos.Dsl.DefaultConcepts.ModuleAutoSqlDependsOnInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Automatically detects and generates dependencies (SqlDependsOn) for all database objects in the module."
+    },
+    "Rhetos.Dsl.DefaultConcepts.ModuleExternalReferenceInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Adds the DLL reference for the generated application. \n            The DLL can be referenced in two ways:\n                1) (Recommended) By C# type which is used (the assembly qualified name). Version, Culture or PublicKeyToken can be removed from the AssemblyQualifiedName for DLLs that are placed in the Rhetos application folder.\n                2) By DLL name(e.g. 'Rhetos.MyFunctions.dll')."
+    },
+    "Rhetos.Dsl.DefaultConcepts.ModuleInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Generates a C# namespace and a database schema"
+    },
+    "Rhetos.Dsl.DefaultConcepts.MoneyPropertyInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Currency value property, limited to 2 decimals in database."
+    },
+    "Rhetos.Dsl.DefaultConcepts.OldDataLoadedInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Initialize or change the data, before saving it to the database, if previous data state needs to be considered. See related LoadOldItems concept."
+    },
+    "Rhetos.Dsl.DefaultConcepts.OnSaveUpdateInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Modify data in other dependent entities that needs to be updated (recomputed) after the current Save operation.\n             If possible, use ComputedFrom instead."
+    },
+    "Rhetos.Dsl.DefaultConcepts.OnSaveValidateInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Implement a custom data validation. If possible, use InvalidData instead, for standard data validations, or RowPermissions for user permissions."
+    },
+    "Rhetos.Dsl.DefaultConcepts.ParameterInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Data structure for FilterBy and ComposableFilterBy parameters. It also represents the filter name.\n            Although any data structure can be used as filter parameter, the Parameter concept describes an intention behind the data structure."
+    },
+    "Rhetos.Dsl.DefaultConcepts.PersistedAllPropertiesInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Copies all properties from source data structure to the cache entity, along with the associated Required, SqlIndex, Extends and CascadeDelete concepts."
+    },
+    "Rhetos.Dsl.DefaultConcepts.PersistedComputeForNewBaseItemsInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Automatically updates cache when a base record is inserted. Automatically enabled when the cache is an extension of an entity."
+    },
+    "Rhetos.Dsl.DefaultConcepts.PersistedComputeForNewBaseItemsWithFilterInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Automatically updates cache when a base record is inserted for items that pass the given filter."
+    },
+    "Rhetos.Dsl.DefaultConcepts.PersistedDataStructureInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Creates entity which will contain cached data from the given source. \n            The source can be any readable data structure (Browse, SqlQueryable, Computed and similar)."
+    },
+    "Rhetos.Dsl.DefaultConcepts.PersistedKeepSynchronizedInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Automatically updates cache when the source data is changed. This feature requires ChangesOnChangedItems defined on the source."
+    },
+    "Rhetos.Dsl.DefaultConcepts.PersistedKeepSynchronizedWithFilteredSaveInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Automatically updates cache when the source data is changed. This feature requires ChangesOnChangedItems defined on the source.\n            The \"save filter\" is a lambda expression (IEnumerable<Entity> items, repository) => IEnumerable<Entity>,\n            that returns subset of items which are allowed to be updated by the KeepSynchronized mechanism."
+    },
+    "Rhetos.Dsl.DefaultConcepts.PersistedKeyPropertiesInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "List of properties for matching source and target records. It controls when to update an item or to delete old item and insert a new one."
+    },
+    "Rhetos.Dsl.DefaultConcepts.PersistedSubtypeImplementationIdInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Represents the persisted table column that captures the alternative ID for the subtype implementation.\n            The alternative ID is needed when a subtype implements the same supertype multiple times, in order to disambiguate implementations without performance loss.\n            \n            This concept is separated from IsSubtypeOfInfo, because there is no need to create a new computed column\n            for each Supertype: only Subtype and ImplementationName need to be unique."
+    },
+    "Rhetos.Dsl.DefaultConcepts.PessimisticLockingInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Enables automatic verification of explicit client locks when saving a record. Generates server actions SetLock and ReleaseLock."
+    },
+    "Rhetos.Dsl.DefaultConcepts.PessimisticLockingParentInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Lock on parent automatically locks all detail records.\n             Use this concept to include additional detail entities that have a reference to the parent entity, but is not marked as Detail."
+    },
+    "Rhetos.Dsl.DefaultConcepts.PolymorphicInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "A common interface that can be implemented by multiple entities."
+    },
+    "Rhetos.Dsl.DefaultConcepts.PolymorphicMaterializedInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Manually creates a materialized table, when there are no references or extensions to the polymorphic"
+    },
+    "Rhetos.Dsl.DefaultConcepts.PolymorphicPropertyInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {},
+    "Rhetos.Dsl.DefaultConcepts.PolymorphicSubtypeDiscriminatorInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "The \"Subtype\" property on a polymorphic supertype,\n            that contains the name of the subtype data structure for each records."
+    },
+    "Rhetos.Dsl.DefaultConcepts.PolymorphicSubtypeReferenceInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "For each subtype, the polymorphic supertype has a reference to the subtype data structure.\n            Each record has only one of those references set (based on it's subtype), all the others are null."
+    },
+    "Rhetos.Dsl.DefaultConcepts.PolymorphicUnionViewInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {},
+    "Rhetos.Dsl.DefaultConcepts.PrerequisiteAllProperties, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "This concept is used as a placeholder for internal optimization when all properties of an entity\n            are required as a prerequisite for another concept.\n            A dependent object can reference this concept as a dependency, instead of referencing each property individually."
+    },
+    "Rhetos.Dsl.DefaultConcepts.PropertyComputedFromInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Mapping for a target property to the source property. Not needed if using AllProperties."
+    },
+    "Rhetos.Dsl.DefaultConcepts.PropertyFromInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Copies property from another data structure, along with the associated Required and SqlIndex concepts."
+    },
+    "Rhetos.Dsl.DefaultConcepts.PropertyInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Property is an abstract concept: there is no ConceptKeyword."
+    },
+    "Rhetos.Dsl.DefaultConcepts.PropertyLoggingInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Sets properties which changes are tracked."
+    },
+    "Rhetos.Dsl.DefaultConcepts.QueryableExtensionInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "A queryable data structure, implemented with a C# code (the lambda expression), for extending entities with simple computed data.\n            The lambda expression returns records as a query: (IQueryable<BaseEntity> source, repository) => IQueryable<Extension>."
+    },
+    "Rhetos.Dsl.DefaultConcepts.QueryExpressionInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "A read method that returns a LINQ query for the given parameter value.\n            The code snippet should be a lambda expression that returns the query:\n            parameter => IQueryable<DataStructureType>.\n            The parameter type also represents the filter name."
+    },
+    "Rhetos.Dsl.DefaultConcepts.QueryFilterExpressionInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "A read method that returns a filtered query for the given source query and the filter parameter.\n            The lambda expression returns a subset of a given query,\n            for example: (query, parameter) => query.Where(...).\n            The parameter type also represents the filter name."
+    },
+    "Rhetos.Dsl.DefaultConcepts.QueryFilterInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Base concept for queryable filters.\n            This concept assumes that there will be a Filter method implemented in the repository class,\n            with parameters (IQueryable<DataStructureType> query, ParameterType filterParameter),\n            returning a subset of data from the given query.\n            The  property is the filterParameter type;\n            it also of represents the filter name."
+    },
+    "Rhetos.Dsl.DefaultConcepts.QueryInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Base concept for querying data with provided input parameter.\n            This concept assumes that there will be a Query method implemented in the repository class,\n            with parameter of a given type (see ),\n            returning IQueryable of the  type.\n            The  property also of represents the filter name."
+    },
+    "Rhetos.Dsl.DefaultConcepts.RangeInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Value of the first property has to be less or equal to the second property (properties have to be of the same type)."
+    },
+    "Rhetos.Dsl.DefaultConcepts.ReferenceCascadeDeleteDbInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "A low-level concept for generating cascade delete in database.\n            It should be rarely used because deleting records directly in database\n            circumvents any business logic implemented in the application related to those records.\n            If the legacy option CommonConcepts.Legacy.CascadeDeleteInDatabase is enabled,\n            this concept will be created automatically for each Reference with CascadeDelete (for example, on Detail concept)"
+    },
+    "Rhetos.Dsl.DefaultConcepts.ReferenceCascadeDeleteInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Automatically deletes detail records when a master record is deleted.",
+      "Remarks": "If referencing polymorphic concept, cascade delete will occur when the _Materialized record is automatically deleted.\n            Cascade delete is implemented in the application layer, because a database implementation would not execute any business logic that is implemented on detail entity.\n            For cascade delete in database see CascadeDeleteInDatabase concept or legacy option CommonConcepts.Legacy.CascadeDeleteInDatabase."
+    },
+    "Rhetos.Dsl.DefaultConcepts.ReferenceCascadeDeletePolymorphicInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {},
+    "Rhetos.Dsl.DefaultConcepts.ReferenceDetailInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Marks entity as detail of the referenced entity. Generates Required, SqlIndex and CascadeDelete."
+    },
+    "Rhetos.Dsl.DefaultConcepts.ReferencePropertyDbConstraintInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "An internal concept for generating FK constraint in database.\n            This concept is separate from the ReferencePropertyInfo concept to allow changes in FK constraint\n            without making unnecessary database modifications (refresh) in features that depend on the ReferencePropertyInfo."
+    },
+    "Rhetos.Dsl.DefaultConcepts.ReferencePropertyInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Lookup field (N:1 relationship). The generated C# property has type of the referenced class.\n             Generates foreign key constraint in database. The database column has \"ID\" suffix."
+    },
+    "Rhetos.Dsl.DefaultConcepts.RegExMatchDefaultMessageInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Use a regular expression to validate the string property value with a default error message."
+    },
+    "Rhetos.Dsl.DefaultConcepts.RegExMatchInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Use a regular expression to validate the string property value with a custom error message."
+    },
+    "Rhetos.Dsl.DefaultConcepts.RegisteredInterfaceImplementationHelperInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Registers the data structure (and it's repository) as the *default* implementation of the given interface. \n            This allows easy access the data structure's repository by using GenericRepository<ThisInterface> from dependency injection."
+    },
+    "Rhetos.Dsl.DefaultConcepts.RegisteredInterfaceImplementationInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {},
+    "Rhetos.Dsl.DefaultConcepts.RegisteredQueryableInterfaceImplementationHelperInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Registers the data structure (and it's repository) as the main implementation of the given interface.\n            This allows for type-safe code in external business layer class library to have simple access to\n            the generated data structure's class and the repository using predefined interfaces."
+    },
+    "Rhetos.Dsl.DefaultConcepts.ReportDataInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "List of readable data structures that provide the data for the report. The module name is optional.\n            *  Each provided data source should have a FilterBy implementation with the filter parameter name same as the report name.\n            *  It is recommended to use FilterByBase, FilterByReferenced and FilterByLinkedItems, to avoid writing redundant filters on related structures(e.g.report may filtered documents and the related detail items)."
+    },
+    "Rhetos.Dsl.DefaultConcepts.ReportDataSourceInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Definition of a single data source for the report. Use the DataSources concept instead, it automatically generates the DataSource statements."
+    },
+    "Rhetos.Dsl.DefaultConcepts.ReportDataSourcesInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "List of readable data structures that provide the data for the report. The module name is optional.\n            Each provided data source should have a FilterBy implementation with the filter parameter name same as the report name.\n            It is recommended to use FilterByBase, FilterByReferenced and FilterByLinkedItems,\n            to avoid writing redundant filters on related structures(e.g.report may filtered documents and the related detail items)."
+    },
+    "Rhetos.Dsl.DefaultConcepts.ReportFileInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "The lambda expression returns an arbitrary generated file (file name and contents as byte array), based on the report data collected by DataSources.\n            The lambda expression returns the file: \n            (object[][] reportData, string convertFormat, executionContext) => new Rhetos.Dom.DefaultConcepts.ReportFile {string Name, byte[] Content}"
+    },
+    "Rhetos.Dsl.DefaultConcepts.RepositoryMemberInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Adds an arbitrary code to the repository class body. This can simplify code reuse between multiple filters, actions and other features."
+    },
+    "Rhetos.Dsl.DefaultConcepts.RepositoryUsesInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Adds the private C# property to the data structure's repository class. The property value will be resolved from IoC container.\n            It is typically a system component that is required in some function in the repository class (entity filter or action implementation, e.g.).\n            \n            PropertyType parameter:\n            It is a C# property type as written in C# source.\n            It may require using the full name with namespace, if the namespace is not available from repository class or default 'using' statements.\n            The type will be resolved from IoC container.",
+      "Remarks": "For application that uses DeployPackages build process, instead of Rhetos CLI, the property value should be the assembly qualified name,\n            but it does not need to contain Version, Culture or PublicKeyToken if you are referencing a local assembly in the application's folder."
+    },
+    "Rhetos.Dsl.DefaultConcepts.RequiredAllowSaveInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Required property, but suppress the validation on save to be verified later."
+    },
+    "Rhetos.Dsl.DefaultConcepts.RequiredPropertyInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "The property value must be entered when saving a record."
+    },
+    "Rhetos.Dsl.DefaultConcepts.RowPermissionsInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Restricts access for selected users to a subset of the entity's records."
+    },
+    "Rhetos.Dsl.DefaultConcepts.RowPermissionsInheritExtensionReadInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "This concept is used for optimization when inherited property can be used to avoid\n            referencing base data structure's property."
+    },
+    "Rhetos.Dsl.DefaultConcepts.RowPermissionsInheritExtensionWriteInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "This concept is used for optimization when inherited property can be used to avoid\n            referencing base data structure's property."
+    },
+    "Rhetos.Dsl.DefaultConcepts.RowPermissionsInheritFromBaseInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Inherits row permissions from base data structure. Can be used on Browse or any entity with Extends."
+    },
+    "Rhetos.Dsl.DefaultConcepts.RowPermissionsInheritFromInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {},
+    "Rhetos.Dsl.DefaultConcepts.RowPermissionsInheritFromReferenceInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Inherits row permissions from the referenced \"parent\" data structure."
+    },
+    "Rhetos.Dsl.DefaultConcepts.RowPermissionsInheritReadInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {},
+    "Rhetos.Dsl.DefaultConcepts.RowPermissionsInheritReadSameMemberInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "This concept is used for optimization when inherited property can be used to avoid\n            referencing base data structure's property."
+    },
+    "Rhetos.Dsl.DefaultConcepts.RowPermissionsInheritWriteInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {},
+    "Rhetos.Dsl.DefaultConcepts.RowPermissionsInheritWriteSameMemberInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "This concept is used for optimization when inherited property can be used to avoid\n            referencing base data structure's property."
+    },
+    "Rhetos.Dsl.DefaultConcepts.RowPermissionsPluginableFiltersInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "The root concept for row permission rules.\n            It allows combining multiple rules and inheriting rules from one data structure to another."
+    },
+    "Rhetos.Dsl.DefaultConcepts.RowPermissionsReadInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Direct implementation of row permission filter, without extendable rules such as AllowRead and Deny.\n            Alternative to extendable RowPermissions concept."
+    },
+    "Rhetos.Dsl.DefaultConcepts.RowPermissionsRuleAllowInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Allow read and write access to selected records."
+    },
+    "Rhetos.Dsl.DefaultConcepts.RowPermissionsRuleAllowReadInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Allow read access to selected records."
+    },
+    "Rhetos.Dsl.DefaultConcepts.RowPermissionsRuleAllowWriteInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Allow write access to selected records."
+    },
+    "Rhetos.Dsl.DefaultConcepts.RowPermissionsRuleDenyInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Deny read and write access to selected records."
+    },
+    "Rhetos.Dsl.DefaultConcepts.RowPermissionsRuleDenyReadInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Deny read access to selected records."
+    },
+    "Rhetos.Dsl.DefaultConcepts.RowPermissionsRuleDenyWriteInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Deny write access to selected records."
+    },
+    "Rhetos.Dsl.DefaultConcepts.RowPermissionsRuleInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {},
+    "Rhetos.Dsl.DefaultConcepts.RowPermissionsSingleFunctionRuleInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "This class is a helper for implementing row permissions rules that are based on a single function that returns the rule's filter expression.\n            Other types if row permissions rules are possible, that do not inherit this class (see RowPermissionsRuleInfo)."
+    },
+    "Rhetos.Dsl.DefaultConcepts.RowPermissionsWriteInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Direct implementation of row permission filter, without extendable rules such as AllowRead and Deny. Alternative to extendable RowPermissions concept."
+    },
+    "Rhetos.Dsl.DefaultConcepts.SamePropertyValue2Info, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Optimization of generated row-permissions filter \n            when a property of one data structure returns the same value as a property of referenced (base or parent) data structure."
+    },
+    "Rhetos.Dsl.DefaultConcepts.SamePropertyValueInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Optimization of generated row-permissions filter \n            when a property of one data structure returns the same value as a property of referenced (base or parent) data structure."
+    },
+    "Rhetos.Dsl.DefaultConcepts.SaveMethodAfterSaveInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "The inserted code will be executed after validations."
+    },
+    "Rhetos.Dsl.DefaultConcepts.SaveMethodInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Allows developers to extend entity's Save method, by injecting a custom C# code that will be executed when saving the records (inserting, updating and deleting).\n            There are different extension points at different positions in the Save method, that are intended for inserting a code with different purpose"
+    },
+    "Rhetos.Dsl.DefaultConcepts.SaveMethodInitializationInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Initialize or change the data, before saving it to the database. If possible, use DefaultValue instead."
+    },
+    "Rhetos.Dsl.DefaultConcepts.ShortStringPropertyInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Unicode string property, intended for short single-line text. Maximal length 256 characters."
+    },
+    "Rhetos.Dsl.DefaultConcepts.SimpleReferencePropertyInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Lookup field (N:1 relationship). The generated C# property has type of the referenced class. \n             Generates foreign key constraint in database. The database column has \"ID\" suffix.\n             Simplified syntax in case when the property name is same as the name of the referenced entity."
+    },
+    "Rhetos.Dsl.DefaultConcepts.SkipRecomputeOnDeployInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Used for disabling recompute-on-deploy for a specific entity in the DSL script (issue #105)."
+    },
+    "Rhetos.Dsl.DefaultConcepts.SnowflakeDataStructureInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {},
+    "Rhetos.Dsl.DefaultConcepts.SpecificSubtypeSqlViewInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Instead of using property implementations (Implements keyword), a specific SQL query may be provided \n             to implement the mapping between the subtype and the polymorphic entity."
+    },
+    "Rhetos.Dsl.DefaultConcepts.SqlDefaultPropertyInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Generates default constraint on the database column. Note: This concept is used only for internal features implemented in SQL procedures and triggers.\n            It cannot be used for default field value when writing data to Web API or in object model, \n            because the saved record will always have the property value set to NULL by Entity Framework, even if the value is not provided."
+    },
+    "Rhetos.Dsl.DefaultConcepts.SqlDependsOnDataStructureInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "It states that the parent object should be created in database after the referenced table or view, including all columns, is created.\n            Besides the column, the dependency also includes any unique indexes on the referenced table."
+    },
+    "Rhetos.Dsl.DefaultConcepts.SqlDependsOnIDInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "This object should be created in database after the given table's ID column is created, but not necessarily all other columns.\n            Use this instead of SqlDependsOn to avoid having dependencies to all properties of the entity."
+    },
+    "Rhetos.Dsl.DefaultConcepts.SqlDependsOnModuleInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "This object should be created in database after all database objects in the given module are created."
+    },
+    "Rhetos.Dsl.DefaultConcepts.SqlDependsOnPropertyInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "It states that the parent object should be created in database after the referenced column is created.\n            Besides the column, the dependency also includes any unique index on the column, and the unique indexes over multiple columns that start with this column."
+    },
+    "Rhetos.Dsl.DefaultConcepts.SqlDependsOnSqlFunctionInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "This object should be created in database after the given SqlFunction is created."
+    },
+    "Rhetos.Dsl.DefaultConcepts.SqlDependsOnSqlIndexInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "This object should be created in database after the given SqlIndex is created."
+    },
+    "Rhetos.Dsl.DefaultConcepts.SqlDependsOnSqlObjectInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "This object should be created in database after the given SqlObject is created."
+    },
+    "Rhetos.Dsl.DefaultConcepts.SqlDependsOnSqlViewInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "This object should be created in database after the given SqlView is created."
+    },
+    "Rhetos.Dsl.DefaultConcepts.SqlFunctionInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "User-defined function in database (scalar, inline or table function)."
+    },
+    "Rhetos.Dsl.DefaultConcepts.SqlIndex2Info, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Index on two columns in database."
+    },
+    "Rhetos.Dsl.DefaultConcepts.SqlIndex3Info, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Index on three columns in database."
+    },
+    "Rhetos.Dsl.DefaultConcepts.SqlIndexClusteredFlatInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Marks the index as clustered."
+    },
+    "Rhetos.Dsl.DefaultConcepts.SqlIndexClusteredInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Marks the index as clustered."
+    },
+    "Rhetos.Dsl.DefaultConcepts.SqlIndexInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Index on a single column in database."
+    },
+    "Rhetos.Dsl.DefaultConcepts.SqlIndexMultipleFollowingPropertyInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {},
+    "Rhetos.Dsl.DefaultConcepts.SqlIndexMultipleInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Index on one on more columns in database."
+    },
+    "Rhetos.Dsl.DefaultConcepts.SqlIndexMultiplePropertyInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {},
+    "Rhetos.Dsl.DefaultConcepts.SqlIndexPropertyClusteredInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Marks the index as clustered."
+    },
+    "Rhetos.Dsl.DefaultConcepts.SqlNotNullInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "This concept is intended for internal use only, for other concepts' implementations.\n            Use \"Required\" or \"SystemRequired\" instead to implement business requirements."
+    },
+    "Rhetos.Dsl.DefaultConcepts.SqlObjectInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Create a custom database object that is not supported by other SQL concepts, for example a full-text search catalog."
+    },
+    "Rhetos.Dsl.DefaultConcepts.SqlProcedureInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Stored procedure in database."
+    },
+    "Rhetos.Dsl.DefaultConcepts.SqlQueryableInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "A queryable data structure, implemented with an SQL query. It generates a database view. \n            With this concept, you should always use SqlDependsOn or AutodetectSqlDependencies to make sure that database objects can be created in the correct order."
+    },
+    "Rhetos.Dsl.DefaultConcepts.SqlTriggerInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Trigger in database."
+    },
+    "Rhetos.Dsl.DefaultConcepts.SqlViewInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "View in database."
+    },
+    "Rhetos.Dsl.DefaultConcepts.SubtypeExtendFilterInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {},
+    "Rhetos.Dsl.DefaultConcepts.SubtypeExtendPolymorphicInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {},
+    "Rhetos.Dsl.DefaultConcepts.SubtypeImplementsPropertyInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Implement a property by a specific SQL expression."
+    },
+    "Rhetos.Dsl.DefaultConcepts.SubtypeImplementsReferenceToHardcodedEntityInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Implement a property by a hardcoded entity entry"
+    },
+    "Rhetos.Dsl.DefaultConcepts.SubtypeWhereInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "It is used to limit the items that will be included in the polymorphic implementation."
+    },
+    "Rhetos.Dsl.DefaultConcepts.SuppressSynchronizationInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Internal concept for turning off automatic recompute of an entity with KeepSynchronized."
+    },
+    "Rhetos.Dsl.DefaultConcepts.SuppressSynchronizationOnChangesItemsInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {},
+    "Rhetos.Dsl.DefaultConcepts.SystemRequiredInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Subvariant of Required. The value must be entered by system internally."
+    },
+    "Rhetos.Dsl.DefaultConcepts.UniqueClusteredInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Marks the index as clustered."
+    },
+    "Rhetos.Dsl.DefaultConcepts.UniqueMultiplePropertiesInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "A unique constraint over multiple properties: Two records cannot have same combination of values."
+    },
+    "Rhetos.Dsl.DefaultConcepts.UniqueMultiplePropertyInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {},
+    "Rhetos.Dsl.DefaultConcepts.UniqueProperties3Info, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "A unique constraint over three properties: Two records cannot have same combination of values."
+    },
+    "Rhetos.Dsl.DefaultConcepts.UniquePropertiesInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "A unique constraint over two properties: Two records cannot have same combination of values."
+    },
+    "Rhetos.Dsl.DefaultConcepts.UniquePropertyInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Two records cannot have same value of this property."
+    },
+    "Rhetos.Dsl.DefaultConcepts.UniqueReferenceCascadeDeleteDbInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "A low-level concept for generating cascade delete in database.\n            It should be rarely used because deleting records directly in database\n            circumvents any business logic implemented in the application, related to those records.\n            If the legacy option CommonConcepts.Legacy.CascadeDeleteInDatabase is enabled,\n            this concept will be created automatically for each UniqueReference with CascadeDelete (for example, on Extends concept)"
+    },
+    "Rhetos.Dsl.DefaultConcepts.UniqueReferenceCascadeDeleteInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Automatically deletes the extension records when a master record is deleted.",
+      "Remarks": "If referencing polymorphic concept, cascade delete will occur when the _Materialized record is automatically deleted.\n            Cascade delete is implemented in the application layer, because a database implementation would not execute any business logic that is implemented on the extension entity.\n            For cascade delete in database see CascadeDeleteInDatabase concept or legacy option CommonConcepts.Legacy.CascadeDeleteInDatabase."
+    },
+    "Rhetos.Dsl.DefaultConcepts.UniqueReferenceCascadeDeletePolymorphicInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "A reference to polymorphic supports cascade delete, but the polymorphic itself is not directly writable,\n            so the triggering event is redirected to the polymorphic's materialized entity."
+    },
+    "Rhetos.Dsl.DefaultConcepts.UniqueReferenceInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Same as reference but with one-to-one relationship. Use instead of Extends when the extended entity should not be a part of the base entity.\n            Generates foreign key constraint in database. The database column has \"ID\" suffix.\n            The extension data structure has the same ID as the base data structure.\n            \n            Database:\n            The extension's table has a foreign key constraint on its ID column, referencing the base entity's ID column.\n            C# object model:\n            The extension's class has 'Base' navigation property that references the base class. The base class has Extension_* navigation property that references the extension."
+    },
+    "Rhetos.Dsl.DefaultConcepts.UserRequiredPropertyInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Subvariant of Required. User (or client applications) needs to provide the property value."
+    },
+    "Rhetos.Dsl.DefaultConcepts.WriteInfo, Rhetos.Dsl.DefaultConcepts, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {
+      "Summary": "Adds a custom Save method to data structure that is not writable by default."
+    },
+    "Rhetos.Dsl.InitializationConcept, Rhetos.Dsl.Interfaces, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null": {},
+    "RhetosTestAppConcepts.WithParentInfo, RhetosTestAppConcepts, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null": {}
+  }
+}

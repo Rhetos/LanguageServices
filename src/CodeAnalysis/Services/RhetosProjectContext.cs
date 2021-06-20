@@ -14,6 +14,7 @@ namespace Rhetos.LanguageServices.CodeAnalysis.Services
         public DateTime LastContextUpdateTime => current?.CreatedTime ?? DateTime.MinValue;
         public DslSyntax DslSyntax => current?.DslSyntax;
         public Dictionary<string, ConceptType[]> Keywords => current?.Keywords;
+        public Dictionary<string, ConceptDocumentation> Documentation => current?.DslDocumentation?.Concepts;
 
         private readonly ILogger<RhetosProjectContext> log;
         private static readonly object _syncRoot = new();
@@ -23,6 +24,7 @@ namespace Rhetos.LanguageServices.CodeAnalysis.Services
         {
             public IDslSyntaxProvider DslSyntaxProvider { get; }
             public DslSyntax DslSyntax { get; }
+            public DslDocumentation DslDocumentation { get; }
             public DateTime DslSyntaxLastModifiedTime { get; }
             public Dictionary<string, ConceptType[]> Keywords { get; }
             public DateTime CreatedTime { get; }
@@ -31,6 +33,7 @@ namespace Rhetos.LanguageServices.CodeAnalysis.Services
             {
                 DslSyntaxProvider = dslSyntaxProvider;
                 DslSyntax = DslSyntaxProvider.Load();
+                DslDocumentation = DslSyntaxProvider.LoadDocumentation();
                 DslSyntaxLastModifiedTime = DslSyntaxProvider.GetLastModifiedTime();
                 Keywords = ExtractKeywords(DslSyntax);
                 CreatedTime = DateTime.Now;

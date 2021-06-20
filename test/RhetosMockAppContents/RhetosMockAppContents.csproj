@@ -7,6 +7,9 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Update="DslDocumentation.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="DslSyntax.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

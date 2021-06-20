@@ -159,7 +159,6 @@ namespace Rhetos.LanguageServices.Server
             services.AddSingleton<ConceptQueries>();
             services.AddSingleton<RhetosDocumentFactory>();
             services.AddSingleton<RhetosProjectContext>();
-            services.AddSingleton<XmlDocumentationProvider>();
             services.AddSingleton<IRhetosProjectRootPathResolver, RhetosProjectRootPathResolver>();
 
             //services.AddTransient<ServerEventHandler>();

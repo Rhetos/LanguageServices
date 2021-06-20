@@ -38,7 +38,6 @@ namespace Rhetos.LanguageServices.CommonTestTools
                 .AddTransient<RhetosDocumentFactory>()
                 .AddSingleton<RhetosProjectContext>()
                 .AddSingleton<IRhetosProjectRootPathResolver, RhetosProjectRootPathResolver>()
-                .AddSingleton<XmlDocumentationProvider>()
                 .AddSingleton<ILogProvider, RhetosNetCoreLogProvider>()
                 .AddSingleton<ConceptQueries>()
                 .AddLogging(cfg => cfg.AddConsole());

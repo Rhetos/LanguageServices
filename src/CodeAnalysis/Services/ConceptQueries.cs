@@ -28,12 +28,10 @@ namespace Rhetos.LanguageServices.CodeAnalysis.Services
     public class ConceptQueries
     {
         private readonly RhetosProjectContext rhetosProjectContext;
-        private readonly XmlDocumentationProvider xmlDocumentationProvider;
 
-        public ConceptQueries(RhetosProjectContext rhetosProjectContext, XmlDocumentationProvider xmlDocumentationProvider)
+        public ConceptQueries(RhetosProjectContext rhetosProjectContext)
         {
             this.rhetosProjectContext = rhetosProjectContext;
-            this.xmlDocumentationProvider = xmlDocumentationProvider;
         }
 
         public string GetFullDescription(string keyword)
@@ -60,7 +58,7 @@ namespace Rhetos.LanguageServices.CodeAnalysis.Services
 
             var signature = ConceptTypeTools.SignatureDescription(conceptType);
             var documentation = $"{prefix}* defined by {conceptType.AssemblyQualifiedName}";
-            var xmlDocumentation = xmlDocumentationProvider.GetDocumentation(conceptType, prefix);
+            var xmlDocumentation = GetDocumentation(conceptType, prefix);
             if (!string.IsNullOrEmpty(xmlDocumentation)) documentation = $"{xmlDocumentation}\n{documentation}";
 
             return new RhetosSignature()
@@ -98,6 +96,24 @@ namespace Rhetos.LanguageServices.CodeAnalysis.Services
             }
 
             return result;
+        }
+
+        public string GetDocumentation(ConceptType conceptType, string linePrefix = null)
+        {
+            if (rhetosProjectContext.Documentation == null)
+                return "*No XML documentation information was found for this Rhetos App*";
+
+            if (!rhetosProjectContext.Documentation.TryGetValue(conceptType.AssemblyQualifiedName, out var conceptDocumentation))
+                return "";
+
+            var documentation = $"{conceptDocumentation.Summary}";
+            if (!string.IsNullOrEmpty(conceptDocumentation.Remarks))
+                documentation += $"\n\nRemarks:\n{conceptDocumentation.Remarks}\n";
+
+            if (!string.IsNullOrEmpty(documentation) && !string.IsNullOrEmpty(linePrefix))
+                documentation = linePrefix + documentation.Replace("\n", $"\n{linePrefix}");
+
+            return documentation;
         }
     }
 }

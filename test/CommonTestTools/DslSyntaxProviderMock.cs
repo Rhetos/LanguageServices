@@ -27,7 +27,10 @@ namespace Rhetos.LanguageServices.CommonTestTools
 
         public DslDocumentation LoadDocumentation()
         {
-            return DslDocumentation;
+            if (DslDocumentation != null)
+                return DslDocumentation;
+
+            return new DslDocumentationFile(new RhetosBuildEnvironment() { CacheFolder = ProjectRootPath }).Load();
         }
 
         public DateTime GetLastModifiedTime()
