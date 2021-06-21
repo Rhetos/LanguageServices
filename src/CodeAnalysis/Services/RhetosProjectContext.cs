@@ -73,6 +73,14 @@ namespace Rhetos.LanguageServices.CodeAnalysis.Services
                     throw new InvalidOperationException($"Trying to update project context which is not initialized.");
 
                 var dslSyntaxProvider = new DslSyntaxProvider(ProjectRootPath);
+
+                // project is no longer valid
+                if (!DslSyntaxProvider.IsValidProjectRootPath(ProjectRootPath))
+                {
+                    current = null;
+                    return;
+                }
+
                 if (current.DslSyntaxLastModifiedTime != dslSyntaxProvider.GetLastModifiedTime())
                     Initialize(dslSyntaxProvider);
             }

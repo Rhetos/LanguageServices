@@ -86,8 +86,14 @@ namespace Rhetos.LanguageServices.VisualStudioExtension
 
                     await WriteToOutputWindowAsync(_outputName, $"'{source.Key}' has changed, refreshing project.");
 
-                    var vsProject = (VSProject2) project.Object;
-                    vsProject.Refresh();
+                    if (project.Object is VSProject2 vsProject2)
+                    {
+                        vsProject2.Refresh();
+                    }
+                    else
+                    {
+                        await WriteToOutputWindowAsync(_outputName, $"Unsupported project object type: {project.Object.GetType().FullName}.");
+                    }
                 }
             }
 

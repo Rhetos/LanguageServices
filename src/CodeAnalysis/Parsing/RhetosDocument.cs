@@ -128,11 +128,6 @@ namespace Rhetos.LanguageServices.CodeAnalysis.Parsing
                 var analysisRun = new CodeAnalysisRun(TextDocument, rhetosProjectContext, logFactory);
                 var result = analysisRun.RunForPosition(lineChr);
 
-                // TODO: add property
-                /*
-                if (rhetosAppContext.ProjectConfigurationDirty)
-                    result.DslParserErrors.Add(new CodeAnalysisError() { Message = "Rhetos project configuration change detected. Restart Visual Studio to update DSL IntelliSense.", Severity = CodeAnalysisError.ErrorSeverity.Warning });
-                */
                 cachedAnalysisResults[cacheKey] = result;
                 return result;
             }
@@ -154,7 +149,7 @@ namespace Rhetos.LanguageServices.CodeAnalysis.Parsing
                     ? ""
                     : $" ({RootPathConfiguration.Context})";
                 var message = $"No valid RhetosProjectRootPath configuration was found for this document{error}. "
-                              + "If document is in folder subtree of Rhetos application, it must be built at least once. "
+                              + "If document is in folder subtree of Rhetos application, it must be built successfully at least once. "
                               + "Otherwise, explicit paths may be set via '// <rhetosProjectRootPath=\"PATH\" />' source code directive or "
                               + "by using 'rhetos-language-services.settings.json' configuration file.";
 

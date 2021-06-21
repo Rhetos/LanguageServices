@@ -111,10 +111,11 @@ namespace Rhetos.LanguageServices.CodeAnalysis.Services
             lock (rhetosDocuments)
             {
                 var contextUpdateTime = rhetosProjectContext.LastContextUpdateTime;
-                UpdateProjectContextRootPath();
 
                 if (rhetosProjectContext.IsInitialized)
                     rhetosProjectContext.UpdateDslSyntax();
+
+                UpdateProjectContextRootPath();
 
                 if (rhetosProjectContext.LastContextUpdateTime == contextUpdateTime)
                     return;

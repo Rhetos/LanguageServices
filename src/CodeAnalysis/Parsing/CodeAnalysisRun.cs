@@ -122,7 +122,7 @@ namespace Rhetos.LanguageServices.CodeAnalysis.Parsing
             }
             catch (Exception e)
             {
-                result.DslParserErrors.Add(new CodeAnalysisError() { LineChr = LineChr.Zero, Message = e.Message });
+                result.DslParserErrors.Add(new CodeAnalysisError() { LineChr = LineChr.Zero, Message = e.ToString() });
             }
             finally
             {

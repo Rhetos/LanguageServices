@@ -141,7 +141,11 @@ namespace Rhetos.LanguageServices.Server
                 .AddLanguageProtocolLogging()
                 .SetMinimumLevel(LogLevel.Trace);
 
+#if DEBUG            
+            ConfigureLoggingExplicitFilters(builder, LogLevel.Warning, LogLevel.Trace);
+#else
             ConfigureLoggingExplicitFilters(builder);
+#endif
         }
 
         public static void ConfigureLoggingExplicitFilters(ILoggingBuilder builder, LogLevel globalMinLevel = LogLevel.Warning, LogLevel rhetosMinLevel = LogLevel.Information)
@@ -177,7 +181,7 @@ namespace Rhetos.LanguageServices.Server
             else
                 logFileMessage = $"Log file: '{logFileMessage}'.";
 
-            var localPath = new Uri(Assembly.GetExecutingAssembly().CodeBase).LocalPath;
+            var localPath = new Uri(Assembly.GetExecutingAssembly().Location).LocalPath;
             log.LogInformation($"Initialized. Running server '{localPath}'. {logFileMessage}");
             // log.LogDebug(JsonConvert.SerializeObject(request, Formatting.Indented));
 

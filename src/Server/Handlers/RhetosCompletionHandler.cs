@@ -64,7 +64,7 @@ namespace Rhetos.LanguageServices.Server.Handlers
         public void SetCapability(CompletionCapability capability, ClientCapabilities clientCapabilities)
         {
         }
-
+        
         public Task<CompletionList> Handle(CompletionParams request, CancellationToken cancellationToken)
         {
             log.LogDebug($"Completion requested at {request.Position.ToLineChr()}.");
@@ -85,6 +85,7 @@ namespace Rhetos.LanguageServices.Server.Handlers
                 .ToList();
 
             var completionList = new CompletionList(completionItems);
+            log.LogTrace($"Returning completion list with {completionItems.Count} items.");
 
             return Task.FromResult(completionList);
         }
