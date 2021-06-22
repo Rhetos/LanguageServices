@@ -24,10 +24,14 @@ using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using EnvDTE;
 using Microsoft.VisualStudio.LanguageServer.Client;
 using Microsoft.VisualStudio.Threading;
 using Microsoft.VisualStudio.Utilities;
+using Microsoft.Win32;
 using Newtonsoft.Json;
+using Process = System.Diagnostics.Process;
+using Microsoft.VisualStudio.PlatformUI;
 
 namespace Rhetos.LanguageServices.VisualStudioExtension
 {
@@ -37,11 +41,13 @@ namespace Rhetos.LanguageServices.VisualStudioExtension
     {
         // allow redirection of LSP server to another path for integration, debugging and testing purposes
         private static readonly string _languageSeverPathConfigurationFilename = "rhetos.lsp-server.local.json";
+        private static readonly string _registryKeyPath = "SOFTWARE\\Rhetos\\RhetosLanguageServices";
+
         public class RhetosLspServerOptions
         {
             public string ServerPath { get; set; }
         }
-
+        
         public string Name => "Rhetos DSL Language Extension";
 
         public IEnumerable<string> ConfigurationSections => null;
@@ -69,6 +75,10 @@ namespace Rhetos.LanguageServices.VisualStudioExtension
             }
             catch (Exception e)
             {
+                MessageDialog.Show("Rhetos DSL Language Extension ERROR",
+                    $"Error encountered while trying to start Rhetos Language Server. See  https://github.com/Rhetos/LanguageServices for more information.\n\nError:\n{e.Message}",
+                    MessageDialogCommandSet.Ok);
+
                 Trace.WriteLine($"Error activating Language Server Process. {e}");
                 throw;
             }
@@ -77,23 +87,33 @@ namespace Rhetos.LanguageServices.VisualStudioExtension
         private Process StartLanguageServer()
         {
             var languageServerPath = GetLanguageServerPath();
+            if (string.IsNullOrEmpty(languageServerPath))
+                throw new InvalidOperationException($"Could not locate installed Rhetos Language Services server.");
+
             Trace.WriteLine($"Starting language server at: '{languageServerPath}'.");
 
-            var info = new ProcessStartInfo
+            try
             {
-                FileName = languageServerPath,
-                RedirectStandardInput = true,
-                RedirectStandardOutput = true,
-                UseShellExecute = false,
-                CreateNoWindow = true
-            };
+                var info = new ProcessStartInfo
+                {
+                    FileName = languageServerPath,
+                    RedirectStandardInput = true,
+                    RedirectStandardOutput = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = true
+                };
 
-            var process = new Process { StartInfo = info };
+                var process = new Process {StartInfo = info};
 
-            if (process.Start())
-                return process;
+                if (process.Start())
+                    return process;
 
-            return null;
+                return null;
+            }
+            catch (Exception e)
+            {
+                throw new InvalidOperationException($"Encountered error while trying to start language server at '{languageServerPath}': {e.Message}.");
+            }
         }
 
         private string GetLanguageServerPath()
@@ -103,9 +123,11 @@ namespace Rhetos.LanguageServices.VisualStudioExtension
             if (!string.IsNullOrEmpty(languageServerPath))
                 return languageServerPath;
 
-            var codebaseLocalPath = new Uri(System.Reflection.Assembly.GetExecutingAssembly().CodeBase).LocalPath;
-            var extensionFolder = Path.GetDirectoryName(codebaseLocalPath);
-            languageServerPath = Path.Combine(extensionFolder, "Rhetos.LanguageServices.ServerProxy.exe");
+            var subKey = Registry.LocalMachine.OpenSubKey(_registryKeyPath);
+            languageServerPath = subKey?.GetValue("Location") as string;
+            subKey?.Close();
+            if (!string.IsNullOrEmpty(languageServerPath))
+                languageServerPath = Path.Combine(languageServerPath, "Rhetos.LanguageServices.Server.exe");
             return languageServerPath;
         }
 

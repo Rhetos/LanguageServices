@@ -86,13 +86,15 @@ namespace Rhetos.LanguageServices.VisualStudioExtension
 
                     await WriteToOutputWindowAsync(_outputName, $"'{source.Key}' has changed, refreshing project.");
 
+                    // Other project types (e.g. VSProject) do not support Refresh() method, so we will ignore them.
+                    // Hopefully newer project types do not have the issue which we are trying to solve here.
                     if (project.Object is VSProject2 vsProject2)
                     {
                         vsProject2.Refresh();
                     }
                     else
                     {
-                        await WriteToOutputWindowAsync(_outputName, $"Unsupported project object type: {project.Object.GetType().FullName}.");
+                        // await WriteToOutputWindowAsync(_outputName, $"Unsupported project object type: {project.Object.GetType().FullName}.");
                     }
                 }
             }

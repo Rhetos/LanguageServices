@@ -29,6 +29,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "installer", "installer", "{
 EndProject
 Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "RhetosLanguageServicesInstaller", "src\RhetosLanguageServicesInstaller\RhetosLanguageServicesInstaller.vdproj", "{C29EB76D-3AB5-40B8-92CC-9D1FF9EECAA0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InstallerCustomActions", "src\InstallerCustomActions\InstallerCustomActions.csproj", "{D4A36AD1-EF0A-43A5-B882-DF872D04DE64}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -75,6 +77,10 @@ Global
 		{C29EB76D-3AB5-40B8-92CC-9D1FF9EECAA0}.Debug|Any CPU.Build.0 = Debug
 		{C29EB76D-3AB5-40B8-92CC-9D1FF9EECAA0}.Release|Any CPU.ActiveCfg = Release
 		{C29EB76D-3AB5-40B8-92CC-9D1FF9EECAA0}.Release|Any CPU.Build.0 = Release
+		{D4A36AD1-EF0A-43A5-B882-DF872D04DE64}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D4A36AD1-EF0A-43A5-B882-DF872D04DE64}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D4A36AD1-EF0A-43A5-B882-DF872D04DE64}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D4A36AD1-EF0A-43A5-B882-DF872D04DE64}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -90,6 +96,7 @@ Global
 		{081AE508-AC71-4390-92DD-0D7CD89D4087} = {C716868E-A5D4-44C7-A58A-395ACAFC733E}
 		{96C22556-190F-4029-990B-FD2CF6DA1FF9} = {C716868E-A5D4-44C7-A58A-395ACAFC733E}
 		{C29EB76D-3AB5-40B8-92CC-9D1FF9EECAA0} = {04214D1D-9F16-4A55-BD55-B29A03470272}
+		{D4A36AD1-EF0A-43A5-B882-DF872D04DE64} = {04214D1D-9F16-4A55-BD55-B29A03470272}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {CBA9BC49-E4BD-4C94-BA69-AA6916D7AB1A}

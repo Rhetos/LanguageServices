@@ -15,7 +15,13 @@
     {
         "Entry"
         {
-        "MsmKey" = "8:_350C914A21874310B567ED07A63973F3"
+        "MsmKey" = "8:_44B245AC273217F0C745F31EAE6EFFC6"
+        "OwnerKey" = "8:_C0FAE6BC1A8549779F9E4DBED5274517"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_C0FAE6BC1A8549779F9E4DBED5274517"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -23,6 +29,24 @@
         {
         "MsmKey" = "8:_E308753C87F94FBCAFD3ED0FA890FC23"
         "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_F3212E5AB64B46E2A021B9F134B00599"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_44B245AC273217F0C745F31EAE6EFFC6"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_C0FAE6BC1A8549779F9E4DBED5274517"
         "MsmSig" = "8:_UNDEFINED"
         }
     }
@@ -50,6 +74,14 @@
             "PrerequisitesLocation" = "2:1"
             "Url" = "8:"
             "ComponentsUrl" = "8:"
+                "Items"
+                {
+                    "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:.NETFramework,Version=v4.7.2"
+                    {
+                    "Name" = "8:Microsoft .NET Framework 4.7.2 (x86 and x64)"
+                    "ProductCode" = "8:.NETFramework,Version=v4.7.2"
+                    }
+                }
             }
         }
         "Release"
@@ -89,6 +121,48 @@
     {
         "CustomAction"
         {
+            "{4AA51A2D-7D85-4A59-BA75-B0809FC8B380}:_07D1FE6FBCBD43DB9FF6BF050157C6F8"
+            {
+            "Name" = "8:Primary output from InstallerCustomActions (Active)"
+            "Condition" = "8:"
+            "Object" = "8:_C0FAE6BC1A8549779F9E4DBED5274517"
+            "FileType" = "3:1"
+            "InstallAction" = "3:1"
+            "Arguments" = "8:"
+            "EntryPoint" = "8:"
+            "Sequence" = "3:1"
+            "Identifier" = "8:_A3804B18_D9EB_42CF_A6AB_047075E11659"
+            "InstallerClass" = "11:TRUE"
+            "CustomActionData" = "8:"
+            }
+            "{4AA51A2D-7D85-4A59-BA75-B0809FC8B380}:_1AA47DEEDB0D475EB762705CC2B9A7A8"
+            {
+            "Name" = "8:Primary output from InstallerCustomActions (Active)"
+            "Condition" = "8:"
+            "Object" = "8:_C0FAE6BC1A8549779F9E4DBED5274517"
+            "FileType" = "3:1"
+            "InstallAction" = "3:4"
+            "Arguments" = "8:"
+            "EntryPoint" = "8:"
+            "Sequence" = "3:1"
+            "Identifier" = "8:_E645BDDC_DC76_45F3_845E_71DFEF093429"
+            "InstallerClass" = "11:TRUE"
+            "CustomActionData" = "8:"
+            }
+            "{4AA51A2D-7D85-4A59-BA75-B0809FC8B380}:_82E4C4BF21F747C182ECDDFD710EB8FA"
+            {
+            "Name" = "8:Primary output from InstallerCustomActions (Active)"
+            "Condition" = "8:"
+            "Object" = "8:_C0FAE6BC1A8549779F9E4DBED5274517"
+            "FileType" = "3:1"
+            "InstallAction" = "3:2"
+            "Arguments" = "8:"
+            "EntryPoint" = "8:"
+            "Sequence" = "3:1"
+            "Identifier" = "8:_C18D79D3_AC0F_4F92_90DE_E9CE664A32C5"
+            "InstallerClass" = "11:TRUE"
+            "CustomActionData" = "8:"
+            }
         }
         "DefaultFeature"
         {
@@ -122,9 +196,40 @@
         }
         "File"
         {
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_350C914A21874310B567ED07A63973F3"
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_44B245AC273217F0C745F31EAE6EFFC6"
             {
-            "SourcePath" = "8:..\\VisualStudioExtension\\bin\\Release\\Rhetos.LanguageServices.VisualStudioExtension.vsix"
+            "AssemblyRegister" = "3:1"
+            "AssemblyIsInGAC" = "11:FALSE"
+            "AssemblyAsmDisplayName" = "8:System.Net.Http, Version=4.2.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"
+                "ScatterAssemblies"
+                {
+                    "_44B245AC273217F0C745F31EAE6EFFC6"
+                    {
+                    "Name" = "8:System.Net.Http.dll"
+                    "Attributes" = "3:512"
+                    }
+                }
+            "SourcePath" = "8:System.Net.Http.dll"
+            "TargetName" = "8:"
+            "Tag" = "8:"
+            "Folder" = "8:_A6EB055905864D0F89ABDF9AAB54DBEF"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:TRUE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_F3212E5AB64B46E2A021B9F134B00599"
+            {
+            "SourcePath" = "8:..\\..\\dist\\Rhetos.LanguageServices.VisualStudioExtension.vsix"
             "TargetName" = "8:Rhetos.LanguageServices.VisualStudioExtension.vsix"
             "Tag" = "8:"
             "Folder" = "8:_51D451D095B045B784F19DA8F719B068"
@@ -210,13 +315,13 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:RhetosLanguageServices"
         "ProductCode" = "8:{5A49FF08-56F7-4DAC-82C8-1B0661B16347}"
-        "PackageCode" = "8:{223DBE44-D737-4504-8CB5-D87195D33862}"
+        "PackageCode" = "8:{796BADF1-66AA-4B3F-92CB-9F0331859C5A}"
         "UpgradeCode" = "8:{F9D3C8DF-7E15-404E-9617-C852A90B2D22}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
-        "RemovePreviousVersions" = "11:FALSE"
+        "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
-        "InstallAllUsers" = "11:FALSE"
+        "InstallAllUsers" = "11:TRUE"
         "ProductVersion" = "8:1.0.0"
         "Manufacturer" = "8:Rhetos"
         "ARPHELPTELEPHONE" = "8:"
@@ -729,6 +834,62 @@
         }
         "ProjectOutput"
         {
+            "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_1A23243B43924FF3A1B0231839E217D1"
+            {
+            "SourcePath" = "8:"
+            "TargetName" = "8:"
+            "Tag" = "8:"
+            "Folder" = "8:_A6EB055905864D0F89ABDF9AAB54DBEF"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            "ProjectOutputGroupRegister" = "3:1"
+            "OutputConfiguration" = "8:"
+            "OutputGroupCanonicalName" = "8:Documentation"
+            "OutputProjectGuid" = "8:{242CA1CB-F61B-4C14-B422-ACF8D6B49DB9}"
+            "ShowKeyOutput" = "11:TRUE"
+                "ExcludeFilters"
+                {
+                }
+            }
+            "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_C0FAE6BC1A8549779F9E4DBED5274517"
+            {
+            "SourcePath" = "8:..\\InstallerCustomActions\\obj\\Release\\InstallerCustomActions.dll"
+            "TargetName" = "8:"
+            "Tag" = "8:"
+            "Folder" = "8:_A6EB055905864D0F89ABDF9AAB54DBEF"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            "ProjectOutputGroupRegister" = "3:1"
+            "OutputConfiguration" = "8:"
+            "OutputGroupCanonicalName" = "8:Built"
+            "OutputProjectGuid" = "8:{D4A36AD1-EF0A-43A5-B882-DF872D04DE64}"
+            "ShowKeyOutput" = "11:TRUE"
+                "ExcludeFilters"
+                {
+                }
+            }
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_E308753C87F94FBCAFD3ED0FA890FC23"
             {
             "SourcePath" = "8:..\\Server\\obj\\Release\\net5.0\\apphost.exe"
