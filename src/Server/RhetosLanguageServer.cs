@@ -46,16 +46,19 @@ namespace Rhetos.LanguageServices.Server
 {
     public class RhetosLanguageServer
     {
-        private readonly ILogger log;
+        public static ILanguageServer Instance { get; private set; }
 
-        public RhetosLanguageServer(ILogger log)
+        private readonly ILogger hostLog;
+        private readonly CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
+
+        public RhetosLanguageServer(ILogger hostLog)
         {
-            this.log = log;
+            this.hostLog = hostLog;
         }
 
         public async Task Run()
         {
-            log.Info($"SERVER START");
+            hostLog.Info($"SERVER START");
 
             try
             {
@@ -67,22 +70,26 @@ namespace Rhetos.LanguageServices.Server
             }
             catch (Exception e)
             {
-                log.Error($"Exception running language server: {e}");
+                hostLog.Error($"Exception running language server: {e}");
                 throw;
             }
 
-            log.Info($"SERVER END");
+            hostLog.Info($"SERVER END");
         }
 
         private async Task RunAndWaitExit(Stream input, Stream output)
         {
-            var server = await BuildLanguageServer(input, output);
+            if (Instance != null)
+                throw new InvalidOperationException($"RhetosLanguage server has already been initialized. Two instances is not allowed.");
 
-            log.Info("Language Server built and started.");
+            Instance = BuildLanguageServer(input, output);
+            AddServerCleanupHandlers(Instance, hostLog);
 
-            AddServerCleanupHandlers(server, log);
+            hostLog.Debug("Language Server built. Awaiting initialize...");
+            await Instance.Initialize(cancellationTokenSource.Token);
+            hostLog.Debug("Initialized!");
 
-            await server.WaitForExit;
+            await Instance.WaitForExit;
         }
 
         public static void AddServerCleanupHandlers(ILanguageServer server, ILogger log = null)
@@ -92,7 +99,6 @@ namespace Rhetos.LanguageServices.Server
                 log?.Debug($"Shutdown requested.");
                 server.Services.GetRequiredService<PublishDiagnosticsRunner>().Stop();
                 server.Services.GetRequiredService<RhetosProjectMonitor>().Stop();
-                Task.Delay(500).Wait();
             });
 
             server.Exit.Subscribe(next =>
@@ -101,9 +107,9 @@ namespace Rhetos.LanguageServices.Server
             });
         }
 
-        public static async Task<ILanguageServer> BuildLanguageServer(Stream inputStream, Stream outputStream)
+        public static ILanguageServer BuildLanguageServer(Stream inputStream, Stream outputStream)
         {
-            var server = await LanguageServer.From(options =>
+            var server = LanguageServer.Create(options =>
             {
                 options
                     .WithInput(inputStream)
@@ -123,7 +129,7 @@ namespace Rhetos.LanguageServices.Server
                 .WithHandler<RhetosSignatureHelpHandler>()
                 .WithHandler<RhetosCompletionHandler>()
                 .WithReceiver(new RhetosJsonRpcReceiver())
-                //.WithUnhandledExceptionHandler(e => LogManager.GetLogger("BLE").Error(() => e.ToString()))
+                .WithUnhandledExceptionHandler(UnhandledExceptionHandler)
                 .WithServices(ConfigureServices)
                 .OnInitialize(OnInitializeAsync)
                 .OnInitialized(OnInitializedAsync);
@@ -151,6 +157,12 @@ namespace Rhetos.LanguageServices.Server
                 s.StartsWith("Rhetos.LanguageServices")
                     ? level >= rhetosMinLevel
                     : level >= globalMinLevel);
+        }
+
+        private static void UnhandledExceptionHandler(Exception e)
+        {
+            var log = Instance?.Services.GetRequiredService<ILogger<RhetosLanguageServer>>();
+            log?.LogError($"Unhandled exception in LanguageServer: {e}");
         }
 
         private static void ConfigureServices(IServiceCollection services)
