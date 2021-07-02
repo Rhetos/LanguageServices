@@ -68,17 +68,14 @@ namespace Rhetos.LanguageServices.VisualStudioExtension
             try
             {
                 var serverProcess = StartLanguageServer();
-                if (serverProcess != null)
-                    return new Connection(serverProcess.StandardOutput.BaseStream, serverProcess.StandardInput.BaseStream);
-
-                return null;
+                return new Connection(serverProcess.StandardOutput.BaseStream, serverProcess.StandardInput.BaseStream);
             }
             catch (Exception e)
             {
                 MessageDialog.Show("Rhetos DSL Language Extension ERROR",
                     $"Error encountered while trying to start Rhetos Language Server. See  https://github.com/Rhetos/LanguageServices for more information.\n\nError:\n{e.Message}",
                     MessageDialogCommandSet.Ok);
-
+                
                 Trace.WriteLine($"Error activating Language Server Process. {e}");
                 throw;
             }
@@ -105,10 +102,10 @@ namespace Rhetos.LanguageServices.VisualStudioExtension
 
                 var process = new Process {StartInfo = info};
 
-                if (process.Start())
-                    return process;
+                if (!process.Start())
+                    throw new InvalidOperationException($"Failed to start RhetosLanguageServer process.");
 
-                return null;
+                return process;
             }
             catch (Exception e)
             {

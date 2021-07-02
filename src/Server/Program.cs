@@ -29,11 +29,19 @@ namespace Rhetos.LanguageServices.Server
         public static async Task Main(string[] args)
         {
             var programLogger = LogManager.GetLogger("Program");
-            var rhetosLanguageServer = new RhetosLanguageServer(programLogger);
+            try
+            {
+                var rhetosLanguageServer = new RhetosLanguageServer(programLogger);
 
-            await rhetosLanguageServer.Run();
+                await rhetosLanguageServer.Run();
+            }
+            catch (Exception e)
+            {
+                programLogger.Fatal(() => $"Fatal exception encountered while running language server: {e}");
+            }
 
             LogManager.Flush();
+            LogManager.Shutdown();
         }
     }
 }

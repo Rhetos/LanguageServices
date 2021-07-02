@@ -18,7 +18,6 @@
 */
 
 using System;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -26,17 +25,13 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 using NLog;
 using NLog.Extensions.Logging;
 using NLog.Targets;
 using NLog.Targets.Wrappers;
-using OmniSharp.Extensions.LanguageServer.Protocol.Client;
-using OmniSharp.Extensions.LanguageServer.Protocol.General;
 using OmniSharp.Extensions.LanguageServer.Protocol.Models;
 using OmniSharp.Extensions.LanguageServer.Protocol.Server;
 using OmniSharp.Extensions.LanguageServer.Protocol.Server.Capabilities;
-using OmniSharp.Extensions.LanguageServer.Protocol.Window;
 using OmniSharp.Extensions.LanguageServer.Server;
 using Rhetos.LanguageServices.CodeAnalysis.Services;
 using Rhetos.LanguageServices.CodeAnalysis.Tools;
@@ -127,6 +122,8 @@ namespace Rhetos.LanguageServices.Server
                 .WithHandler<RhetosHoverHandler>()
                 .WithHandler<RhetosSignatureHelpHandler>()
                 .WithHandler<RhetosCompletionHandler>()
+                .WithReceiver(new RhetosJsonRpcReceiver())
+                //.WithUnhandledExceptionHandler(e => LogManager.GetLogger("BLE").Error(() => e.ToString()))
                 .WithServices(ConfigureServices)
                 .OnInitialize(OnInitializeAsync)
                 .OnInitialized(OnInitializedAsync);
@@ -142,7 +139,7 @@ namespace Rhetos.LanguageServices.Server
                 .SetMinimumLevel(LogLevel.Trace);
 
 #if DEBUG            
-            ConfigureLoggingExplicitFilters(builder, LogLevel.Warning, LogLevel.Trace);
+            ConfigureLoggingExplicitFilters(builder, LogLevel.Trace, LogLevel.Trace);
 #else
             ConfigureLoggingExplicitFilters(builder);
 #endif
@@ -183,7 +180,6 @@ namespace Rhetos.LanguageServices.Server
 
             var localPath = new Uri(Assembly.GetExecutingAssembly().Location).LocalPath;
             log.LogInformation($"Initialized. Running server '{localPath}'. {logFileMessage}");
-            // log.LogDebug(JsonConvert.SerializeObject(request, Formatting.Indented));
 
             return Task.CompletedTask;
         }
@@ -194,7 +190,7 @@ namespace Rhetos.LanguageServices.Server
             response.Capabilities.TextDocumentSync.Options!.Change = TextDocumentSyncKind.Full;
             languageServer.Services.GetRequiredService<PublishDiagnosticsRunner>().Start();
             languageServer.Services.GetRequiredService<RhetosProjectMonitor>().Start();
-
+            
             return Task.CompletedTask;
         }
 

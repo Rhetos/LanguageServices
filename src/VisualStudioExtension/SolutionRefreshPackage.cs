@@ -42,7 +42,7 @@ namespace Rhetos.LanguageServices.VisualStudioExtension
             // Adds a service on the background thread
             AddService(typeof(SolutionRefreshService), CreateMyServiceAsync);
 
-            var svc = await GetServiceAsync(typeof(SolutionRefreshService));
+            _ = await GetServiceAsync(typeof(SolutionRefreshService));
         }
 
         private async Task<object> CreateMyServiceAsync(IAsyncServiceContainer container, CancellationToken cancellationToken, Type serviceType)
