@@ -79,6 +79,7 @@ namespace Rhetos.LanguageServices.Server
             }
 
             hostLog.Info($"SERVER END");
+            await Task.Delay(10000);
         }
 
         private async Task RunAndWaitExit(Stream input, Stream output)
@@ -108,6 +109,7 @@ namespace Rhetos.LanguageServices.Server
             server.Exit.Subscribe(next =>
             {
                 log?.Info($"Exit requested: {next}");
+                server.Services.GetRequiredService<OrphanedProcessMonitor>().Stop();
             });
         }
 
@@ -212,6 +214,7 @@ namespace Rhetos.LanguageServices.Server
             services.AddSingleton<ILogProvider, RhetosNetCoreLogProvider>();
             services.AddSingleton<PublishDiagnosticsRunner>();
             services.AddSingleton<RhetosProjectMonitor>();
+            services.AddSingleton<OrphanedProcessMonitor>();
         }
 
         private static Task OnInitializeAsync(ILanguageServer languageServer, InitializeParams request, CancellationToken cancellationToken)
@@ -235,6 +238,13 @@ namespace Rhetos.LanguageServices.Server
             response.Capabilities.TextDocumentSync.Options!.Change = TextDocumentSyncKind.Full;
             languageServer.Services.GetRequiredService<PublishDiagnosticsRunner>().Start();
             languageServer.Services.GetRequiredService<RhetosProjectMonitor>().Start();
+
+            if (request.ProcessId.HasValue)
+            {
+                var orphanedProcessMonitor = languageServer.Services.GetRequiredService<OrphanedProcessMonitor>();
+                orphanedProcessMonitor.SetHostProcessId((int)request.ProcessId.Value);
+                orphanedProcessMonitor.Start();
+            }
             
             return Task.CompletedTask;
         }
