@@ -29,6 +29,7 @@ using NLog;
 using NLog.Extensions.Logging;
 using NLog.Targets;
 using NLog.Targets.Wrappers;
+using OmniSharp.Extensions.JsonRpc;
 using OmniSharp.Extensions.LanguageServer.Protocol.Models;
 using OmniSharp.Extensions.LanguageServer.Protocol.Server;
 using OmniSharp.Extensions.LanguageServer.Protocol.Server.Capabilities;
@@ -123,12 +124,14 @@ namespace Rhetos.LanguageServices.Server
 
         public static void ConfigureLanguageServer(LanguageServerOptions options, Action<ILoggingBuilder> configureLoggingAction = null)
         {
+            // Hack to circumvent OmniSharp bug: https://github.com/OmniSharp/csharp-language-server-protocol/issues/609
+            options.Services.AddSingleton<IReceiver, RhetosJsonRpcReceiver>();
+
             options
                 .WithHandler<TextDocumentHandler>()
                 .WithHandler<RhetosHoverHandler>()
                 .WithHandler<RhetosSignatureHelpHandler>()
                 .WithHandler<RhetosCompletionHandler>()
-                .WithReceiver(new RhetosJsonRpcReceiver())
                 .WithUnhandledExceptionHandler(UnhandledExceptionHandler)
                 .WithServices(ConfigureServices)
                 .OnInitialize(OnInitializeAsync)
@@ -145,7 +148,7 @@ namespace Rhetos.LanguageServices.Server
                 .SetMinimumLevel(LogLevel.Trace);
 
 #if DEBUG            
-            ConfigureLoggingExplicitFilters(builder, LogLevel.Trace, LogLevel.Trace);
+            ConfigureLoggingExplicitFilters(builder, LogLevel.Debug, LogLevel.Trace);
 #else
             ConfigureLoggingExplicitFilters(builder);
 #endif
@@ -179,7 +182,6 @@ namespace Rhetos.LanguageServices.Server
             services.AddSingleton<PublishDiagnosticsRunner>();
             services.AddSingleton<RhetosProjectMonitor>();
         }
-
 
         private static Task OnInitializeAsync(ILanguageServer languageServer, InitializeParams request, CancellationToken cancellationToken)
         {

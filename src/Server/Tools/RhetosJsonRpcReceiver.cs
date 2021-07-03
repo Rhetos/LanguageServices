@@ -9,12 +9,15 @@ using NLog;
 using OmniSharp.Extensions.JsonRpc;
 using OmniSharp.Extensions.JsonRpc.Server;
 using OmniSharp.Extensions.JsonRpc.Server.Messages;
+using OmniSharp.Extensions.LanguageServer.Protocol;
+using OmniSharp.Extensions.LanguageServer.Server;
+using OmniSharp.Extensions.LanguageServer.Server.Messages;
 
 namespace Rhetos.LanguageServices.Server.Tools
 {
-    public class RhetosJsonRpcReceiver : Receiver
+    public class RhetosJsonRpcReceiver : LspServerReceiver
     {
-        public RhetosJsonRpcReceiver() : base()
+        public RhetosJsonRpcReceiver(ILogger<LspServerReceiver> logger) : base(logger)
         {
         }
 
@@ -25,7 +28,6 @@ namespace Rhetos.LanguageServices.Server.Tools
             {
                 return new InvalidRequest(null, "Not an object");
             }
-            //LogManager.GetLogger("GetRenor").Info(jObject.ToString());
 
             if (jObject["jsonrpc"]?.Value<string>() != "2.0")
             {
@@ -91,10 +93,7 @@ namespace Rhetos.LanguageServices.Server.Tools
 
         public override (IEnumerable<Renor> results, bool hasResponse) GetRequests(JToken container)
         {
-            //LogManager.GetLogger("BLO").Info(container.ToString());
-
             return base.GetRequests(container);
         }
-
     }
 }

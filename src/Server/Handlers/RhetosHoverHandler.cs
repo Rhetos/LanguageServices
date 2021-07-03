@@ -48,6 +48,8 @@ namespace Rhetos.LanguageServices.Server.Handlers
             return new HoverRegistrationOptions() {DocumentSelector = TextDocumentHandler.RhetosDocumentSelector};
         }
 
+        // Specific empty Hover response VS2019 will handle correctly
+        private static readonly Hover _emptyHoverResult = new Hover() {Contents = new MarkedStringsOrMarkupContent(new MarkupContent())};
         public Task<Hover> Handle(HoverParams request, CancellationToken cancellationToken)
         {
             RhetosDocument rhetosDocument;
@@ -59,12 +61,12 @@ namespace Rhetos.LanguageServices.Server.Handlers
             catch (InvalidOperationException)
             {
                 log.LogWarning($"Trying to resolve hover on document that is not opened '{request.TextDocument.Uri}'.");
-                return Task.FromResult<Hover>(null);
+                return Task.FromResult<Hover>(_emptyHoverResult);
             }
 
             var descInfo = rhetosDocument.GetHoverDescriptionAtPosition(request.Position.ToLineChr());
             if (string.IsNullOrEmpty(descInfo.description))
-                return Task.FromResult<Hover>(null);
+                return Task.FromResult<Hover>(_emptyHoverResult);
 
             var response = new Hover()
             {
