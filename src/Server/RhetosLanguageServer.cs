@@ -23,8 +23,11 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 using NLog;
 using NLog.Extensions.Logging;
 using NLog.Targets;
@@ -147,11 +150,39 @@ namespace Rhetos.LanguageServices.Server
                 .AddLanguageProtocolLogging()
                 .SetMinimumLevel(LogLevel.Trace);
 
-#if DEBUG            
-            ConfigureLoggingExplicitFilters(builder, LogLevel.Debug, LogLevel.Trace);
-#else
-            ConfigureLoggingExplicitFilters(builder);
-#endif
+            // Enable all - SetMinimumLevel above will not work, because OmniSharp does .AddLogging after it, which resets default min level
+            builder.AddFilter("*", LogLevel.Trace);
+
+            // Filter other logs outgoing via LSP to VS2019
+            builder.Services.Configure<LoggerFilterOptions>(o => o.Rules.Add(
+                new LoggerFilterRule(
+                    "OmniSharp.Extensions.LanguageServer.Server.Logging.LanguageServerLoggerProvider",
+                    "Rhetos.LanguageServices.*", LogLevel.Information, null)));
+            builder.Services.Configure<LoggerFilterOptions>(o => o.Rules.Add(
+                new LoggerFilterRule(
+                    "OmniSharp.Extensions.LanguageServer.Server.Logging.LanguageServerLoggerProvider",
+                    "*", LogLevel.Warning, null)));
+
+            // With our custom RhetosJsonRpcReceiver we have messed up IReceiver registration order.
+            // As a result LspServerOutputFilter incorrectly emits warning messages. We are completely hiding those.
+            builder.Services.Configure<LoggerFilterOptions>(o => o.Rules.Add(
+                new LoggerFilterRule(
+                    "OmniSharp.Extensions.LanguageServer.Server.Logging.LanguageServerLoggerProvider",
+                    "OmniSharp.Extensions.LanguageServer.Server.LspServerOutputFilter", LogLevel.Error, null)));
+
+            builder.Services.Configure<LoggerFilterOptions>(o => o.Rules.Add(
+                new LoggerFilterRule(
+                    typeof(NLogLoggerProvider).FullName,
+                    "OmniSharp.Extensions.LanguageServer.Server.LspServerOutputFilter", LogLevel.Error, null)));
+
+            // Warning about no configuration surfacing. Not sure what it means.
+            // We will hide it from LSP logging, but keep it in NLog.
+            builder.Services.Configure<LoggerFilterOptions>(o => o.Rules.Add(
+                new LoggerFilterRule(
+                    "OmniSharp.Extensions.LanguageServer.Server.Logging.LanguageServerLoggerProvider",
+                    "OmniSharp.Extensions.LanguageServer.Server.Configuration.DidChangeConfigurationProvider", LogLevel.Error, null)));
+
+            // No filtering for NLog provider. We can specify rules for those in NLog.config
         }
 
         public static void ConfigureLoggingExplicitFilters(ILoggingBuilder builder, LogLevel globalMinLevel = LogLevel.Warning, LogLevel rhetosMinLevel = LogLevel.Information)
