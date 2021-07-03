@@ -140,6 +140,9 @@ namespace Rhetos.LanguageServices.CodeAnalysis.Services
 
                 var documentRootPaths = GetRootPathsFromDocuments();
 
+                if (documentRootPaths.Count == 0)
+                    return;
+
                 if (rhetosProjectContext.IsInitialized && documentRootPaths.Contains(rhetosProjectContext.ProjectRootPath))
                     return;
 

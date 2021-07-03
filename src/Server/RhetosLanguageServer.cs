@@ -79,7 +79,6 @@ namespace Rhetos.LanguageServices.Server
             }
 
             hostLog.Info($"SERVER END");
-            await Task.Delay(10000);
         }
 
         private async Task RunAndWaitExit(Stream input, Stream output)

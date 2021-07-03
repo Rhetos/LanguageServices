@@ -90,6 +90,8 @@ namespace Rhetos.LanguageServices.Server.Services
                 }
                 catch (Exception e)
                 {
+                    // Give it one last chance to gracefully exit
+                    Task.Delay(1000, cancellationToken).Wait(cancellationToken);
                     nLogLogger.Warn($"Host process error, self-terminating: {e}.");
 
                     LogManager.Flush();

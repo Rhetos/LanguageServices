@@ -104,9 +104,10 @@ namespace Rhetos.LanguageServices.Server.Services
             var publishDiagnosticsChanged = rhetosWorkspace.Value.GetUpdatedDocuments(lastPublishTime)
                 .Select(DiagnosticParamsFromRhetosDocument);
 
+            
             var publishDiagnosticsRemoved = rhetosWorkspace.Value.GetClosedDocuments(lastPublishTime)
                 .Select(documentUri => new PublishDiagnosticsParams() {Uri = documentUri, Diagnostics = new Container<Diagnostic>()});
-
+            
             var allPublishDiagnostics = publishDiagnosticsChanged
                 .Concat(publishDiagnosticsRemoved)
                 .ToList();
