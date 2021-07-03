@@ -74,7 +74,7 @@ namespace Rhetos.LanguageServices.VisualStudioExtension
                 MessageDialog.Show("Rhetos DSL Language Extension ERROR",
                     $"Error encountered while trying to start Rhetos Language Server. See  https://github.com/Rhetos/LanguageServices for more information.\n\nError:\n{e.Message}",
                     MessageDialogCommandSet.Ok);
-                
+
                 Trace.WriteLine($"Error activating Language Server Process. {e}");
                 throw;
             }

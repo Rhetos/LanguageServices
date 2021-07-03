@@ -117,7 +117,7 @@ namespace Rhetos.LanguageServices.Server.Services
 
             foreach (var diagnostics in allPublishDiagnostics)
             {
-                log.LogTrace($"Publish new diagnostics for '{diagnostics.Uri}'.");
+                log.LogTrace($"Publish new diagnostics for '{diagnostics.Uri}'; reporting {diagnostics.Diagnostics.Count()} messages.");
                 var publishTask = Task.Run(() => languageServerFacade.SendNotification(diagnostics));
                 publishTasks.Add(publishTask);
             }
