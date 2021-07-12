@@ -40,13 +40,13 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_44B245AC273217F0C745F31EAE6EFFC6"
+        "OwnerKey" = "8:_C0FAE6BC1A8549779F9E4DBED5274517"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_C0FAE6BC1A8549779F9E4DBED5274517"
+        "OwnerKey" = "8:_44B245AC273217F0C745F31EAE6EFFC6"
         "MsmSig" = "8:_UNDEFINED"
         }
     }
@@ -314,15 +314,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:RhetosLanguageServices"
-        "ProductCode" = "8:{5A49FF08-56F7-4DAC-82C8-1B0661B16347}"
-        "PackageCode" = "8:{796BADF1-66AA-4B3F-92CB-9F0331859C5A}"
+        "ProductCode" = "8:{2EC9E0D6-42D2-4B9E-928D-FF72A2A73103}"
+        "PackageCode" = "8:{834E6D87-1CCC-417B-8C1A-0B817FBF013F}"
         "UpgradeCode" = "8:{F9D3C8DF-7E15-404E-9617-C852A90B2D22}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:TRUE"
-        "ProductVersion" = "8:1.0.0"
+        "ProductVersion" = "8:2.0.2"
         "Manufacturer" = "8:Rhetos"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"
@@ -864,7 +864,7 @@
             }
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_C0FAE6BC1A8549779F9E4DBED5274517"
             {
-            "SourcePath" = "8:..\\InstallerCustomActions\\obj\\Release\\InstallerCustomActions.dll"
+            "SourcePath" = "8:..\\InstallerCustomActions\\obj\\Debug\\InstallerCustomActions.dll"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_A6EB055905864D0F89ABDF9AAB54DBEF"
@@ -892,7 +892,7 @@
             }
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_E308753C87F94FBCAFD3ED0FA890FC23"
             {
-            "SourcePath" = "8:..\\Server\\obj\\Release\\net5.0\\apphost.exe"
+            "SourcePath" = "8:..\\Server\\obj\\Debug\\net5.0\\apphost.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_A6EB055905864D0F89ABDF9AAB54DBEF"

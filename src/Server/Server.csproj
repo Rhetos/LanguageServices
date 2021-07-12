@@ -5,6 +5,8 @@
     <TargetFramework>net5.0</TargetFramework>
     <AssemblyName>Rhetos.LanguageServices.Server</AssemblyName>
     <RootNamespace>Rhetos.LanguageServices.Server</RootNamespace>
+    <AssemblyVersion>2.0.2</AssemblyVersion>
+    <FileVersion>2.0.2</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>
