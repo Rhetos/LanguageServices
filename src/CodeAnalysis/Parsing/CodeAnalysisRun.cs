@@ -107,7 +107,7 @@ namespace Rhetos.LanguageServices.CodeAnalysis.Parsing
 
         private void ParseAndCaptureErrors()
         {
-            var dslParser = new DslParser(tokenizer, rhetosProjectContext.DslSyntax, rhetosLogProvider);
+            var dslParser = new DslParser(tokenizer, new Lazy<DslSyntax>(() => rhetosProjectContext.DslSyntax), rhetosLogProvider);
 
             try
             {
@@ -275,7 +275,7 @@ namespace Rhetos.LanguageServices.CodeAnalysis.Parsing
             var capturedErrors = new List<CodeAnalysisError>();
             try
             {
-                var safeTokenizer = new Tokenizer(textDocument, new FilesUtility(rhetosLogProvider), rhetosProjectContext.DslSyntax);
+                var safeTokenizer = new Tokenizer(textDocument, new FilesUtility(rhetosLogProvider), new Lazy<DslSyntax>(() => rhetosProjectContext.DslSyntax));
                 var tokenizerResult = safeTokenizer.GetTokens();
                 if (tokenizerResult.SyntaxError != null)
                 {

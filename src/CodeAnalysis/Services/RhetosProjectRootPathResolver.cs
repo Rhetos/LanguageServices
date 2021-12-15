@@ -5,8 +5,10 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using Rhetos.LanguageServices.CodeAnalysis.Parsing;
 using Rhetos.LanguageServices.CodeAnalysis.Tools;
+using Rhetos.Logging;
 
 namespace Rhetos.LanguageServices.CodeAnalysis.Services
 {
@@ -14,9 +16,11 @@ namespace Rhetos.LanguageServices.CodeAnalysis.Services
     {
         private static readonly string _configurationFilename = "rhetos-language-services.settings.json";
         private static readonly string _rhetosProjectRootPathConfigurationKey = "RhetosProjectRootPath";
+        private readonly ILogProvider rhetosLogProvider;
 
-        public RhetosProjectRootPathResolver()
+        public RhetosProjectRootPathResolver(ILoggerFactory logFactory)
         {
+            this.rhetosLogProvider = new RhetosNetCoreLogProvider(logFactory);
         }
 
         public RootPathConfiguration ResolveRootPathFromDocumentDirective(RhetosDocument rhetosDocument)
@@ -94,7 +98,7 @@ namespace Rhetos.LanguageServices.CodeAnalysis.Services
             if (configurationFile == null)
                 return (null, null);
 
-            var configurationProvider = new ConfigurationBuilder()
+            var configurationProvider = new ConfigurationBuilder(rhetosLogProvider)
                 .AddJsonFile(configurationFile)
                 .Build();
 
