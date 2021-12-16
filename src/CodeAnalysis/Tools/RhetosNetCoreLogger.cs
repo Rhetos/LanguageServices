@@ -45,8 +45,14 @@ namespace Rhetos.LanguageServices.CodeAnalysis.Tools
                 case EventType.Info:
                     netCoreLogger.LogInformation(logMessage());
                     break;
+                case EventType.Warning:
+                    netCoreLogger.LogWarning(logMessage());
+                    break;
                 case EventType.Error:
                     netCoreLogger.LogError(logMessage());
+                    break;
+                default:
+                    netCoreLogger.LogTrace(logMessage());
                     break;
             }
         }

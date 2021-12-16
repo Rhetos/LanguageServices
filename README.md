@@ -9,9 +9,16 @@ This project is a [Language Server Protocol](https://microsoft.github.io/languag
 Build the project using `build.bat`.
 
 * If build returns error `The imported project "...\Microsoft.VsSDK.targets" was not found`, open *Rhetos.LanguageServices.sln* in Visual Studio, it will automatically offer to install the required component "Visual Studio extension development".
+* If Visual Studio cannot open RhetosLanguageServicesInstaller project, displaying `(incompatible)` in Solution Explorer, in Visual Studio install extension "Microsoft Visual Studio Installer Projects".
+* If build.bat fails with error `RhetosLanguageServicesInstaller.vdproj(1,1): error MSB4025: The project file could not be loaded. Data at the root level is invalid. Line 1, position 1.`, build the solution directly in Visual Studio.
 
-Build will produce `.vsix` file in the `./dist` folder. It is a Visual Studio extension containing both the extension code and LSP server binaries needed to run it.
-Install the `.vsix` as you would install any other Visual Studio extension.
+Build will produce installation file in `src\RhetosLanguageServicesInstaller\Debug\RhetosLanguageServicesInstaller.msi`.
+It contains the Visual Studio extension for DSL IntelliSense and LSP server.
+
+Before running RhetosLanguageServicesInstaller.msi, uninstall any older version of RhetosLanguageServices:
+
+1. In Windows "Apps & features" uninstall "RhetosLanguageServices".
+2. In Visual Studio under Extensions uninstall "Rhetos DSL Language Extension".
 
 ## Features
 
