@@ -50,7 +50,8 @@ namespace Rhetos.LanguageServices.CommonTestTools
             if (initializeContextFromFolder != null)
             {
                 var rhetosProjectContext = serviceProvider.GetRequiredService<RhetosProjectContext>();
-                rhetosProjectContext.Initialize(new DslSyntaxProviderMock(initializeContextFromFolder));
+                var logProvider = serviceProvider.GetRequiredService<ILogProvider>();
+                rhetosProjectContext.Initialize(new DslSyntaxProviderMock(initializeContextFromFolder, logProvider));
             }
 
             return serviceProvider;

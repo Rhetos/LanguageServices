@@ -17,6 +17,7 @@ namespace Rhetos.LanguageServices.CodeAnalysis.Services
         public Dictionary<string, ConceptDocumentation> Documentation => current?.DslDocumentation?.Concepts;
 
         private readonly ILogger<RhetosProjectContext> log;
+        private readonly ILoggerFactory loggerFactory;
         private static readonly object _syncRoot = new();
         private Context current;
 
@@ -40,9 +41,10 @@ namespace Rhetos.LanguageServices.CodeAnalysis.Services
             }
         }
 
-        public RhetosProjectContext(ILogger<RhetosProjectContext> log)
+        public RhetosProjectContext(ILogger<RhetosProjectContext> log, ILoggerFactory loggerFactory)
         {
             this.log = log;
+            this.loggerFactory = loggerFactory;
         }
 
         public void Initialize(IDslSyntaxProvider dslSyntaxProvider)
@@ -72,7 +74,7 @@ namespace Rhetos.LanguageServices.CodeAnalysis.Services
                 if (!IsInitialized)
                     throw new InvalidOperationException($"Trying to update project context which is not initialized.");
 
-                var dslSyntaxProvider = new DslSyntaxProvider(ProjectRootPath);
+                var dslSyntaxProvider = new DslSyntaxProvider(ProjectRootPath, new RhetosNetCoreLogProvider(loggerFactory));
 
                 // project is no longer valid
                 if (!DslSyntaxProvider.IsValidProjectRootPath(ProjectRootPath))

@@ -9,7 +9,7 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Logging" Version="5.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="5.0.0" />
-    <PackageReference Include="Rhetos" Version="5.0.0-dev*" />
+    <PackageReference Include="Rhetos.DslParser" Version="5.0.0-dev*" />
   </ItemGroup>
 
 </Project>

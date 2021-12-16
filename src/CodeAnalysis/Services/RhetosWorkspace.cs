@@ -32,12 +32,14 @@ namespace Rhetos.LanguageServices.CodeAnalysis.Services
         private readonly Dictionary<Uri, RhetosDocument> rhetosDocuments = new Dictionary<Uri, RhetosDocument>();
         private readonly Dictionary<Uri, DateTime> documentChangeTimes = new Dictionary<Uri, DateTime>();
         private readonly ILogger<RhetosWorkspace> log;
+        private readonly ILoggerFactory logFactory;
         private readonly RhetosDocumentFactory rhetosDocumentFactory;
         private readonly RhetosProjectContext rhetosProjectContext;
 
-        public RhetosWorkspace(RhetosDocumentFactory rhetosDocumentFactory, RhetosProjectContext rhetosProjectContext, ILogger<RhetosWorkspace> log)
+        public RhetosWorkspace(RhetosDocumentFactory rhetosDocumentFactory, RhetosProjectContext rhetosProjectContext, ILogger<RhetosWorkspace> log, ILoggerFactory logFactory)
         {
             this.log = log;
+            this.logFactory = logFactory;
             this.rhetosDocumentFactory = rhetosDocumentFactory;
             this.rhetosProjectContext = rhetosProjectContext;
         }
@@ -166,7 +168,7 @@ namespace Rhetos.LanguageServices.CodeAnalysis.Services
                     }
                         
                     log.LogTrace($"Trying to initialize RhetosProjectContext with rootPath='{rootPath}'.");
-                    rhetosProjectContext.Initialize(new DslSyntaxProvider(rootPath));
+                    rhetosProjectContext.Initialize(new DslSyntaxProvider(rootPath, new RhetosNetCoreLogProvider(logFactory)));
 
                     if (rhetosProjectContext.ProjectRootPath == rootPath)
                         break;

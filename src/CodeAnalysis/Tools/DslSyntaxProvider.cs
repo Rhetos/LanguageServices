@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using Microsoft.Extensions.Logging;
 using Rhetos.Dsl;
+using Rhetos.Logging;
 using Rhetos.Utilities;
 
 namespace Rhetos.LanguageServices.CodeAnalysis.Tools
@@ -9,10 +11,12 @@ namespace Rhetos.LanguageServices.CodeAnalysis.Tools
     public class DslSyntaxProvider : IDslSyntaxProvider
     {
         public string ProjectRootPath { get; }
+        private readonly ILogProvider logProvider;
 
-        public DslSyntaxProvider(string projectRootPath)
+        public DslSyntaxProvider(string projectRootPath, ILogProvider logProvider)
         {
             ProjectRootPath = projectRootPath;
+            this.logProvider = logProvider;
         }
 
         public DslSyntax Load()
@@ -21,7 +25,7 @@ namespace Rhetos.LanguageServices.CodeAnalysis.Tools
                 throw new InvalidOperationException($"Can't load {nameof(DslSyntax)} from '{ProjectRootPath}', because it is not a valid project root path.");
 
             var rhetosBuildEnvironment = new RhetosBuildEnvironment() { CacheFolder = BuildCacheFolder(ProjectRootPath) };
-            return new DslSyntaxFile(rhetosBuildEnvironment).Load();
+            return new DslSyntaxFile(rhetosBuildEnvironment, logProvider).Load();
         }
 
         public DslDocumentation LoadDocumentation()

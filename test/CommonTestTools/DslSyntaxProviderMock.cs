@@ -5,24 +5,28 @@ using System.Text;
 using System.Threading.Tasks;
 using Rhetos.Dsl;
 using Rhetos.LanguageServices.CodeAnalysis.Tools;
+using Rhetos.Logging;
 using Rhetos.Utilities;
 
 namespace Rhetos.LanguageServices.CommonTestTools
 {
     public class DslSyntaxProviderMock : IDslSyntaxProvider
     {
+        private readonly ILogProvider logProvider;
+
         public string ProjectRootPath { get; }
         public DateTime LastModifiedTime { get; init; } = DateTime.Now;
         public DslDocumentation DslDocumentation { get; init; }
 
-        public DslSyntaxProviderMock(string explicitFolderWithDslSyntax)
+        public DslSyntaxProviderMock(string explicitFolderWithDslSyntax, ILogProvider logProvider)
         {
             ProjectRootPath = explicitFolderWithDslSyntax;
+            this.logProvider = logProvider;
         }
 
         public DslSyntax Load()
         {
-            return new DslSyntaxFile(new RhetosBuildEnvironment() {CacheFolder = ProjectRootPath}).Load();
+            return new DslSyntaxFile(new RhetosBuildEnvironment() {CacheFolder = ProjectRootPath}, logProvider).Load();
         }
 
         public DslDocumentation LoadDocumentation()

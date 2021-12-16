@@ -6,6 +6,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using Rhetos.LanguageServices.CodeAnalysis.Parsing;
 using Rhetos.LanguageServices.CodeAnalysis.Tools;
 using Rhetos.Logging;
@@ -14,13 +15,8 @@ namespace Rhetos.LanguageServices.CodeAnalysis.Services
 {
     public class RhetosProjectRootPathResolver : IRhetosProjectRootPathResolver
     {
-        private static readonly string _configurationFilename = "rhetos-language-services.settings.json";
-        private static readonly string _rhetosProjectRootPathConfigurationKey = "RhetosProjectRootPath";
-        private readonly ILogProvider rhetosLogProvider;
-
-        public RhetosProjectRootPathResolver(ILoggerFactory logFactory)
+        public RhetosProjectRootPathResolver()
         {
-            this.rhetosLogProvider = new RhetosNetCoreLogProvider(logFactory);
         }
 
         public RootPathConfiguration ResolveRootPathFromDocumentDirective(RhetosDocument rhetosDocument)
@@ -92,21 +88,22 @@ namespace Rhetos.LanguageServices.CodeAnalysis.Services
         private (string rootPath, string configurationPath) GetRootPathFromConfigurationInParentFolders(string startingFolder)
         {
             var configurationFile = EnumerateParentFolders(startingFolder)
-                .Select(folder => Path.Combine(folder, _configurationFilename))
+                .Select(folder => Path.Combine(folder, AppLanguageServicesOptions.ConfigurationFilename))
                 .FirstOrDefault(filename => File.Exists(filename));
 
             if (configurationFile == null)
                 return (null, null);
 
-            var configurationProvider = new ConfigurationBuilder(rhetosLogProvider)
-                .AddJsonFile(configurationFile)
-                .Build();
+            var appOptions = JsonConvert.DeserializeObject<AppLanguageServicesOptions>(File.ReadAllText(configurationFile));
 
-            var rhetosProjectRootPath = configurationProvider.GetValue<string>(_rhetosProjectRootPathConfigurationKey);
-            if (string.IsNullOrEmpty(rhetosProjectRootPath))
-                throw new InvalidOperationException($"Configuration file '{configurationFile}' does not contain valid configuration key {_rhetosProjectRootPathConfigurationKey}.");
+            if (string.IsNullOrEmpty(appOptions.RhetosProjectRootPath))
+                throw new InvalidOperationException($"Configuration file '{configurationFile}' does not contain valid configuration key {nameof(appOptions.RhetosProjectRootPath)}.");
 
-            return (Path.GetFullPath(rhetosProjectRootPath), Path.GetFullPath(configurationFile));
+            string absoluteRootPath = Path.GetFullPath(Path.Combine(
+                Path.GetDirectoryName(configurationFile),
+                appOptions.RhetosProjectRootPath));
+
+            return (absoluteRootPath, Path.GetFullPath(configurationFile));
         }
 
         private IEnumerable<string> EnumerateParentFolders(string startingFolder)
