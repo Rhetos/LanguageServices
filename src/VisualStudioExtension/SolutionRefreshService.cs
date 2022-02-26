@@ -80,28 +80,18 @@ namespace Rhetos.LanguageServices.VisualStudioExtension
                     || !beforeBuildSources.ContainsKey(source.Key)
                     || beforeBuildSources[source.Key] != source.Value)
                 {
-#pragma warning disable VSTHRD010 // Invoke single-threaded types on Main thread
-                    var project = projects.Single(a => a.FullName == source.Key);
-#pragma warning restore VSTHRD010 // Invoke single-threaded types on Main thread
-
-                    await WriteToOutputWindowAsync(_outputName, $"'{source.Key}' has changed, refreshing project.");
-
-                    // Other project types (e.g. VSProject) do not support Refresh() method, so we will ignore them.
-                    // Hopefully newer project types do not have the issue which we are trying to solve here.
-                    if (project.Object is VSProject2 vsProject2)
-                    {
-                        vsProject2.Refresh();
-                    }
-                    else
-                    {
-                        // await WriteToOutputWindowAsync(_outputName, $"Unsupported project object type: {project.Object.GetType().FullName}.");
-                    }
+                    // HACK: Force the "design-time build", by updating timestamp on project.assets.json.
+                    // This is intended to prevent the Visual Studio C# IntelliSense errors, caused by the IntelliSense not detecting the newly generated C# files.
+                    string path = Path.Combine(Path.GetDirectoryName(source.Key), "obj", "project.assets.json");
+                    if (SafeTouch(path))
+                        await WriteToOutputWindowAsync(_outputName, $"'{source.Key}' has changed, refreshing project.");
                 }
             }
 
             if (oldActiveWindow != dte.ActiveWindow.Caption)
                 dte.Windows.Item(oldActiveWindow).Activate();
         }
+
         private async Task<Dictionary<string, DateTime?>> EnumerateProjectSourcesAsync(Project[] projects)
         {
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
@@ -123,6 +113,7 @@ namespace Rhetos.LanguageServices.VisualStudioExtension
 
             return result;
         }
+
         public static async Task<Project[]> GetProjectsAsync(Solution solution)
         {
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
@@ -192,6 +183,21 @@ namespace Rhetos.LanguageServices.VisualStudioExtension
             if (pane == null) return;
 
             pane.OutputString($"{nameof(SolutionRefreshService)}: {message}{Environment.NewLine}");
+        }
+
+        public static bool SafeTouch(string path)
+        {
+            var file = new FileInfo(path);
+            if (file.Exists)
+            {
+                var isReadOnly = file.IsReadOnly;
+                file.IsReadOnly = false;
+                file.LastWriteTime = DateTime.Now;
+                file.IsReadOnly = isReadOnly;
+                return true;
+            }
+            else
+                return false;
         }
     }
 }
