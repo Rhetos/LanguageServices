@@ -1,6 +1,7 @@
 {
   "$id": "1",
-  "Version": "5.0.0-dev2106181954d85ad4",
+  "Version": "5.0",
+  "RhetosVersion": "5.0.0-dev220309103387d0b6",
   "ExcessDotInKey": 0,
   "DatabaseLanguage": "MsSql",
   "ConceptTypes": [
