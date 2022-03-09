@@ -48,7 +48,7 @@ namespace Rhetos.LanguageServices.CodeAnalysis.Test
             if (analysisResult.AllErrors.Any())
             {
                 Console.WriteLine($"Errors during parsing:");
-                Console.WriteLine(string.Join("\n", analysisResult.AllErrors.Select(a => "\t" + a.Message)));
+                Console.WriteLine(string.Join("\n", analysisResult.AllErrors.Select(a => $"\t{a.Code} {a.Message}")));
                 //throw new InvalidOperationException($"Result encountered {analysisResult.AllErrors.Count()} errors. Expected 0.");
             }
 
@@ -203,6 +203,7 @@ Reference a.b.x p ";
             Assert.AreEqual(1, analysisResult.TokenizerErrors.Count);
             Console.WriteLine(JsonConvert.SerializeObject(analysisResult.TokenizerErrors[0], Formatting.Indented));
             StringAssert.Contains(analysisResult.TokenizerErrors[0].Message, "Missing closing character");
+            Assert.AreEqual("RH0008", analysisResult.TokenizerErrors[0].Code);
         }
 
         [TestMethod]

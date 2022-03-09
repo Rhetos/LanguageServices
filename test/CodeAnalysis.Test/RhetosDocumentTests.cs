@@ -61,7 +61,7 @@ Module module1
                 return analysisResult;
 
             Console.WriteLine("Analysis failed with errors:");
-            Console.WriteLine(string.Join("\n", analysisResult.AllErrors.Select(a => "\t" + a.Message)));
+            Console.WriteLine(string.Join("\n", analysisResult.AllErrors.Select(a => $"\t{a.Code} {a.Message}")));
             Assert.Fail($"Analysis failed with {analysisResult.AllErrors.Count()} errors.");
             return null;
         }
@@ -593,6 +593,7 @@ Module module1
 
             Assert.AreEqual(2, analysis.AllErrors.Count());
             StringAssert.Contains(analysis.AllErrors.First().Message, "Cannot find the extension file referenced in DSL script.");
+            Assert.AreEqual("RH0012", analysis.AllErrors.First().Code);
         }
     }
 }

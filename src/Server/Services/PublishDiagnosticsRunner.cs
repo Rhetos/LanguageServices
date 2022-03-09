@@ -158,13 +158,13 @@ namespace Rhetos.LanguageServices.Server.Services
                 end = error.LineChr.ToPosition();
             }
 
-            return new Diagnostic()
+            return new Diagnostic
             {
                 Severity = error.Severity == CodeAnalysisError.ErrorSeverity.Error ? DiagnosticSeverity.Error : DiagnosticSeverity.Warning,
+                Code = new DiagnosticCode(error.Code),
                 Message = error.Message,
                 Range = new Range(start, end),
             };
         }
-
     }
 }

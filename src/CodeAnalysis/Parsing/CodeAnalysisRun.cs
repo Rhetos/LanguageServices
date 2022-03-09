@@ -190,7 +190,7 @@ namespace Rhetos.LanguageServices.CodeAnalysis.Parsing
         private CodeAnalysisError CreateAnalysisError(DslSyntaxException e)
         {
             var lineChr = new LineChr(e.FilePosition.BeginLine - 1, e.FilePosition.BeginColumn - 1);
-            return new CodeAnalysisError() {LineChr = lineChr, Message = e.Message};
+            return new CodeAnalysisError() {LineChr = lineChr, Code = e.ErrorCode, Message = e.Message};
         }
 
         private void OnUpdateContext(ITokenReader iTokenReader, Stack<ConceptSyntaxNode> context, bool isOpening)
@@ -280,7 +280,7 @@ namespace Rhetos.LanguageServices.CodeAnalysis.Parsing
                 if (tokenizerResult.SyntaxError != null)
                 {
                     var lineChr = new LineChr(tokenizerResult.SyntaxError.FilePosition.BeginLine - 1, tokenizerResult.SyntaxError.FilePosition.BeginColumn - 1);
-                    capturedErrors.Add(new CodeAnalysisError() { LineChr = lineChr, Message = tokenizerResult.SyntaxError.Message });
+                    capturedErrors.Add(new CodeAnalysisError() { LineChr = lineChr, Code = tokenizerResult.SyntaxError.ErrorCode, Message = tokenizerResult.SyntaxError.Message });
                 }
                 return (new TokenizerExplicitTokens(tokenizerResult.Tokens), capturedErrors);
             }

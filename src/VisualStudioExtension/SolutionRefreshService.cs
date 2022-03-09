@@ -81,7 +81,7 @@ namespace Rhetos.LanguageServices.VisualStudioExtension
                     || beforeBuildSources[source.Key] != source.Value)
                 {
                     // HACK: Force the "design-time build", by updating timestamp on project.assets.json.
-                    // This is intended to prevent the Visual Studio C# IntelliSense errors, caused by the IntelliSense not detecting the newly generated C# files.
+                    // DTB is needed to prevent the Visual Studio C# IntelliSense errors, because IntelliSense will not automatically detect the newly generated C# files.
                     string path = Path.Combine(Path.GetDirectoryName(source.Key), "obj", "project.assets.json");
                     if (SafeTouch(path))
                         await WriteToOutputWindowAsync(_outputName, $"'{source.Key}' has changed, refreshing project.");

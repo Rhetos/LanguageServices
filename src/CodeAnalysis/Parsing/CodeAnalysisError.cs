@@ -28,12 +28,13 @@ namespace Rhetos.LanguageServices.CodeAnalysis.Parsing
         }
 
         public LineChr LineChr { get; set; } = LineChr.Zero;
+        public string Code { get; set; }
         public string Message { get; set; }
         public ErrorSeverity Severity { get; set; } = ErrorSeverity.Error;
 
         public override string ToString()
         {
-            return $"{LineChr} {Message}";
+            return $"{LineChr} {Code} {Message}";
         }
     }
 }
