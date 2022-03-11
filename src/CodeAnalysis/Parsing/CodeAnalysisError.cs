@@ -27,14 +27,15 @@ namespace Rhetos.LanguageServices.CodeAnalysis.Parsing
             Warning
         }
 
-        public LineChr LineChr { get; set; } = LineChr.Zero;
+        public LineChr BeginLineChr { get; set; } = LineChr.Zero;
+        public LineChr EndLineChr { get; set; } = LineChr.Zero;
         public string Code { get; set; }
         public string Message { get; set; }
         public ErrorSeverity Severity { get; set; } = ErrorSeverity.Error;
 
         public override string ToString()
         {
-            return $"{LineChr} {Code} {Message}";
+            return $"{BeginLineChr} {Code} {Message}";
         }
     }
 }

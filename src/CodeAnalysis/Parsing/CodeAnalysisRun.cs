@@ -122,7 +122,7 @@ namespace Rhetos.LanguageServices.CodeAnalysis.Parsing
             }
             catch (Exception e)
             {
-                result.DslParserErrors.Add(new CodeAnalysisError() { LineChr = LineChr.Zero, Message = e.ToString() });
+                result.DslParserErrors.Add(new CodeAnalysisError { Message = e.ToString() });
             }
             finally
             {
@@ -189,8 +189,9 @@ namespace Rhetos.LanguageServices.CodeAnalysis.Parsing
 
         private CodeAnalysisError CreateAnalysisError(DslSyntaxException e)
         {
-            var lineChr = new LineChr(e.FilePosition.BeginLine - 1, e.FilePosition.BeginColumn - 1);
-            return new CodeAnalysisError() {LineChr = lineChr, Code = e.ErrorCode, Message = e.Message};
+            var beginLineChr = new LineChr(e.FilePosition.BeginLine - 1, e.FilePosition.BeginColumn - 1);
+            var endLineChr = new LineChr(e.FilePosition.EndLine - 1, e.FilePosition.EndColumn - 1);
+            return new CodeAnalysisError() {BeginLineChr = beginLineChr, EndLineChr = endLineChr, Code = e.ErrorCode, Message = e.Message};
         }
 
         private void OnUpdateContext(ITokenReader iTokenReader, Stack<ConceptSyntaxNode> context, bool isOpening)
@@ -279,8 +280,9 @@ namespace Rhetos.LanguageServices.CodeAnalysis.Parsing
                 var tokenizerResult = safeTokenizer.GetTokens();
                 if (tokenizerResult.SyntaxError != null)
                 {
-                    var lineChr = new LineChr(tokenizerResult.SyntaxError.FilePosition.BeginLine - 1, tokenizerResult.SyntaxError.FilePosition.BeginColumn - 1);
-                    capturedErrors.Add(new CodeAnalysisError() { LineChr = lineChr, Code = tokenizerResult.SyntaxError.ErrorCode, Message = tokenizerResult.SyntaxError.Message });
+                    var beginLineChr = new LineChr(tokenizerResult.SyntaxError.FilePosition.BeginLine - 1, tokenizerResult.SyntaxError.FilePosition.BeginColumn - 1);
+                    var endLineChr = new LineChr(tokenizerResult.SyntaxError.FilePosition.EndLine - 1, tokenizerResult.SyntaxError.FilePosition.EndColumn - 1);
+                    capturedErrors.Add(new CodeAnalysisError() { BeginLineChr = beginLineChr, EndLineChr = endLineChr, Code = tokenizerResult.SyntaxError.ErrorCode, Message = tokenizerResult.SyntaxError.Message });
                 }
                 return (new TokenizerExplicitTokens(tokenizerResult.Tokens), capturedErrors);
             }

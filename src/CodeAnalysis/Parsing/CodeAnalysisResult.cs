@@ -84,12 +84,12 @@ namespace Rhetos.LanguageServices.CodeAnalysis.Parsing
         public bool IsAfterAnyErrorPosition(LineChr lineChr)
         {
             var pos = TextDocument.GetPosition(lineChr);
-            return AllErrors.Any(error => pos > TextDocument.GetPosition(error.LineChr));
+            return AllErrors.Any(error => pos > TextDocument.GetPosition(error.BeginLineChr));
         }
 
         public bool IsAfterAnyErrorLine(LineChr lineChr)
         {
-            return AllErrors.Where(a => a.Severity == CodeAnalysisError.ErrorSeverity.Error).Any(error => lineChr.Line > error.LineChr.Line);
+            return AllErrors.Where(a => a.Severity == CodeAnalysisError.ErrorSeverity.Error).Any(error => lineChr.Line > error.BeginLineChr.Line);
         }
 
         public Token GetTokenBeingTypedAtCursor(LineChr lineChr)

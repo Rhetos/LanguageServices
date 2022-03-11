@@ -144,24 +144,16 @@ namespace Rhetos.LanguageServices.Server.Services
 
         private Diagnostic DiagnosticFromAnalysisError(CodeAnalysisResult analysisResult, CodeAnalysisError error)
         {
-            var start = error.LineChr.ToPosition();
-            Position end;
-            var tokenAtPosition = analysisResult.GetTokenAtPosition(error.LineChr);
+            var start = error.BeginLineChr.ToPosition();
+            var end = error.EndLineChr.ToPosition();
 
-            if (tokenAtPosition != null)
-            {
-                var lineChr = analysisResult.TextDocument.GetLineChr(tokenAtPosition.PositionEndInDslScript);
-                end = lineChr.ToPosition();
-            }
-            else
-            {
-                end = error.LineChr.ToPosition();
-            }
+            if (end < start) // If the end position is not set.
+                end = start;
 
             return new Diagnostic
             {
                 Severity = error.Severity == CodeAnalysisError.ErrorSeverity.Error ? DiagnosticSeverity.Error : DiagnosticSeverity.Warning,
-                Code = new DiagnosticCode(error.Code),
+                Code = error.Code != null ? new DiagnosticCode?(error.Code) : null,
                 Message = error.Message,
                 Range = new Range(start, end),
             };
