@@ -1,24 +1,21 @@
 # Rhetos Language Services
 
-## Introduction
-
 This project is a [Language Server Protocol](https://microsoft.github.io/language-server-protocol/) implementation for Rhetos DSL. It includes a language server and a corresponding Visual Studio extension.
 
-## Building the project
+Contents:
 
-Build the project using `build.bat`.
-
-* If build returns error `The imported project "...\Microsoft.VsSDK.targets" was not found`, open *Rhetos.LanguageServices.sln* in Visual Studio, it will automatically offer to install the required component "Visual Studio extension development".
-* If Visual Studio cannot open RhetosLanguageServicesInstaller project, displaying `(incompatible)` in Solution Explorer, in Visual Studio install extension "Microsoft Visual Studio Installer Projects".
-* If build.bat fails with error `RhetosLanguageServicesInstaller.vdproj(1,1): error MSB4025: The project file could not be loaded. Data at the root level is invalid. Line 1, position 1.`, build the solution directly in Visual Studio.
-
-Build will produce installation file in `src\RhetosLanguageServicesInstaller\Debug\RhetosLanguageServicesInstaller.msi`.
-It contains the Visual Studio extension for DSL IntelliSense and LSP server.
-
-Before running RhetosLanguageServicesInstaller.msi, uninstall any older version of RhetosLanguageServices:
-
-1. In Windows "Apps & features" uninstall "RhetosLanguageServices".
-2. In Visual Studio under Extensions uninstall "Rhetos DSL Language Extension".
+1. [Features](#features)
+2. [Installation](#installation)
+3. [Usage](#usage)
+4. [Limitations](#limitations)
+   1. [Changing Rhetos application after initialization](#changing-rhetos-application-after-initialization)
+   2. [Syntax highlight keywords](#syntax-highlight-keywords)
+   3. [Documents analyzed](#documents-analyzed)
+5. [How to contribute](#how-to-contribute)
+   1. [Building and testing the source code](#building-and-testing-the-source-code)
+6. [Troubleshooting](#troubleshooting)
+   1. [Rhetos application not detected after opening `.rhe` file](#rhetos-application-not-detected-after-opening-rhe-file)
+   2. [Advanced troubleshooting](#advanced-troubleshooting)
 
 ## Features
 
@@ -29,15 +26,22 @@ Before running RhetosLanguageServicesInstaller.msi, uninstall any older version 
 5. Signature help for concept parameters
 6. Keyword and signature info on hover
 7. XML-style documentation from IConceptInfo implementation classes
-8. Automatic refresh of Rhetos projects when Rhetos generated source files change (this refresh is needed to fix C# IntelliSense)
+8. Automatic refresh of Rhetos projects when Rhetos generated source files change (this refresh is needed to update C# IntelliSense)
+
+## Installation
+
+Install by downloading and running *RhetosLanguageServicesInstaller.msi* from https://github.com/Rhetos/LanguageServices/releases.
+
+Before installing a new version, **uninstall the old version first:**
+
+1. In Visual Studio under Extensions uninstall "Rhetos DSL Language Extension".
+2. In Windows "Apps & features" uninstall "RhetosLanguageServices".
 
 ## Usage
 
-Install from Visual Studio Marketplace: [Rhetos DSL Language Extension](https://marketplace.visualstudio.com/items?itemName=rhetos.rhetos-languageservices).
-
 Rhetos Language Services will activate whenever `.rhe` file is opened within Visual Studio. An attempt to detect a corresponding Rhetos application is made and if successful, the system will provide IntelliSense and other features to the editor.
 
-**If your `.rhe` document resides in the directory tree inside your Rhetos application, it will automatically be detected by rule (3), so no additional configuration is needed.**
+If your `.rhe` document resides in the directory tree inside your Rhetos application, it will automatically be detected by rule (3), so no additional configuration is needed.
 
 For a `.rhe` document, the following rules are applied in order to find the location of corresponding Rhetos application:
 
@@ -61,7 +65,7 @@ Use rules (1) and (2) as means to override this default behavior.
 
 Initializing language services server with specific Rhetos application causes `.dll` files of that application to be loaded (for DSL concept discovery). As a consequence, once initialized with a specific Rhetos application, services will only work for that application for the duration of the process runtime.
 
-**To change the Rhetos application used in code analysis, restart Visual Studio.**
+To change the Rhetos application used in code analysis, restart Visual Studio.
 
 ### Syntax highlight keywords
 
@@ -70,6 +74,27 @@ Syntax highlighting has a fixed set of keywords being recognized, independent of
 ### Documents analyzed
 
 Language services will analyze and report errors only on **currently opened documents** in the IDE.
+
+## How to contribute
+
+Contributions are very welcome. The easiest way is to fork this repo, and then
+make a pull request from your fork. The first time you make a pull request, you
+may be asked to sign a Contributor Agreement.
+
+For more info see [How to Contribute](https://github.com/Rhetos/Rhetos/wiki/How-to-Contribute) on Rhetos wiki.
+
+### Building and testing the source code
+
+Open Rhetos.LanguageServices.sln in Visual Studio 2019, build the solution and run the unit tests. **Prerequisites**:
+
+* If missing, Visual Studio will automatically offer to install the required component "Visual Studio extension development".
+* If Visual Studio cannot open RhetosLanguageServicesInstaller project, displaying "(incompatible)" in Solution Explorer, in Visual Studio install extension "Microsoft Visual Studio Installer Projects".
+
+Build will produce installation file `RhetosLanguageServicesInstaller.msi` in `src\RhetosLanguageServicesInstaller\Debug`.
+It contains the Visual Studio extension for DSL IntelliSense and LSP server.
+See the [Installation instructions](#installation) above.
+
+Automating the build with `Build.bat` has known issues, and is currently not available.
 
 ## Troubleshooting
 
