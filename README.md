@@ -15,7 +15,7 @@ Contents:
    1. [Building and testing the source code](#building-and-testing-the-source-code)
 6. [Troubleshooting](#troubleshooting)
    1. [Rhetos application not detected after opening `.rhe` file](#rhetos-application-not-detected-after-opening-rhe-file)
-   2. [Advanced troubleshooting](#advanced-troubleshooting)
+   2. [Diagnostics and advanced troubleshooting](#diagnostics-and-advanced-troubleshooting)
 
 ## Features
 
@@ -102,8 +102,18 @@ Automating the build with `Build.bat` has known issues, and is currently not ava
 
 Make sure you have built Rhetos application at least once.
 
-### Advanced troubleshooting
+### Diagnostics and advanced troubleshooting
 
-If the Rhetos Language Services server starts correctly (after opening any `.rhe` file) it will log some basic information in the Visual Studio output window under `Rhetos DSL Language Extension` source. This log will display the location from where server is running as well as log filename with detailed logging (if configured).
+If the Rhetos Language Services server starts correctly (after opening any `.rhe` file) it will log some basic information in the Visual Studio "Output" window under "Rhetos DSL Language Extension" source.
+
+The Output window will display the **location from where Rhetos Language Services server is running** as well as additional **log file path** with detailed logging (if configured).
 
 Use the log file for advanced troubleshooting in case of problems/errors.
+Configure logging to write additional information to the log file,
+by editing `NLog.config` file at Rhetos Language Services server location (see the location above).
+Add the following lines under `<rules>` element, before the existing rules:
+
+```xml
+<logger name="Rhetos.*" minlevel="Trace" writeTo="logfile" final="true" />
+<logger name="*" minlevel="Debug" writeTo="logfile" final="true" />
+```
