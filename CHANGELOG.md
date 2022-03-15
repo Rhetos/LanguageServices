@@ -1,10 +1,30 @@
-# Rhetos Language Service changelog
+# Rhetos Language Service release notes
 
-## v0.9.7-preview
+## 2.0.0 (TO BE RELEASED)
+
+* Updated for compatibility with Rhetos 5.0.0.
+* New MSI installer that contains two Rhetos DSL IntelliSense components:
+  * Visual Studio extension
+  * Rhetos Language Services server
+* Improved error handling, initialization and logging.
+* Refreshing C# IntelliSense for newly generated files to work with latest update of VS2019 (updating timestamp on project.assets.json).
+* Fixed rhetos project initialization attempts when no documents are opened.
+* Added mechanism to self-terminate if host process exits without requesting shutdown.
+* Workaround for OmniSharp deserialization of Initialize JsonRpc request and VS2019 Hover handling.
+
+## 1.0.0 (2020-05-14)
+
+* Updated for compatibility with Rhetos release 4.0.0.
+
+## 0.9.8-preview
+
+* Updated VS marketplace publisher
+
+## 0.9.7-preview
 
 * Refreshing projects in solution after build will no longer impact VS UI
 
-## v0.9.6-preview
+## 0.9.6-preview
 
 * Changed XML documentation display format
 * Minor wording changes in LSP warning
@@ -12,7 +32,7 @@
 * [BUGFIX] Hover while Visual Studio is loading will no longer generate LSP exception message
 * Upgraded to latest Rhetos 4.0 build
 
-## v0.9.5-preview
+## 0.9.5-preview
 
 * Language Server will now use Rhetos project DLLs instead of built application DLLs
 * Added asynchronous checking for Rhetos project configuration changes and appropriate warnings
@@ -21,7 +41,7 @@
 * Configuration keys for overriding Rhetos project location have been changed to `rhetosProjectRootPath` (from `rhetosAppRootPath`)
 * [BUGFIX] XML documentation will now correctly be displayed for concepts in plugins
 
-## v0.9.3-preview
+## 0.9.3-preview
 
 * Improved signature help/active parameter for several non-common scenarios
 * Keyword info implementation class is now displayed with full name (including namespace)
