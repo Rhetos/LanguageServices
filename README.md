@@ -1,6 +1,7 @@
 # Rhetos Language Services
 
 This project is a [Language Server Protocol](https://microsoft.github.io/language-server-protocol/) implementation for Rhetos DSL. It includes a language server and a corresponding Visual Studio extension.
+It supports applications with Rhetos v4 and higher.
 
 Contents:
 
@@ -30,12 +31,16 @@ Contents:
 
 ## Installation
 
-Install by downloading and running *RhetosLanguageServicesInstaller.msi* from https://github.com/Rhetos/LanguageServices/releases.
-
 Before installing a new version, **uninstall the old version first:**
 
 1. In Visual Studio under Extensions uninstall "Rhetos DSL Language Extension".
 2. In Windows "Apps & features" uninstall "RhetosLanguageServices".
+
+Setup:
+
+1. Install by downloading and running latest version of *RhetosLanguageServicesInstaller.msi* from <https://github.com/Rhetos/LanguageServices/releases>.
+2. Applications with **Rhetos v4** additionally need to install [Rhetos LanguageServicesCompatibility](https://github.com/Rhetos/LanguageServicesCompatibility) NuGet package.
+  **Rhetos v5** apps, and newer, support Rhetos Language Services by default; they do not need the LanguageServicesCompatibility plugin.
 
 ## Usage
 
