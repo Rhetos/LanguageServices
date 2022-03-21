@@ -32,7 +32,6 @@ namespace Rhetos.LanguageServices.CodeAnalysis.Parsing
         public TextDocument TextDocument { get; private set; }
         public Uri DocumentUri { get; }
         public RootPathConfiguration RootPathConfiguration { get; private set; }
-        public CodeAnalysisError RhetosAppContextInitializeError { get; set; }
 
         private readonly RhetosProjectContext rhetosProjectContext;
         // we don't want to run analysis during document text change and also rely on Rhetos parsing infrastructure to be thread-safe
@@ -137,10 +136,9 @@ namespace Rhetos.LanguageServices.CodeAnalysis.Parsing
         {
             var analysisResult = new CodeAnalysisResult(TextDocument, 0, 0);
 
-            var isInitialized = rhetosProjectContext.IsInitialized;
             // if we have a failed initialization attempt, add it to error list
-            if (RhetosAppContextInitializeError != null)
-                analysisResult.DslParserErrors.Add(RhetosAppContextInitializeError);
+            if (rhetosProjectContext.InitializationError != null)
+                analysisResult.DslParserErrors.Add(rhetosProjectContext.InitializationError);
 
             // document doesn't have a valid root path configured
             if (string.IsNullOrEmpty(RootPathConfiguration?.RootPath))
@@ -156,12 +154,12 @@ namespace Rhetos.LanguageServices.CodeAnalysis.Parsing
                 analysisResult.DslParserErrors.Add(new CodeAnalysisError() { Message = message, Severity = CodeAnalysisError.ErrorSeverity.Warning });
             }
             // there is a valid rootPath, but initialize has not been run yet, should be transient error until the next RhetosProjectMonitor cycle
-            else if (!isInitialized && RhetosAppContextInitializeError == null)
+            else if (!rhetosProjectContext.IsInitialized && rhetosProjectContext.InitializationError == null)
             {
                 analysisResult.DslParserErrors.Add(new CodeAnalysisError() { Message = "Waiting for Rhetos Project initialization.", Severity = CodeAnalysisError.ErrorSeverity.Warning });
             }
             // document's root path is different than path used to initialize RhetosAppContext
-            else if (isInitialized && !string.Equals(rhetosProjectContext.ProjectRootPath, RootPathConfiguration?.RootPath, StringComparison.InvariantCultureIgnoreCase))
+            else if (rhetosProjectContext.IsInitialized && !string.Equals(rhetosProjectContext.ProjectRootPath, RootPathConfiguration?.RootPath, StringComparison.InvariantCultureIgnoreCase))
             {
                 var message = $"Language Services have been initialized with Rhetos app at '{rhetosProjectContext.ProjectRootPath}'. "
                               + $"This document is configured to use different Rhetos app at '{RootPathConfiguration.RootPath}'. No code analysis will be performed. "

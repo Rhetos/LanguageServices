@@ -1,16 +1,24 @@
-﻿using System;
+﻿using Microsoft.Extensions.Logging;
+using Rhetos.Dsl;
+using Rhetos.LanguageServices.CodeAnalysis.Parsing;
+using Rhetos.LanguageServices.CodeAnalysis.Tools;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.Extensions.Logging;
-using Rhetos.Dsl;
-using Rhetos.LanguageServices.CodeAnalysis.Tools;
 
 namespace Rhetos.LanguageServices.CodeAnalysis.Services
 {
     public class RhetosProjectContext
     {
         public string ProjectRootPath => current?.DslSyntaxProvider.ProjectRootPath;
+        /// <summary>
+        /// Even if <see cref="IsInitialized"/> is <see langword="true"/>, also check <see cref="InitializationError"/> before using the context.
+        /// The <see cref="current"/> context may be marked as "initialized" even if it has an InitializationError, in order to avoid
+        /// retrying the failed initialization every second (see MonitorLoop) if the environment has not changed
+        /// (Context.DslSyntaxLastModifiedTime or Context.DslSyntaxProvider.ProjectRootPath).
+        /// </summary>
         public bool IsInitialized => current != null;
+        public CodeAnalysisError InitializationError => current?.InitializationError;
         public DateTime LastContextUpdateTime => current?.CreatedTime ?? DateTime.MinValue;
         public DslSyntax DslSyntax => current?.DslSyntax;
         public Dictionary<string, ConceptType[]> Keywords => current?.Keywords;
@@ -29,15 +37,41 @@ namespace Rhetos.LanguageServices.CodeAnalysis.Services
             public DateTime DslSyntaxLastModifiedTime { get; }
             public Dictionary<string, ConceptType[]> Keywords { get; }
             public DateTime CreatedTime { get; }
+            public CodeAnalysisError InitializationError { get; }
 
             public Context(IDslSyntaxProvider dslSyntaxProvider)
             {
                 DslSyntaxProvider = dslSyntaxProvider;
-                DslSyntax = DslSyntaxProvider.Load();
-                DslDocumentation = DslSyntaxProvider.LoadDocumentation();
-                DslSyntaxLastModifiedTime = DslSyntaxProvider.GetLastModifiedTime();
-                Keywords = ExtractKeywords(DslSyntax);
                 CreatedTime = DateTime.Now;
+                DslSyntaxLastModifiedTime = dslSyntaxProvider.GetLastModifiedTime();
+
+                var dslSyntax = LoadDslSyntax(dslSyntaxProvider);
+                if (dslSyntax.Error == null)
+                {
+                    DslSyntax = dslSyntax.Value;
+                    DslDocumentation = dslSyntaxProvider.LoadDocumentation();
+                    Keywords = ExtractKeywords(dslSyntax.Value);
+                }
+                else
+                {
+                    InitializationError = new CodeAnalysisError { Message = dslSyntax.Error };
+                }
+            }
+
+            private static (DslSyntax Value, string Error) LoadDslSyntax(IDslSyntaxProvider dslSyntaxProvider)
+            {
+                var dslSyntax = dslSyntaxProvider.Load();
+
+                string error = null;
+                if (dslSyntax.Version == null)
+                    error = $"Cannot detect the application's DSL syntax version (Rhetos {dslSyntax.RhetosVersion})." +
+                        $" Currently installed Rhetos Language Services supports DSL version {DslSyntax.CurrentVersion}.";
+                else if (dslSyntax.Version > DslSyntax.CurrentVersion)
+                    error = $"Please install the latest version of Rhetos Language Services." +
+                        $" The project uses a newer version of the DSL syntax: DSL version {dslSyntax.Version}, Rhetos {dslSyntax.RhetosVersion}." +
+                        $" Currently installed Rhetos Language Services supports DSL version {DslSyntax.CurrentVersion}.";
+
+                return (dslSyntax, error);
             }
         }
 
