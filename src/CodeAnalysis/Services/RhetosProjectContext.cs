@@ -45,16 +45,18 @@ namespace Rhetos.LanguageServices.CodeAnalysis.Services
                 CreatedTime = DateTime.Now;
                 DslSyntaxLastModifiedTime = dslSyntaxProvider.GetLastModifiedTime();
 
-                var dslSyntax = LoadDslSyntax(dslSyntaxProvider);
-                if (dslSyntax.Error == null)
+                var (dslSyntax, dslSyntaxError) = LoadDslSyntax(dslSyntaxProvider);
+                if (dslSyntaxError == null)
                 {
-                    DslSyntax = dslSyntax.Value;
+                    DslSyntax = dslSyntax;
                     DslDocumentation = dslSyntaxProvider.LoadDocumentation();
-                    Keywords = ExtractKeywords(dslSyntax.Value);
+                    Keywords = ExtractKeywords(dslSyntax);
                 }
                 else
                 {
-                    InitializationError = new CodeAnalysisError { Message = dslSyntax.Error };
+                    InitializationError = new CodeAnalysisError { Message = dslSyntaxError };
+                    DslDocumentation = new DslDocumentation { Concepts = new Dictionary<string, ConceptDocumentation>() };
+                    Keywords = new Dictionary<string, ConceptType[]>();
                 }
             }
 

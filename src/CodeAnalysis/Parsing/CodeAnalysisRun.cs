@@ -47,11 +47,6 @@ namespace Rhetos.LanguageServices.CodeAnalysis.Parsing
             this.rhetosLogProvider = new RhetosNetCoreLogProvider(logFactory);
         }
 
-        public CodeAnalysisResult RunForDocument()
-        {
-            return RunForPosition(null);
-        }
-
         public CodeAnalysisResult RunForPosition(LineChr? lineChr)
         {
             InitializeResult(lineChr);
