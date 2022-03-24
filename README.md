@@ -14,6 +14,7 @@ Contents:
    3. [Documents analyzed](#documents-analyzed)
 5. [How to contribute](#how-to-contribute)
    1. [Building and testing the source code](#building-and-testing-the-source-code)
+   2. [Releasing a new version](#releasing-a-new-version)
 6. [Troubleshooting](#troubleshooting)
    1. [Rhetos application not detected after opening `.rhe` file](#rhetos-application-not-detected-after-opening-rhe-file)
    2. [Diagnostics and advanced troubleshooting](#diagnostics-and-advanced-troubleshooting)
@@ -100,6 +101,23 @@ It contains the Visual Studio extension for DSL IntelliSense and LSP server.
 See the [Installation instructions](#installation) above.
 
 Automating the build with `Build.bat` has known issues, and is currently not available.
+
+### Releasing a new version
+
+For example, for version `2.0.3`.
+
+1. If building a prerelease for internal testing, run: `powershell .\tools\ChangeVersion.ps1 2.0.3 auto`
+   * If building a public release run: `powershell .\tools\ChangeVersion.ps1 2.0.3`,
+     and update ChangeLog.md file.
+2. `clean.bat`
+3. Open Rhetos.LanguageServices.sln in Visual Studio 2019 and rebuild it.
+4. `powershell .\tools\ChangeVersion.ps1 2.0.3 dev`
+5. The installation package is created in `src\RhetosLanguageServicesInstaller\Debug\RhetosLanguageServicesInstaller.msi`
+6. If building a public release:
+   * Add git tag to the current commit and push tags to GitGub.
+   * Create a new release on [GitHub](https://github.com/Rhetos/LanguageServices/releases)
+     for the tag, and upload the MSI file under Assets.
+   * Prepare development for the next version with `powershell .\tools\ChangeVersion.ps1 2.1.3` dev
 
 ## Troubleshooting
 
