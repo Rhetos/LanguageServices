@@ -110,7 +110,9 @@ For example, for version `2.0.3`.
    * If building a public release run: `powershell .\tools\ChangeVersion.ps1 2.0.3`,
      and update ChangeLog.md file.
 2. `clean.bat`
-3. Open Rhetos.LanguageServices.sln in Visual Studio 2019 and rebuild it.
+3. Open Rhetos.LanguageServices.sln in Visual Studio 2019
+   1. Rebuild the solution.
+   2. Run unit tests.
 4. `powershell .\tools\ChangeVersion.ps1 2.0.3 dev`
 5. The installation package is created in `src\RhetosLanguageServicesInstaller\Debug\RhetosLanguageServicesInstaller.msi`
 6. If building a public release:
