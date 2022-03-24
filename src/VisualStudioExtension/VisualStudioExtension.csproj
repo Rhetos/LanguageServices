@@ -105,7 +105,8 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(VSToolsPath)\VSSDK\Microsoft.VsSDK.targets" Condition="'$(VSToolsPath)' != ''" />
   <PropertyGroup>
-    <PostBuildEvent>copy "$(TargetDir)Rhetos.LanguageServices.VisualStudioExtension.vsix" "$(SolutionDir)dist\"</PostBuildEvent>
+    <PostBuildEvent>if not exist "$(SolutionDir)dist\" md "$(SolutionDir)dist\"
+copy "$(TargetDir)Rhetos.LanguageServices.VisualStudioExtension.vsix" "$(SolutionDir)dist\"</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
