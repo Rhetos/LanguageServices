@@ -1,0 +1,12 @@
+﻿<Project>
+  <PropertyGroup>
+    <Company>Omega software</Company>
+    <Copyright>Copyright (C) Omega software 2017</Copyright>
+    <AssemblyVersion>2.0.3</AssemblyVersion>
+    <FileVersion>2.0.3</FileVersion>
+    <InformationalVersion>2.0.3-dev</InformationalVersion>
+    <NoWarn>1701,1702,1591,1573</NoWarn>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+	<AnalysisMode>AllEnabledByDefault</AnalysisMode>
+  </PropertyGroup>
+</Project>
