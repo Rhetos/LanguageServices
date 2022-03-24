@@ -229,7 +229,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_F3212E5AB64B46E2A021B9F134B00599"
             {
-            "SourcePath" = "8:..\\..\\dist\\Rhetos.LanguageServices.VisualStudioExtension.vsix"
+            "SourcePath" = "8:..\\VisualStudioExtension\\bin\\Debug\\Rhetos.LanguageServices.VisualStudioExtension.vsix"
             "TargetName" = "8:Rhetos.LanguageServices.VisualStudioExtension.vsix"
             "Tag" = "8:"
             "Folder" = "8:_51D451D095B045B784F19DA8F719B068"
