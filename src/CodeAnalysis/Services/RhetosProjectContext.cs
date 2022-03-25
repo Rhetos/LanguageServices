@@ -90,7 +90,7 @@ namespace Rhetos.LanguageServices.CodeAnalysis.Services
                 else if (dslSyntax.Version > DslSyntax.CurrentVersion)
                     error = $"Please install the latest version of Rhetos Language Services." +
                         $" The project uses a newer version of the DSL syntax: DSL version {dslSyntax.Version}, Rhetos {dslSyntax.RhetosVersion}." +
-                        $" Currently installed Rhetos Language Services supports DSL version {DslSyntax.CurrentVersion}.";
+                        $" Currently installed Rhetos Language Services supports DSL version {DslSyntax.CurrentVersion} or lower.";
 
                 return (dslSyntax, error);
             }

@@ -21,8 +21,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -43,6 +41,7 @@ namespace Rhetos.LanguageServices.LspIntegration.Test
     [DeploymentItem("RhetosAppFolder\\FolderWithApp2\\MockObj\\Rhetos\\", "RhetosAppFolder\\FolderWithApp2\\obj\\Rhetos")]
     [DeploymentItem("DslSyntax.json", "RhetosAppFolder\\FolderWithApp2\\obj\\Rhetos\\")]
     [DeploymentItem("RhetosAppFolder\\FolderWithApp\\doc.rhe", "RhetosAppFolder\\FolderWithApp\\1\\2\\3\\")]
+    [DeploymentItem("RhetosAppFolder\\FolderWithAppUnsupported\\MockObj\\Rhetos\\", "RhetosAppFolder\\FolderWithAppUnsupported\\obj\\Rhetos")]
     public class ProjectContextTests : IntegrationTestBase
     {
         private ILanguageServer server;
@@ -222,6 +221,7 @@ namespace Rhetos.LanguageServices.LspIntegration.Test
         public void UnsupportedDslSyntaxVersion()
         {
             var textDocumentItem = DocumentFromText("Entity e;", "RhetosAppFolder\\FolderWithAppUnsupported\\doc.rhe");
+            
             client.TextDocument.DidOpenTextDocument(new DidOpenTextDocumentParams()
             {
                 TextDocument = textDocumentItem
@@ -229,18 +229,20 @@ namespace Rhetos.LanguageServices.LspIntegration.Test
 
             Task.Delay(1500).Wait();
             DumpLogs(ServerLogs, "Server Logs");
-            Assert.AreEqual(1, CountContainsAll(ServerLogs, "Warning", "The application uses a newer version of the DSL syntax", "6.0", "5.0"));
+            // Checking for the warning from Rhetos framework's DslSyntaxFile class:
+            Assert.AreEqual(1, CountContainsAll(ServerLogs, "Warning", "The project uses a newer version of the DSL syntax", "1111.0", "5.0"));
 
             // Wait again to test that the failed context initialization is not executed repeatedly, since the root path and DSL syntax modification time are unchanged.
             Task.Delay(1500).Wait();
-            Assert.AreEqual(1, CountContainsAll(ServerLogs, "Warning", "The application uses a newer version of the DSL syntax", "6.0", "5.0"));
+            Assert.AreEqual(1, CountContainsAll(ServerLogs, "Warning", "The project uses a newer version of the DSL syntax", "1111.0", "5.0"));
 
             var projectContext = server.GetRequiredService<RhetosProjectContext>();
             Assert.IsTrue(projectContext.IsInitialized);
             Assert.IsTrue(projectContext.InitializationError.Message.Contains("Please install the latest version of Rhetos Language Services"));
 
+            string expectedDiagnostics = "Please install the latest version of Rhetos Language Services. The project uses a newer version of the DSL syntax: DSL version 1111.0, Rhetos 1111.0.0-dev220309103387d0b6. Currently installed Rhetos Language Services supports DSL version 5.0 or lower.";
             Console.WriteLine("Diagnostics:" + string.Concat(Diagnostics.Select((d, x) => $"{Environment.NewLine}{x + 1}: {d}")));
-            Assert.IsTrue(Diagnostics.Single().StartsWith("Please install the latest version of Rhetos Language Services. The project uses a newer version of the DSL syntax: DSL version 6.0, Rhetos . Currently installed Rhetos Language Services supports DSL version 5.0."));
+            Assert.AreEqual(expectedDiagnostics, Diagnostics.Single().Substring(0, Math.Min(expectedDiagnostics.Length, Diagnostics.Single().Length)));
 
             var completionResult = client.TextDocument.RequestCompletion(new CompletionParams()
             {
@@ -250,7 +252,5 @@ namespace Rhetos.LanguageServices.LspIntegration.Test
 
             Assert.AreEqual(0, completionResult.Items.Count());
         }
-
-        private static Regex version = new Regex(@"\d+(\.\d+)*");
     }
 }

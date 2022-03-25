@@ -10,6 +10,9 @@
     <None Update="DslDocumentation.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="RhetosAppFolder\FolderWithAppUnsupported\MockObj\Rhetos\DslSyntax.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="RhetosAppFolder\FolderWithAppUnsupported\obj\Rhetos\DslSyntax.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
