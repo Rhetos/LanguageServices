@@ -119,7 +119,7 @@ For example, for version `2.0.3`.
    * Add git tag to the current commit and push tags to GitGub.
    * Create a new release on [GitHub](https://github.com/Rhetos/LanguageServices/releases)
      for the tag, and upload the MSI file under Assets.
-   * Prepare development for the next version with `powershell .\tools\ChangeVersion.ps1 2.1.3` dev
+   * Prepare development for the next minor version with `powershell .\tools\ChangeVersion.ps1 2.1.0 dev`
 
 ## Troubleshooting
 
