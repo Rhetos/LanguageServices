@@ -17,11 +17,11 @@ function RegexReplace ($fileSearch, $replacePattern, $replaceWith)
     Get-ChildItem -File -Path $folders -Filter $fileSearch `
         | Select-Object -ExpandProperty FullName `
         | ForEach-Object {
-            $text = [IO.File]::ReadAllText($_, [System.Text.Encoding]::UTF8)
+            $text = [IO.File]::ReadAllText($_)
             $replaced = $text -Replace $replacePattern, $replaceWith
             if ($replaced -ne $text) {
                 Write-Output $_
-                [IO.File]::WriteAllText($_, $replaced, [System.Text.Encoding]::UTF8)
+                [IO.File]::WriteAllText($_, $replaced)
             }
         }
 }
@@ -39,17 +39,6 @@ Else
     $prereleaseSuffix = ''
 }
 $fullVersion = $version.ToString() + $prereleaseSuffix
-Write-Output "Setting version '$fullVersion'."
-
-function RegexReplace ($fileSearch, $replacePattern, $replaceWith)
-{
-    Get-ChildItem $fileSearch -r `
-        | ForEach-Object {
-        $c = [IO.File]::ReadAllText($_.FullName, [System.Text.Encoding]::Default) -Replace $replacePattern, $replaceWith;
-        [IO.File]::WriteAllText($_.FullName, $c, [System.Text.Encoding]::UTF8)
-    }
-}
-
 Write-Output "Setting version '$fullVersion'."
 
 RegexReplace '*AssemblyInfo.cs' '([\n^]\[assembly: Assembly(File)?Version(Attribute)?\(\").*(\"\)\])' ('${1}' + $version + '${4}')
