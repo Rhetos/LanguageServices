@@ -67,16 +67,10 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.VisualStudio.SDK" Version="17.2.32505.173" ExcludeAssets="runtime">
+    <PackageReference Include="Microsoft.VisualStudio.SDK" Version="17.0.32112.339" ExcludeAssets="runtime">
       <IncludeAssets>compile; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.VisualStudio.Threading">
-      <Version>17.2.32</Version>
-    </PackageReference>
-    <PackageReference Include="Microsoft.VisualStudio.Validation">
-      <Version>17.0.53</Version>
-    </PackageReference>
-    <PackageReference Include="Microsoft.VSSDK.BuildTools" Version="17.1.4057">
+    <PackageReference Include="Microsoft.VSSDK.BuildTools" Version="17.0.5238">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
