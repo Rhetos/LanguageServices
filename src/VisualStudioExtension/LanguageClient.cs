@@ -41,6 +41,7 @@ namespace Rhetos.LanguageServices.VisualStudioExtension
         // allow redirection of LSP server to another path for integration, debugging and testing purposes
         private static readonly string _languageSeverPathConfigurationFilename = "rhetos.lsp-server.local.json";
         private static readonly string _registryKeyPath = "SOFTWARE\\Rhetos\\RhetosLanguageServices";
+        private static readonly string _registryKeyPath32 = "SOFTWARE\\WOW6432Node\\Rhetos\\RhetosLanguageServices"; // The 32bit program data on 64bit systems available in 'Wow6432Node' folder.
 
         public class RhetosLspServerOptions
         {
@@ -119,9 +120,9 @@ namespace Rhetos.LanguageServices.VisualStudioExtension
             if (!string.IsNullOrEmpty(languageServerPath))
                 return languageServerPath;
 
-            var subKey = Registry.LocalMachine.OpenSubKey(_registryKeyPath);
-            languageServerPath = subKey?.GetValue("Location") as string;
-            subKey?.Close();
+            languageServerPath = TryReadPathFromRegistry(_registryKeyPath)
+                ?? TryReadPathFromRegistry(_registryKeyPath32);
+
             if (!string.IsNullOrEmpty(languageServerPath))
                 languageServerPath = Path.Combine(languageServerPath, "Rhetos.LanguageServices.Server.exe");
             return languageServerPath;
@@ -136,6 +137,16 @@ namespace Rhetos.LanguageServices.VisualStudioExtension
             Trace.WriteLine($"Loaded server path from path configuration file: '{options.ServerPath}'.");
             return options;
         }
+
+        private static string TryReadPathFromRegistry(string key)
+        {
+            string languageServerPath;
+            var subKey = Registry.LocalMachine.OpenSubKey(key);
+            languageServerPath = subKey?.GetValue("Location") as string;
+            subKey?.Close();
+            return languageServerPath;
+        }
+
 
         public async Task OnLoadedAsync()
         {
