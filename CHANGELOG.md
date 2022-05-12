@@ -1,5 +1,14 @@
 # Rhetos Language Service release notes
 
+## 2.1.0 (TO BE RELEASED)
+
+* Rhetos DSL IntelliSense support for **Visual Studio 2022**,
+  along with the existing Visual Studio 2019.
+* Updated dependencies for VS2019 to fix some build issues.
+  The extension for Visual Studio 2019 requires **v16.10 or newer**.
+
+## 2.0.3 (2022-03-25)
+
 ## 2.0.3 (2022-03-25)
 
 * Updated for compatibility with Rhetos 5.0.0.
