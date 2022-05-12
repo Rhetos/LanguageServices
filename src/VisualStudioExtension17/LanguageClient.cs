@@ -46,7 +46,7 @@ namespace Rhetos.LanguageServices.VisualStudioExtension
         {
             public string ServerPath { get; set; }
         }
-        
+
         public string Name => "Rhetos DSL Language Extension";
 
         public IEnumerable<string> ConfigurationSections => null;
@@ -54,6 +54,8 @@ namespace Rhetos.LanguageServices.VisualStudioExtension
         public object InitializationOptions => null;
 
         public IEnumerable<string> FilesToWatch => null;
+
+        public bool ShowNotificationOnInitializeFailed => false;
 
         public event AsyncEventHandler<EventArgs> StartAsync;
 #pragma warning disable CS0067 // The event 'LanguageClient.StopAsync' is never used
@@ -99,7 +101,7 @@ namespace Rhetos.LanguageServices.VisualStudioExtension
                     CreateNoWindow = true
                 };
 
-                var process = new Process {StartInfo = info};
+                var process = new Process { StartInfo = info };
 
                 if (!process.Start())
                     throw new InvalidOperationException($"Failed to start RhetosLanguageServer process.");
@@ -131,7 +133,7 @@ namespace Rhetos.LanguageServices.VisualStudioExtension
         {
             if (!File.Exists(_languageSeverPathConfigurationFilename))
                 return null;
-            
+
             var options = JsonConvert.DeserializeObject<RhetosLspServerOptions>(File.ReadAllText(_languageSeverPathConfigurationFilename));
             Trace.WriteLine($"Loaded server path from path configuration file: '{options.ServerPath}'.");
             return options;
@@ -147,9 +149,12 @@ namespace Rhetos.LanguageServices.VisualStudioExtension
             return Task.CompletedTask;
         }
 
-        public Task OnServerInitializeFailedAsync(Exception e)
+        public Task<InitializationFailureContext> OnServerInitializeFailedAsync(ILanguageClientInitializationInfo initializationState)
         {
-            return Task.CompletedTask;
+            return Task.FromResult(new InitializationFailureContext
+            {
+                FailureMessage = initializationState.InitializationException?.Message
+            });
         }
     }
 }
