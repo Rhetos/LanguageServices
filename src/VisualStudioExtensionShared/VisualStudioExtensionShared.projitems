@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects Condition="'$(MSBuildVersion)' == '' Or '$(MSBuildVersion)' &lt; '16.0'">$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>844417fc-fb12-4bc7-896a-95f15f986d90</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>VisualStudioExtensionShared</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)LanguageClient.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)RheContentDefinition.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)SolutionRefreshPackage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)SolutionRefreshService.cs" />
+  </ItemGroup>
+</Project>

@@ -33,7 +33,14 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InstallerCustomActions", "s
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VisualStudioExtension17", "src\VisualStudioExtension17\VisualStudioExtension17.csproj", "{7DA66995-41CA-4EEC-A7CF-AA115D70AF1D}"
 EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "VisualStudioExtensionShared", "src\VisualStudioExtensionShared\VisualStudioExtensionShared.shproj", "{844417FC-FB12-4BC7-896A-95F15F986D90}"
+EndProject
 Global
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		src\VisualStudioExtensionShared\VisualStudioExtensionShared.projitems*{242ca1cb-f61b-4c14-b422-acf8d6b49db9}*SharedItemsImports = 4
+		src\VisualStudioExtensionShared\VisualStudioExtensionShared.projitems*{7da66995-41ca-4eec-a7cf-aa115d70af1d}*SharedItemsImports = 4
+		src\VisualStudioExtensionShared\VisualStudioExtensionShared.projitems*{844417fc-fb12-4bc7-896a-95f15f986d90}*SharedItemsImports = 13
+	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Debug|x86 = Debug|x86
@@ -154,6 +161,7 @@ Global
 		{C29EB76D-3AB5-40B8-92CC-9D1FF9EECAA0} = {04214D1D-9F16-4A55-BD55-B29A03470272}
 		{D4A36AD1-EF0A-43A5-B882-DF872D04DE64} = {04214D1D-9F16-4A55-BD55-B29A03470272}
 		{7DA66995-41CA-4EEC-A7CF-AA115D70AF1D} = {4A38AB36-9EB2-433E-ADD2-4EE75CE96673}
+		{844417FC-FB12-4BC7-896A-95F15F986D90} = {4A38AB36-9EB2-433E-ADD2-4EE75CE96673}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {CBA9BC49-E4BD-4C94-BA69-AA6916D7AB1A}

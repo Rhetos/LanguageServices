@@ -47,7 +47,7 @@ namespace Rhetos.LanguageServices.VisualStudioExtension
         {
             public string ServerPath { get; set; }
         }
-
+        
         public string Name => "Rhetos DSL Language Extension";
 
         public IEnumerable<string> ConfigurationSections => null;
@@ -56,7 +56,9 @@ namespace Rhetos.LanguageServices.VisualStudioExtension
 
         public IEnumerable<string> FilesToWatch => null;
 
+#if !VisualStudioSdk16
         public bool ShowNotificationOnInitializeFailed => true;
+#endif
 
         public event AsyncEventHandler<EventArgs> StartAsync;
 #pragma warning disable CS0067 // The event 'LanguageClient.StopAsync' is never used
@@ -102,7 +104,7 @@ namespace Rhetos.LanguageServices.VisualStudioExtension
                     CreateNoWindow = true
                 };
 
-                var process = new Process { StartInfo = info };
+                var process = new Process {StartInfo = info};
 
                 if (!process.Start())
                     throw new InvalidOperationException($"Failed to start RhetosLanguageServer process.");
@@ -134,7 +136,7 @@ namespace Rhetos.LanguageServices.VisualStudioExtension
         {
             if (!File.Exists(_languageSeverPathConfigurationFilename))
                 return null;
-
+            
             var options = JsonConvert.DeserializeObject<RhetosLspServerOptions>(File.ReadAllText(_languageSeverPathConfigurationFilename));
             Trace.WriteLine($"Loaded server path from path configuration file: '{options.ServerPath}'.");
             return options;
@@ -160,6 +162,14 @@ namespace Rhetos.LanguageServices.VisualStudioExtension
             return Task.CompletedTask;
         }
 
+#if VisualStudioSdk16
+        // ILanguageClient implementation for Visual Studio v16.
+        public Task OnServerInitializeFailedAsync(Exception e)
+        {
+            return Task.CompletedTask;
+        }
+#else
+        // ILanguageClient implementation for Visual Studio v17.
         public Task<InitializationFailureContext> OnServerInitializeFailedAsync(ILanguageClientInitializationInfo initializationState)
         {
             return Task.FromResult(new InitializationFailureContext
@@ -167,5 +177,6 @@ namespace Rhetos.LanguageServices.VisualStudioExtension
                 FailureMessage = initializationState.InitializationException?.Message
             });
         }
+#endif
     }
 }
