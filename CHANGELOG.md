@@ -9,8 +9,6 @@
 
 ## 2.0.3 (2022-03-25)
 
-## 2.0.3 (2022-03-25)
-
 * Updated for compatibility with Rhetos 5.0.0.
 * New MSI installer that contains two Rhetos DSL IntelliSense components:
   * Visual Studio extension

@@ -32,9 +32,12 @@ Contents:
 
 ## Installation
 
+Rhetos DSL IntelliSense is available for Visual Studio 2019 and 2022.
+
 Before installing a new version, **uninstall the old version first:**
 
 1. In Visual Studio under Extensions uninstall "Rhetos DSL Language Extension".
+   Uninstall the extension from both VS 2019 and VS 2022, if installed.
 2. In Windows "Apps & features" uninstall "RhetosLanguageServices".
 
 Setup:
