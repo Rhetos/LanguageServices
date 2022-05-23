@@ -348,7 +348,7 @@
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:TRUE"
-        "ProductVersion" = "8:2.1.0"
+        "ProductVersion" = "8:2.2.0"
         "Manufacturer" = "8:Rhetos"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"
