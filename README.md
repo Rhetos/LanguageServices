@@ -94,7 +94,7 @@ For more info see [How to Contribute](https://github.com/Rhetos/Rhetos/wiki/How-
 
 ### Building and testing the source code
 
-Open Rhetos.LanguageServices.sln in Visual Studio 2019, build the solution and run the unit tests. **Prerequisites**:
+Open Rhetos.LanguageServices.sln in Visual Studio 2022, build the solution and run the unit tests. **Prerequisites**:
 
 * If missing, Visual Studio will automatically offer to install the required component "Visual Studio extension development".
 * If Visual Studio cannot open RhetosLanguageServicesInstaller project, displaying "(incompatible)" in Solution Explorer, in Visual Studio install extension "Microsoft Visual Studio Installer Projects".
@@ -113,13 +113,13 @@ For example, for version `2.0.3`.
    * If building a public release run: `powershell .\tools\ChangeVersion.ps1 2.0.3`,
      and update ChangeLog.md file.
 2. `clean.bat`
-3. Open Rhetos.LanguageServices.sln in Visual Studio 2019
+3. Open Rhetos.LanguageServices.sln in Visual Studio 2022
    1. Rebuild the solution.
    2. Run unit tests.
 4. `powershell .\tools\ChangeVersion.ps1 2.0.3 dev`
 5. The installation package is created in `src\RhetosLanguageServicesInstaller\Debug\RhetosLanguageServicesInstaller.msi`
 6. If building a public release:
-   * Add git tag to the current commit and push tags to GitGub.
+   * Add git tag to the current commit and push tags to GitHub.
    * Create a new release on [GitHub](https://github.com/Rhetos/LanguageServices/releases)
      for the tag, and upload the MSI file under Assets.
    * Prepare development for the next minor version with `powershell .\tools\ChangeVersion.ps1 2.1.0 dev`
