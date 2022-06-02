@@ -42,7 +42,7 @@ Before installing a new version, **uninstall the old version first:**
 
 Setup:
 
-1. Install by downloading and running latest version of *RhetosLanguageServicesInstaller.msi* from <https://github.com/Rhetos/LanguageServices/releases>.
+1. Install by downloading and running latest version of **RhetosLanguageServicesInstaller.msi** from <https://github.com/Rhetos/LanguageServices/releases>.
 2. Applications with **Rhetos v4** additionally need to install [Rhetos.LanguageServicesCompatibility](https://github.com/Rhetos/LanguageServicesCompatibility) NuGet package.
   **Rhetos v5** apps, and newer, support Rhetos Language Services by default; they do not need the LanguageServicesCompatibility plugin.
 
