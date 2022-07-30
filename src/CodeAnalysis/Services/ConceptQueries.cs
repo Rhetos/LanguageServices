@@ -108,7 +108,7 @@ namespace Rhetos.LanguageServices.CodeAnalysis.Services
 
             var documentation = $"{conceptDocumentation.Summary}";
             if (!string.IsNullOrEmpty(conceptDocumentation.Remarks))
-                documentation += $"\n\nRemarks:\n{conceptDocumentation.Remarks}\n";
+                documentation += $"\nRemarks:\n{conceptDocumentation.Remarks}";
 
             if (!string.IsNullOrEmpty(documentation) && !string.IsNullOrEmpty(linePrefix))
                 documentation = linePrefix + documentation.Replace("\n", $"\n{linePrefix}");
