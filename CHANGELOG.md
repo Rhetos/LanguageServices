@@ -1,5 +1,11 @@
 # Rhetos Language Service release notes
 
+## 2.2.0 (2023-03-16)
+
+* *Block comments* supported in syntax highlighting. They will pass syntax verification only on Rhetos v5.4+.
+* Updated keywords list for syntax highlighting. Added new keywords from CommonConcepts. Removed keywords from custom extensions.
+* IntelliSense: Removed surplus newlines on Remarks in concept hints.
+
 ## 2.1.0 (2022-05-23)
 
 * Rhetos DSL IntelliSense now supports **Visual Studio 2022**,
