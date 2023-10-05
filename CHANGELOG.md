@@ -1,5 +1,9 @@
 # Rhetos Language Service release notes
 
+## 2.3.0 (2023-10-05)
+
+* No longer committing autocomplete selection on 'space' and 'dot' key. The autocomplete made it difficult to write user messages and inline code in .rhe scripts.
+
 ## 2.2.0 (2023-03-16)
 
 * *Block comments* supported in syntax highlighting. They will pass syntax verification only on Rhetos v5.4+.

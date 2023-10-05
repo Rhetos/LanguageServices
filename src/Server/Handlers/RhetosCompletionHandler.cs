@@ -46,7 +46,7 @@ namespace Rhetos.LanguageServices.Server.Handlers
             DocumentSelector = TextDocumentHandler.RhetosDocumentSelector,
             ResolveProvider = true,
             TriggerCharacters = new Container<string>("."),
-            AllCommitCharacters = new Container<string>(" ", ".")
+            AllCommitCharacters = new Container<string>()
         };
 
         public RhetosCompletionHandler(ILogger<RhetosCompletionHandler> log, ILanguageServerFacade serverFacade)
