@@ -123,6 +123,7 @@ For example, for version `2.0.3`.
    * Create a new release on [GitHub](https://github.com/Rhetos/LanguageServices/releases)
      for the tag, and upload the MSI file under Assets.
    * Prepare development for the next minor version with `powershell .\tools\ChangeVersion.ps1 2.1.0 dev`
+     and commit with message "Development 2.1.0.".
 
 ## Troubleshooting
 
