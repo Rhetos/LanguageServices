@@ -575,7 +575,8 @@ Module module1
 
             Assert.AreEqual(15, textToken.PositionInDslScript);
             Assert.AreEqual(28, textToken.PositionEndInDslScript);
-            Assert.AreEqual("line 1\n\nline 3\nlast line", textToken.Value.ToLinuxEndings());
+            //Assert.AreEqual("line 1\n\nline 3\nlast line", textToken.Value.ToLinuxEndings());
+            Assert.AreEqual("<include.txt>", textToken.Value); // External text files are currently not loaded by the DSL IntelliSense.
         }
 
         [TestMethod]
@@ -591,9 +592,11 @@ Module module1
             foreach (var error in analysis.AllErrors)
                 Console.WriteLine(error);
 
-            Assert.AreEqual(2, analysis.AllErrors.Count());
-            StringAssert.Contains(analysis.AllErrors.First().Message, "Cannot find the extension file referenced in DSL script.");
-            Assert.AreEqual("RH0012", analysis.AllErrors.First().Code);
+            Assert.AreEqual(0, analysis.AllErrors.Count()); // External text files are currently not loaded by the DSL IntelliSense.
+
+            //Assert.AreEqual(2, analysis.AllErrors.Count());
+            //StringAssert.Contains(analysis.AllErrors.First().Message, "Cannot find the extension file referenced in DSL script.");
+            //Assert.AreEqual("RH0012", analysis.AllErrors.First().Code);
         }
     }
 }

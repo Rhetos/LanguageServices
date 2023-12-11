@@ -230,17 +230,17 @@ namespace Rhetos.LanguageServices.LspIntegration.Test
             Task.Delay(1500).Wait();
             DumpLogs(ServerLogs, "Server Logs");
             // Checking for the warning from Rhetos framework's DslSyntaxFile class:
-            Assert.AreEqual(1, CountContainsAll(ServerLogs, "Warning", "The project uses a newer version of the DSL syntax", "1111.0", "5.0"));
+            Assert.AreEqual(1, CountContainsAll(ServerLogs, "Warning", "The project uses a newer version of the DSL syntax", "1111.0", "supports DSL version 6.0 or lower"));
 
             // Wait again to test that the failed context initialization is not executed repeatedly, since the root path and DSL syntax modification time are unchanged.
             Task.Delay(1500).Wait();
-            Assert.AreEqual(1, CountContainsAll(ServerLogs, "Warning", "The project uses a newer version of the DSL syntax", "1111.0", "5.0"));
+            Assert.AreEqual(1, CountContainsAll(ServerLogs, "Warning", "The project uses a newer version of the DSL syntax", "1111.0", "supports DSL version 6.0 or lower"));
 
             var projectContext = server.GetRequiredService<RhetosProjectContext>();
             Assert.IsTrue(projectContext.IsInitialized);
             Assert.IsTrue(projectContext.InitializationError.Message.Contains("Please install the latest version of Rhetos Language Services"));
 
-            string expectedDiagnostics = "Please install the latest version of Rhetos Language Services. The project uses a newer version of the DSL syntax: DSL version 1111.0, Rhetos 1111.0.0-dev220309103387d0b6. Currently installed Rhetos Language Services supports DSL version 5.0 or lower.";
+            string expectedDiagnostics = "Please install the latest version of Rhetos Language Services. The project uses a newer version of the DSL syntax: DSL version 1111.0, Rhetos 1111.0.0-dev220309103387d0b6. Currently installed Rhetos Language Services supports DSL version 6.0 or lower.";
             Console.WriteLine("Diagnostics:" + string.Concat(Diagnostics.Select((d, x) => $"{Environment.NewLine}{x + 1}: {d}")));
             Assert.AreEqual(expectedDiagnostics, Diagnostics.Single().Substring(0, Math.Min(expectedDiagnostics.Length, Diagnostics.Single().Length)));
 

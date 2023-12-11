@@ -237,7 +237,7 @@ namespace Rhetos.LanguageServices.CodeAnalysis.Parsing
         {
             var script = textDocument.DslScripts.Single();
             var commentTokens = new List<Token>();
-            var tokenizerInternals = new TokenizerInternals(rhetosProjectContext.DslSyntax);
+            var tokenizerInternals = new TokenizerInternals(rhetosProjectContext.DslSyntax, new SimpleExternalResourceReader());
             try
             {
                 var scriptPosition = 0;
@@ -248,7 +248,7 @@ namespace Rhetos.LanguageServices.CodeAnalysis.Parsing
                         break;
 
                     var startPosition = scriptPosition;
-                    var token = tokenizerInternals.GetNextToken_ValueType(script, ref scriptPosition, _ => "");
+                    var token = tokenizerInternals.GetNextToken_ValueType(script, ref scriptPosition);
                     token.DslScript = script;
                     token.PositionInDslScript = startPosition;
 
@@ -271,7 +271,7 @@ namespace Rhetos.LanguageServices.CodeAnalysis.Parsing
             var capturedErrors = new List<CodeAnalysisError>();
             try
             {
-                var safeTokenizer = new Tokenizer(textDocument, new FilesUtility(rhetosLogProvider), new Lazy<DslSyntax>(() => rhetosProjectContext.DslSyntax));
+                var safeTokenizer = new Tokenizer(textDocument, new SimpleExternalResourceReader(), new Lazy<DslSyntax>(() => rhetosProjectContext.DslSyntax));
                 var tokenizerResult = safeTokenizer.GetTokens();
                 if (tokenizerResult.SyntaxError != null)
                 {
