@@ -86,9 +86,9 @@ namespace Rhetos.LanguageServices.CodeAnalysis.Services
                 string error = null;
                 if (dslSyntax.Version == null)
                     error = $"Cannot detect the application's DSL syntax version (Rhetos {dslSyntax.RhetosVersion})." +
-                        $" Currently installed Rhetos Language Services supports DSL version {DslSyntax.CurrentVersion}.";
+                        $" Currently installed Rhetos Language Services supports DSL version {DslSyntax.CurrentVersion} or lower.";
                 else if (dslSyntax.Version > DslSyntax.CurrentVersion)
-                    error = $"Please install the latest version of Rhetos Language Services." +
+                    error = $"Please install the latest version of Rhetos Language Services (IntelliSense)." +
                         $" The project uses a newer version of the DSL syntax: DSL version {dslSyntax.Version}, Rhetos {dslSyntax.RhetosVersion}." +
                         $" Currently installed Rhetos Language Services supports DSL version {DslSyntax.CurrentVersion} or lower.";
 

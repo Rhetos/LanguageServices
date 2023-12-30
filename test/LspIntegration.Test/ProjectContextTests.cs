@@ -240,7 +240,7 @@ namespace Rhetos.LanguageServices.LspIntegration.Test
             Assert.IsTrue(projectContext.IsInitialized);
             Assert.IsTrue(projectContext.InitializationError.Message.Contains("Please install the latest version of Rhetos Language Services"));
 
-            string expectedDiagnostics = "Please install the latest version of Rhetos Language Services. The project uses a newer version of the DSL syntax: DSL version 1111.0, Rhetos 1111.0.0-dev220309103387d0b6. Currently installed Rhetos Language Services supports DSL version 6.0 or lower.";
+            string expectedDiagnostics = "Please install the latest version of Rhetos Language Services (IntelliSense). The project uses a newer version of the DSL syntax: DSL version 1111.0, Rhetos 1111.0.0-dev220309103387d0b6. Currently installed Rhetos Language Services supports DSL version 6.0 or lower.";
             Console.WriteLine("Diagnostics:" + string.Concat(Diagnostics.Select((d, x) => $"{Environment.NewLine}{x + 1}: {d}")));
             Assert.AreEqual(expectedDiagnostics, Diagnostics.Single().Substring(0, Math.Min(expectedDiagnostics.Length, Diagnostics.Single().Length)));
 
