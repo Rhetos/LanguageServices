@@ -38,9 +38,9 @@ namespace Rhetos.LanguageServices.Server.Handlers
 {
     public class TextDocumentHandler : TextDocumentSyncHandlerBase
     {
-        public static DocumentSelector RhetosDocumentSelector = DocumentSelector.ForLanguage("rhetos-dsl");
+        public static readonly TextDocumentSelector RhetosDocumentSelector = TextDocumentSelector.ForLanguage("rhetos-dsl");
 
-        protected override TextDocumentSyncRegistrationOptions CreateRegistrationOptions(SynchronizationCapability capability, ClientCapabilities clientCapabilities)
+        protected override TextDocumentSyncRegistrationOptions CreateRegistrationOptions(TextSynchronizationCapability capability, ClientCapabilities clientCapabilities)
         {
             return new TextDocumentSyncRegistrationOptions()
             {
