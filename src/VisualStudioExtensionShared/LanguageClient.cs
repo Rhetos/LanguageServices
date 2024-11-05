@@ -30,7 +30,9 @@ using Microsoft.VisualStudio.Utilities;
 using Microsoft.Win32;
 using Newtonsoft.Json;
 using Process = System.Diagnostics.Process;
+using Task = System.Threading.Tasks.Task;
 using Microsoft.VisualStudio.PlatformUI;
+using Microsoft.VisualStudio.Shell;
 
 namespace Rhetos.LanguageServices.VisualStudioExtension
 {
@@ -76,6 +78,8 @@ namespace Rhetos.LanguageServices.VisualStudioExtension
             }
             catch (Exception e)
             {
+                await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(token);
+
                 MessageDialog.Show("Rhetos DSL Language Extension ERROR",
                     $"Error encountered while trying to start Rhetos Language Server. See  https://github.com/Rhetos/LanguageServices for more information.\n\nError:\n{e.Message}",
                     MessageDialogCommandSet.Ok);
