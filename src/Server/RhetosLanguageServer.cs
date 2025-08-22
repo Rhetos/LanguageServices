@@ -274,6 +274,11 @@ namespace Rhetos.LanguageServices.Server
             }
         }
 
+        /// <summary>
+        /// Disables dynamic registration of capabilities as a workaround for newer versions of Visual Studio 2022
+        /// which advertise support (`DynamicRegistration = true`) but do not actually support dynamic registrations
+        /// </summary>
+        /// <param name="capabilities">The set of client-declared capabilities</param>
         private static void DisableDynamicCapabilityRegistration(ClientCapabilities capabilities)
         {
             if (capabilities.TextDocument.Synchronization.IsSupported)
