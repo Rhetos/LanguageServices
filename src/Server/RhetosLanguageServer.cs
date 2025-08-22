@@ -33,6 +33,7 @@ using NLog.Extensions.Logging;
 using NLog.Targets;
 using NLog.Targets.Wrappers;
 using OmniSharp.Extensions.JsonRpc;
+using OmniSharp.Extensions.LanguageServer.Protocol.Client.Capabilities;
 using OmniSharp.Extensions.LanguageServer.Protocol.Models;
 using OmniSharp.Extensions.LanguageServer.Protocol.Server;
 using OmniSharp.Extensions.LanguageServer.Protocol.Server.Capabilities;
@@ -225,6 +226,8 @@ namespace Rhetos.LanguageServices.Server
             else
                 logFileMessage = $"Log file: '{logFileMessage}'.";
 
+            DisableDynamicCapabilityRegistration(request.Capabilities);
+
             var localPath = new Uri(Assembly.GetExecutingAssembly().Location).LocalPath;
             log.LogInformation($"Initialized. Running server '{localPath}'. {logFileMessage}");
 
@@ -269,6 +272,26 @@ namespace Rhetos.LanguageServices.Server
             {
                 return null;
             }
+        }
+
+        /// <summary>
+        /// Disables dynamic registration of capabilities as a workaround for newer versions of Visual Studio 2022
+        /// which advertise support (`DynamicRegistration = true`) but do not actually support dynamic registrations
+        /// </summary>
+        /// <param name="capabilities">The set of client-declared capabilities</param>
+        private static void DisableDynamicCapabilityRegistration(ClientCapabilities capabilities)
+        {
+            if (capabilities.TextDocument.Synchronization.IsSupported)
+                capabilities.TextDocument.Synchronization.Value.DynamicRegistration = false;
+
+            if (capabilities.TextDocument.Hover.IsSupported)
+                capabilities.TextDocument.Hover.Value.DynamicRegistration = false;
+
+            if (capabilities.TextDocument.SignatureHelp.IsSupported)
+                capabilities.TextDocument.SignatureHelp.Value.DynamicRegistration = false;
+
+            if (capabilities.TextDocument.Completion.IsSupported)
+                capabilities.TextDocument.Completion.Value.DynamicRegistration = false;
         }
     }
 }
