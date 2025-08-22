@@ -1,4 +1,4 @@
-﻿/*
+/*
     Copyright (C) 2014 Omega software d.o.o.
 
     This file is part of Rhetos.
@@ -19,6 +19,8 @@
 
 using Rhetos.Dsl;
 using Rhetos.Utilities;
+using System;
+using System.Collections.Generic;
 
 namespace Rhetos.LanguageServices.CodeAnalysis.Parsing
 {
@@ -32,5 +34,7 @@ namespace Rhetos.LanguageServices.CodeAnalysis.Parsing
         {
             return $"<{relativePathOrResourceName}>";
         }
+
+        public IReadOnlyCollection<string> ExternalFiles => Array.Empty<string>();
     }
 }
