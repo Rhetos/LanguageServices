@@ -33,6 +33,7 @@ using NLog.Extensions.Logging;
 using NLog.Targets;
 using NLog.Targets.Wrappers;
 using OmniSharp.Extensions.JsonRpc;
+using OmniSharp.Extensions.LanguageServer.Protocol.Client.Capabilities;
 using OmniSharp.Extensions.LanguageServer.Protocol.Models;
 using OmniSharp.Extensions.LanguageServer.Protocol.Server;
 using OmniSharp.Extensions.LanguageServer.Protocol.Server.Capabilities;
@@ -225,6 +226,8 @@ namespace Rhetos.LanguageServices.Server
             else
                 logFileMessage = $"Log file: '{logFileMessage}'.";
 
+            DisableDynamicCapabilityRegistration(request.Capabilities);
+
             var localPath = new Uri(Assembly.GetExecutingAssembly().Location).LocalPath;
             log.LogInformation($"Initialized. Running server '{localPath}'. {logFileMessage}");
 
@@ -269,6 +272,21 @@ namespace Rhetos.LanguageServices.Server
             {
                 return null;
             }
+        }
+
+        private static void DisableDynamicCapabilityRegistration(ClientCapabilities capabilities)
+        {
+            if (capabilities.TextDocument.Synchronization.IsSupported)
+                capabilities.TextDocument.Synchronization.Value.DynamicRegistration = false;
+
+            if (capabilities.TextDocument.Hover.IsSupported)
+                capabilities.TextDocument.Hover.Value.DynamicRegistration = false;
+
+            if (capabilities.TextDocument.SignatureHelp.IsSupported)
+                capabilities.TextDocument.SignatureHelp.Value.DynamicRegistration = false;
+
+            if (capabilities.TextDocument.Completion.IsSupported)
+                capabilities.TextDocument.Completion.Value.DynamicRegistration = false;
         }
     }
 }
