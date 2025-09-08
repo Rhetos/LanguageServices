@@ -1,13 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <OutputType>Library</OutputType>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Rhetos.CommonConcepts" Version="5.2.0" />
-    <PackageReference Include="Rhetos.MSBuild" Version="5.2.0" />
+    <PackageReference Include="Rhetos.CommonConcepts" Version="6.0.0" />
+    <PackageReference Include="Rhetos.MSBuild" Version="6.0.0" />
   </ItemGroup>
 
   <ItemGroup>
