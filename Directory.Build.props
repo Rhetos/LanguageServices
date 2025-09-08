@@ -2,9 +2,9 @@
   <PropertyGroup>
     <Company>Omega software</Company>
     <Copyright>Copyright (C) Omega software 2017</Copyright>
-    <AssemblyVersion>6.0.0</AssemblyVersion>
-    <FileVersion>6.0.0</FileVersion>
-    <InformationalVersion>6.0.0-dev</InformationalVersion>
+    <AssemblyVersion>6.1.0</AssemblyVersion>
+    <FileVersion>6.1.0</FileVersion>
+    <InformationalVersion>6.1.0-dev</InformationalVersion>
     <NoWarn>1701,1702,1591,1573</NoWarn>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
 	<AnalysisMode>AllEnabledByDefault</AnalysisMode>
