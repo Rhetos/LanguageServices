@@ -2,8 +2,8 @@
 
 ## 6.0.0 (2025-09-08)
 
-* Support for latest version of Visual Studio 2022.
-  * Bugfix: LSP features not working in the latest Visual Studio 2022 (#15, thanks @dkocis6).
+* Bugfix: LSP features not working in the latest Visual Studio 2022
+  ([#15](https://github.com/Rhetos/LanguageServices/issues/15), thanks [@dkocis6](https://github.com/dkocis6)).
 * Support for Rhetos 6.
   * The external file reference in DSL script can now reference SQL resources.
 * Update to .NET 8.
