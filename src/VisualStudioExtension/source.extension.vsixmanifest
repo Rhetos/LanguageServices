@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
     <Metadata>
-        <Identity Id="Rhetos.LanguageServerProtocol.VisualStudioExtension.876c511f-12ec-4532-9a84-2f9ccf8b1732" Version="2.4.0" Language="en-US" Publisher="Rhetos" />
+        <Identity Id="Rhetos.LanguageServerProtocol.VisualStudioExtension.876c511f-12ec-4532-9a84-2f9ccf8b1732" Version="6.0.0" Language="en-US" Publisher="Rhetos" />
         <DisplayName>Rhetos DSL Language Extension</DisplayName>
         <Description xml:space="preserve">Rhetos DSL Language Extension</Description>
     </Metadata>

@@ -94,14 +94,18 @@ For more info see [How to Contribute](https://github.com/Rhetos/Rhetos/wiki/How-
 
 ### Building and testing the source code
 
-Open Rhetos.LanguageServices.sln in Visual Studio 2022, build the solution and run the unit tests. **Prerequisites**:
+Open Rhetos.LanguageServices.sln in Visual Studio 2022, **build the solution** and **run the unit tests**.
+
+Prerequisites:
 
 * If missing, Visual Studio will automatically offer to install the required component "Visual Studio extension development".
 * If Visual Studio cannot open RhetosLanguageServicesInstaller project, displaying "(incompatible)" in Solution Explorer, in Visual Studio install extension "Microsoft Visual Studio Installer Projects".
 
-Build will produce installation file `RhetosLanguageServicesInstaller.msi` in `src\RhetosLanguageServicesInstaller\Debug`.
-It contains the Visual Studio extension for DSL IntelliSense and LSP server.
-See the [Installation instructions](#installation) above.
+Build output:
+
+* Build will produce installation file `RhetosLanguageServicesInstaller.msi` in `src\RhetosLanguageServicesInstaller\Debug`.
+  It contains the Visual Studio extension for DSL IntelliSense and LSP server.
+  See the [Installation instructions](#installation) above.
 
 Automating the build with `Build.bat` has known issues, and is currently not available.
 

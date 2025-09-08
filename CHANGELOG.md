@@ -1,5 +1,13 @@
 # Rhetos Language Service release notes
 
+## 6.0.0 (2025-09-08)
+
+* Support for latest version of Visual Studio 2022.
+  * Bugfix: LSP features not working in the latest Visual Studio 2022 (#15, thanks @dkocis6).
+* Support for Rhetos 6.
+  * The external file reference in DSL script can now reference SQL resources.
+* Update to .NET 8.
+
 ## 2.3.0 (2023-10-05)
 
 * No longer committing autocomplete selection on 'space' and 'dot' key. The autocomplete made it difficult to write user messages and inline code in .rhe scripts.
