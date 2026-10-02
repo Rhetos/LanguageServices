@@ -2,8 +2,8 @@
 
 ## 6.1.0 (unreleased)
 
-* The server and its tests roll forward to the latest installed .NET major version (`RollForward` set to `LatestMajor`),
-  so the server runs on computers where only .NET 9 or 10 is installed.
+* The server and its tests run on .NET 8 or on any newer installed .NET runtime, for example 9 or 10
+  (`RollForward` set to `LatestMajor`).
 * Headless build: solution filter `Rhetos.LanguageServices.Server.slnf` and script `tools/build-server.ps1`
   build, test and publish the server with the .NET SDK alone, without Visual Studio.
 * Bugfix: the server now keys open documents by the URI string the client sent and publishes diagnostics with the same URI,
