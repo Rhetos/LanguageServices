@@ -153,6 +153,7 @@ Decided on 2026-10-02: VS 2019 support is dropped. The work is described in prer
 * `CancellationToken` is ignored; check it before running analysis.
 * `RhetosDocument._syncAnalysis` is a static lock shared by all documents; a per-document lock (or a per-project-context lock, since the Rhetos tokenizer shares `DslSyntax`) would allow parallel analysis.
 * `DidChange` assumes full sync (`ContentChanges.First()`); assert or handle incremental changes explicitly.
+* `CodeAnalysisRun.CreateAnalysisError` dereferences `DslSyntaxException.FilePosition` without a null check. Rhetos sets `FilePosition` only in the six-argument constructor (and only for a non-empty `DslScript.Path`, which A3 guarantees); the one-argument `DslSyntaxException(string)` never sets it, and `DslParser` throws that one for a warning promoted to an error (`ExcessDotInKey == Error`). The resulting `NullReferenceException` is thrown inside the `catch (DslSyntaxException)` block, so the sibling `catch (Exception)` does not catch it; `PublishDiagnosticsRunner.LoopCycle` fails, `lastPublishTime` is not advanced, and no document gets diagnostics while the cycle retries every 300 ms. Fix: when `FilePosition` is null, report the error at the document start (or at the `DslSyntaxException.DslScript` if available) and add a test with a one-argument `DslSyntaxException`. Found during A3 (2026-10-02); details in [docs/lsp/omnisharp-document-uri.md](../docs/lsp/omnisharp-document-uri.md) §5.
 
 ### B7. Feature gaps worth adding (benefit both IDEs)
 
