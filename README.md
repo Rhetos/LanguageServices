@@ -122,6 +122,7 @@ See [docs/rhetos/README.md](docs/rhetos/README.md) for Rhetos framework backgrou
 | `tools/` | `ChangeVersion.ps1` (sets the version in `Directory.Build.props`, VSIX manifests and the installer project), `FindVisualStudio.bat` and `CheckLicenceInSourceFiles.bat` (used by `build.bat`), `git/gitclear.ps1` (deletes merged git branches). |
 | `CHANGELOG.md`, `License.txt` | Release notes and license. |
 | `docs/rhetos/` | Background documentation about the Rhetos framework, as it relates to this project. |
+| `plans/` | Implementation plans that are not yet executed: `prerequisites-and-improvements.md` (repository changes before VS Code support, and other improvements) and `vs-code/` (the Visual Studio Code extension plan). |
 | `dist/` | Folder that `clean.bat` deletes and recreates; ignored by git. |
 | `temp/` | Local drafts, scratch notes and other temporary files; ignored by git. |
 
