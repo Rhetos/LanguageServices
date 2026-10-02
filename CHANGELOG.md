@@ -6,6 +6,12 @@
   so the server runs on computers where only .NET 9 or 10 is installed.
 * Headless build: solution filter `Rhetos.LanguageServices.Server.slnf` and script `tools/build-server.ps1`
   build, test and publish the server with the .NET SDK alone, without Visual Studio.
+* Bugfix: the server now keys open documents by the URI string the client sent and publishes diagnostics with the same URI,
+  instead of converting through `System.Uri`.
+* Documents that are not files (for example VS Code `untitled:` documents) no longer resolve a relative `rhetosProjectRootPath` directive
+  against the server's working directory. They report that no Rhetos application is available.
+* Bugfix: removing a `rhetosProjectRootPath` directive from an open document no longer throws a `NullReferenceException`
+  that stopped the diagnostics for that document.
 
 ## 6.0.0 (2025-09-08)
 

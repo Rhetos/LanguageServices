@@ -39,9 +39,9 @@ namespace Rhetos.LanguageServices.CodeAnalysis.Services
             this.logFactory = logFactory;
         }
 
-        public RhetosDocument CreateNew(Uri documentUri)
+        public RhetosDocument CreateNew(DocumentKey documentKey)
         {
-            return new RhetosDocument(rhetosProjectContext, conceptQueries, rhetosProjectRootPathResolver, logFactory, documentUri);
+            return new RhetosDocument(rhetosProjectContext, conceptQueries, rhetosProjectRootPathResolver, logFactory, documentKey);
         }
     }
 }

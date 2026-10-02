@@ -71,7 +71,7 @@ namespace Rhetos.LanguageServices.CodeAnalysis.Parsing
             if (lineChr == null)
                 textDocument = fullTextDocument;
             else
-                textDocument = new TextDocument(fullTextDocument.GetTruncatedAtNextEndOfLine(lineChr.Value), fullTextDocument.Uri);
+                textDocument = new TextDocument(fullTextDocument.GetTruncatedAtNextEndOfLine(lineChr.Value), fullTextDocument.DocumentKey);
 
             result = lineChr == null
                 ? new CodeAnalysisResult(textDocument, 0, 0)

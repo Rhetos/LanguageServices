@@ -30,7 +30,7 @@ namespace Rhetos.LanguageServices.CodeAnalysis.Parsing
     public class RhetosDocument
     {
         public TextDocument TextDocument { get; private set; }
-        public Uri DocumentUri { get; }
+        public DocumentKey DocumentKey { get; }
         public RootPathConfiguration RootPathConfiguration { get; private set; }
 
         private readonly RhetosProjectContext rhetosProjectContext;
@@ -42,13 +42,13 @@ namespace Rhetos.LanguageServices.CodeAnalysis.Parsing
         private readonly Dictionary<int, CodeAnalysisResult> cachedAnalysisResults = new Dictionary<int, CodeAnalysisResult>();
 
         public RhetosDocument(RhetosProjectContext rhetosProjectContext, ConceptQueries conceptQueries, IRhetosProjectRootPathResolver rhetosProjectRootPathResolver,
-            ILoggerFactory logFactory, Uri documentUri)
+            ILoggerFactory logFactory, DocumentKey documentKey)
         {
             this.rhetosProjectContext = rhetosProjectContext;
             this.conceptQueries = conceptQueries;
             this.rhetosProjectRootPathResolver = rhetosProjectRootPathResolver;
             this.logFactory = logFactory;
-            this.DocumentUri = documentUri;
+            this.DocumentKey = documentKey ?? throw new ArgumentNullException(nameof(documentKey));
             UpdateText("");
         }
 
@@ -56,7 +56,7 @@ namespace Rhetos.LanguageServices.CodeAnalysis.Parsing
         {
             lock (_syncAnalysis)
             {
-                TextDocument = new TextDocument(text, DocumentUri);
+                TextDocument = new TextDocument(text, DocumentKey);
                 InvalidateAnalysisCache();
 
                 UpdateRootPathConfiguration();
@@ -91,8 +91,9 @@ namespace Rhetos.LanguageServices.CodeAnalysis.Parsing
         private void UpdateRootPathConfiguration()
         {
             var directiveConfiguration = rhetosProjectRootPathResolver.ResolveRootPathFromDocumentDirective(this);
+            // directiveConfiguration is null if the text has no directive, or has type None if the directive cannot be resolved
             var deletedDirective = RootPathConfiguration?.ConfigurationType == RootPathConfigurationType.SourceDirective
-                                   && directiveConfiguration.ConfigurationType == RootPathConfigurationType.None;
+                                   && directiveConfiguration?.ConfigurationType != RootPathConfigurationType.SourceDirective;
 
             // run full configuration scan if we have just deleted a source directive
             // OR we have never ran a successful configuration for this document

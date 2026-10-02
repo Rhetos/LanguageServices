@@ -19,9 +19,11 @@
 
 using System;
 using System.IO;
+using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Rhetos.LanguageServices.CodeAnalysis.Parsing;
 using Rhetos.LanguageServices.CodeAnalysis.Services;
 using Rhetos.LanguageServices.CodeAnalysis.Tools;
 using Rhetos.LanguageServices.CommonTestTools;
@@ -53,13 +55,13 @@ namespace Rhetos.LanguageServices.CodeAnalysis.Test
         [DataRow(@"RhetosAppFolder\FolderWithConfiguration\SubFolder\doc.rhe", @"c:\FolderFromJson\Rhetos", RootPathConfigurationType.ConfigurationFile)]
         public void RhetosRootAppPathFromDocument(string documentRelativePath, string expectedRootAppPath, RootPathConfigurationType expectedConfigurationType)
         {
-            var uri = new Uri(Path.Combine(Environment.CurrentDirectory, documentRelativePath));
-            Console.WriteLine($"Opening file '{uri.LocalPath}.'");
-            var text = File.ReadAllText(uri.LocalPath);
+            var documentKey = TestCommon.DocumentKeyFromPath(Path.Combine(Environment.CurrentDirectory, documentRelativePath));
+            Console.WriteLine($"Opening file '{documentKey.LocalPath}.'");
+            var text = File.ReadAllText(documentKey.LocalPath);
             Console.WriteLine($"File contents:\n{text}\n*****************\n");
             var rhetosProjectRootPathResolver =  serviceProvider.GetRequiredService<IRhetosProjectRootPathResolver>();
             var documentFactory = serviceProvider.GetRequiredService<RhetosDocumentFactory>();
-            var rhetosDocument = documentFactory.CreateNew(uri);
+            var rhetosDocument = documentFactory.CreateNew(documentKey);
             rhetosDocument.UpdateText(text);
 
             var rootPathConfiguration = rhetosProjectRootPathResolver.ResolveRootPathForDocument(rhetosDocument);
@@ -78,6 +80,89 @@ namespace Rhetos.LanguageServices.CodeAnalysis.Test
 
                 Assert.AreEqual(expectedRootAppPath, rootPathConfiguration.RootPath);
             }
+        }
+
+        [TestMethod]
+        [DataRow("// <rhetosProjectRootPath=\".\\\"/>", "relative rhetosProjectRootPath directive")]
+        [DataRow("// <rhetosProjectRootPath=\"RhetosAppFolder\\FolderWithApp\"/>", "relative rhetosProjectRootPath directive")]
+        [DataRow("", "cannot be detected from its folder")]
+        [DataRow("Module m;", "cannot be detected from its folder")]
+        public void NonFileDocumentHasNoRootPath(string text, string expectedReason)
+        {
+            var rhetosProjectRootPathResolver = serviceProvider.GetRequiredService<IRhetosProjectRootPathResolver>();
+            var documentFactory = serviceProvider.GetRequiredService<RhetosDocumentFactory>();
+            var rhetosDocument = documentFactory.CreateNew(DocumentKey.ForNonFile("untitled:Untitled-1"));
+            rhetosDocument.UpdateText(text);
+
+            foreach (var rootPathConfiguration in new[] { rhetosProjectRootPathResolver.ResolveRootPathForDocument(rhetosDocument), rhetosDocument.RootPathConfiguration })
+            {
+                Console.WriteLine($"{rootPathConfiguration.ConfigurationType} = {rootPathConfiguration.RootPath}, context: {rootPathConfiguration.Context}");
+                // The relative directive must not be resolved against the process working directory (Environment.CurrentDirectory contains a Rhetos app folder).
+                Assert.IsNull(rootPathConfiguration.RootPath);
+                Assert.AreEqual(RootPathConfigurationType.None, rootPathConfiguration.ConfigurationType);
+                StringAssert.Contains(rootPathConfiguration.Context, "'untitled:Untitled-1' is not a file", StringComparison.Ordinal);
+                StringAssert.Contains(rootPathConfiguration.Context, expectedReason, StringComparison.Ordinal);
+            }
+
+            var errors = rhetosDocument.GetAnalysis().AllErrors.ToList();
+            Assert.AreEqual(1, errors.Count, string.Join(Environment.NewLine, errors));
+            Assert.AreEqual(CodeAnalysisError.ErrorSeverity.Warning, errors[0].Severity);
+            StringAssert.Contains(errors[0].Message, "No valid RhetosProjectRootPath configuration was found for this document (the document 'untitled:Untitled-1' is not a file", StringComparison.Ordinal);
+        }
+
+        [TestMethod]
+        public void NonFileDocumentWithAbsoluteDirective()
+        {
+            var rhetosProjectRootPathResolver = serviceProvider.GetRequiredService<IRhetosProjectRootPathResolver>();
+            var documentFactory = serviceProvider.GetRequiredService<RhetosDocumentFactory>();
+            var rhetosDocument = documentFactory.CreateNew(DocumentKey.ForNonFile("untitled:Untitled-1"));
+            var appFolder = Path.Combine(Environment.CurrentDirectory, @"RhetosAppFolder\FolderWithApp");
+            rhetosDocument.UpdateText($"// <rhetosProjectRootPath=\"{appFolder}\"/>");
+
+            var rootPathConfiguration = rhetosProjectRootPathResolver.ResolveRootPathForDocument(rhetosDocument);
+
+            Assert.AreEqual(RootPathConfigurationType.SourceDirective, rootPathConfiguration.ConfigurationType);
+            Assert.AreEqual(appFolder, rootPathConfiguration.RootPath);
+            Assert.AreEqual("untitled:Untitled-1", rootPathConfiguration.Context);
+        }
+
+        [TestMethod]
+        [DataRow(true)]
+        [DataRow(false)]
+        public void DirectiveAddedAndRemoved(bool isFile)
+        {
+            var documentFactory = serviceProvider.GetRequiredService<RhetosDocumentFactory>();
+            var documentKey = isFile
+                ? TestCommon.DocumentKeyFromPath(Path.Combine(Environment.CurrentDirectory, @"RhetosAppFolder\EmptyFolder\added-and-removed.rhe"))
+                : DocumentKey.ForNonFile("untitled:Untitled-1");
+            var rhetosDocument = documentFactory.CreateNew(documentKey);
+            var appFolder = Path.Combine(Environment.CurrentDirectory, @"RhetosAppFolder\FolderWithApp");
+
+            rhetosDocument.UpdateText($"// <rhetosProjectRootPath=\"{appFolder}\"/>\nModule M;");
+            Assert.AreEqual(RootPathConfigurationType.SourceDirective, rhetosDocument.RootPathConfiguration.ConfigurationType);
+            Assert.AreEqual(appFolder, rhetosDocument.RootPathConfiguration.RootPath);
+
+            // Removing the directive must re-resolve the root path (there is no Rhetos app or configuration file above EmptyFolder).
+            rhetosDocument.UpdateText("Module M;");
+            Assert.AreEqual(RootPathConfigurationType.None, rhetosDocument.RootPathConfiguration.ConfigurationType);
+            Assert.IsNull(rhetosDocument.RootPathConfiguration.RootPath);
+            Assert.IsFalse(rhetosDocument.UpdateRootPathIfChanged());
+        }
+
+        [TestMethod]
+        public void FileDocumentWithRelativeDirective()
+        {
+            var rhetosProjectRootPathResolver = serviceProvider.GetRequiredService<IRhetosProjectRootPathResolver>();
+            var documentFactory = serviceProvider.GetRequiredService<RhetosDocumentFactory>();
+            var documentPath = Path.Combine(Environment.CurrentDirectory, @"RhetosAppFolder\EmptyFolder\relative-directive.rhe");
+            var rhetosDocument = documentFactory.CreateNew(TestCommon.DocumentKeyFromPath(documentPath));
+            rhetosDocument.UpdateText("// <rhetosProjectRootPath=\"..\\FolderWithApp\"/>");
+
+            var rootPathConfiguration = rhetosProjectRootPathResolver.ResolveRootPathForDocument(rhetosDocument);
+
+            Assert.AreEqual(RootPathConfigurationType.SourceDirective, rootPathConfiguration.ConfigurationType);
+            Assert.AreEqual(Path.Combine(Environment.CurrentDirectory, @"RhetosAppFolder\FolderWithApp"), rootPathConfiguration.RootPath);
+            Assert.AreEqual(documentPath, rootPathConfiguration.Context);
         }
     }
 }

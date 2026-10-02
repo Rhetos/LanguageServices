@@ -56,7 +56,7 @@ namespace Rhetos.LanguageServices.Server.Handlers
             // Visual Studio may issue hover before DidOpen if hover happens before solution is fully loaded
             try
             {
-                rhetosDocument = rhetosWorkspace.Value.GetRhetosDocument(request.TextDocument.Uri.ToUri());
+                rhetosDocument = rhetosWorkspace.Value.GetRhetosDocument(request.TextDocument.Uri.ToString());
             }
             catch (InvalidOperationException)
             {

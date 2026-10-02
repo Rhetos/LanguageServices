@@ -29,7 +29,15 @@ namespace Rhetos.LanguageServices.CommonTestTools
 {
     public static class TestCommon
     {
-        public static Uri UriMock => new Uri("file://\\stub.txt");
+        /// <summary>
+        /// A file document key in a folder that does not exist, in the canonical form that the language server creates from an LSP document URI.
+        /// </summary>
+        public static DocumentKey DocumentKeyMock => DocumentKey.ForFile("file:///c:/stub/stub.rhe", @"c:\stub\stub.rhe");
+
+        /// <summary>
+        /// Creates a file document key from an absolute file path. The drive letter case of the path is kept.
+        /// </summary>
+        public static DocumentKey DocumentKeyFromPath(string localPath) => DocumentKey.ForFile(new Uri(localPath).AbsoluteUri, localPath);
 
         public static IServiceProvider CreateTestServiceProvider(string initializeContextFromFolder = null)
         {
@@ -59,11 +67,12 @@ namespace Rhetos.LanguageServices.CommonTestTools
 
         public static RhetosDocument CreateWithTestUri(this RhetosDocumentFactory rhetosDocumentFactory, string text = null, LineChr? showPosition = null)
         {
-            var rhetosDocument = rhetosDocumentFactory.CreateNew(new Uri($"file://\\{Guid.NewGuid()}"));
+            var name = Guid.NewGuid();
+            var rhetosDocument = rhetosDocumentFactory.CreateNew(DocumentKey.ForFile($"file:///c:/stub/{name}.rhe", $@"c:\stub\{name}.rhe"));
             if (text != null)
             {
                 rhetosDocument.UpdateText(text);
-                Console.WriteLine($"Initialized document: {rhetosDocument.DocumentUri} with text:\n{text}<< END DOCUMENT >>\n\n");
+                Console.WriteLine($"Initialized document: {rhetosDocument.DocumentKey} with text:\n{text}<< END DOCUMENT >>\n\n");
             }
 
             if (showPosition != null)

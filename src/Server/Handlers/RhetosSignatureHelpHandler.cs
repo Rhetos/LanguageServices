@@ -59,7 +59,7 @@ namespace Rhetos.LanguageServices.Server.Handlers
         public Task<SignatureHelp> Handle(SignatureHelpParams request, CancellationToken cancellationToken)
         {
             log.LogDebug($"SignatureHelp requested at {request.Position.ToLineChr()}.");
-            var rhetosDocument = rhetosWorkspace.Value.GetRhetosDocument(request.TextDocument.Uri.ToUri());
+            var rhetosDocument = rhetosWorkspace.Value.GetRhetosDocument(request.TextDocument.Uri.ToString());
             if (rhetosDocument == null)
                 return Task.FromResult<SignatureHelp>(null);
 

@@ -119,11 +119,30 @@ namespace Rhetos.LanguageServices.LspIntegration.Test
             Console.WriteLine(">> Log dump END\n");
         }
 
+        /// <summary>
+        /// Returns the last published diagnostics for the document URI string (exact match), or null if none were published.
+        /// </summary>
+        protected IReadOnlyList<Diagnostic> GetPublishedDiagnostics(string documentUri)
+        {
+            lock (documentDiagnostics)
+                return documentDiagnostics.TryGetValue(documentUri, out var diagnostics) ? diagnostics : null;
+        }
+
+        /// <summary>
+        /// The distinct URI strings of all received diagnostics notifications.
+        /// </summary>
+        protected IReadOnlyList<string> GetPublishedDiagnosticsUris()
+        {
+            lock (documentDiagnostics)
+                return documentDiagnostics.Keys.ToList();
+        }
+
         private IEnumerable<string> DiagnosticsToMessages()
         {
-            return documentDiagnostics
-                .SelectMany(entry => entry.Value.Select(diag => FormatDiagnosticMessage(entry.Key, diag.Message, diag.Range.ToString())))
-                .ToList();
+            lock (documentDiagnostics)
+                return documentDiagnostics
+                    .SelectMany(entry => entry.Value.Select(diag => FormatDiagnosticMessage(entry.Key, diag.Message, diag.Range.ToString())))
+                    .ToList();
         }
 
         private void OnLogMessage(LogMessageParams msgParams)
@@ -144,7 +163,9 @@ namespace Rhetos.LanguageServices.LspIntegration.Test
 
         private void OnPublishDiagnostics(PublishDiagnosticsParams diagnosticParams)
         {
-            documentDiagnostics[diagnosticParams.Uri.ToUri().AbsolutePath] = diagnosticParams.Diagnostics.ToList();
+            // Keyed by the exact URI string, so that tests can check that the published URI equals the opened URI.
+            lock (documentDiagnostics)
+                documentDiagnostics[diagnosticParams.Uri.ToString()] = diagnosticParams.Diagnostics.ToList();
         }
 
         private string FormatDiagnosticMessage(string documentUri, string message, string position)

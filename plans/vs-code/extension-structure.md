@@ -155,7 +155,7 @@ export async function createClient(context: vscode.ExtensionContext, output: vsc
   };
 
   const clientOptions: LanguageClientOptions = {
-    documentSelector: [{ scheme: 'file', language: 'rhetos-dsl' }, { scheme: 'untitled', language: 'rhetos-dsl' }],
+    documentSelector: [{ scheme: 'file', language: 'rhetos-dsl' }],   // 'file' only: untitled documents have no folder, so they get no Rhetos context
     outputChannel: output,
     traceOutputChannel: output,
     synchronize: {

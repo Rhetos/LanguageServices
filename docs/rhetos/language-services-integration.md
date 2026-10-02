@@ -28,7 +28,7 @@ Legend: **V** = verified in code, git history or a file (path cited). **I** = in
 | `Parsing/` | `RhetosDocument` | One open document: text, `RootPathConfiguration`, analysis cache, completion/hover/signature queries, "blocked analysis" warnings |
 | `Parsing/` | `RhetosSignature` | DTO: `ConceptType`, parameters, signature text, documentation |
 | `Parsing/` | `SimpleExternalResourceReader` | Rhetos `IExternalTextReader` stub. It returns `"<name>"` instead of reading referenced files or SQL resources |
-| `Parsing/` | `TextDocument` | Text + URI. Implements Rhetos `IDslScriptsProvider` (one `DslScript`, `Path = Uri.LocalPath`). Offset ↔ line/char, truncation |
+| `Parsing/` | `TextDocument` | Text + URI. Implements Rhetos `IDslScriptsProvider` (one `DslScript`, `Path = LocalPath ?? Uri`, never empty; `LocalPath` is null for non-file schemes). Offset ↔ line/char, truncation |
 | `Parsing/` | `TokenizerExplicitTokens` | Rhetos `ITokenizer` that returns a precomputed token list, used to feed `DslParser` |
 | `Services/` | `ConceptQueries` | Keyword → signatures + docs. Valid child concepts for a parent `ConceptType`. Doc lookup by `AssemblyQualifiedName` |
 | `Services/` | `IRhetosProjectRootPathResolver`, `RhetosProjectRootPathResolver` | Find the Rhetos app root for a document (section 2.1) |
@@ -249,5 +249,5 @@ The mock `test/RhetosMockAppContents/DslSyntax.json` has `"Version": "5.0"` and 
 | 12 | `// TODO: this class is maybe specific for LanguageServices` | `Services/RhetosWorkspace.cs` | TODO (V) |
 | 13 | `// HACK: Force the "design-time build", by updating timestamp on project.assets.json` | `SolutionRefreshService.cs` | Hack (V) |
 | 14 | OmniSharp workarounds: `RhetosJsonRpcReceiver` (issue #609), log-filter rules, disabling dynamic registration for VS 2022 | `src/Server/RhetosLanguageServer.cs` | V |
-| 15 | The resolver calls `Path.GetDirectoryName(DocumentUri.LocalPath)` and assumes `file:` URIs | `RhetosProjectRootPathResolver.cs` | I |
+| 15 | Fixed on branch vs-code (plan A3): the resolver returns None with a reason for non-file documents (for example `untitled:`) and no longer resolves a relative directive against the server's working directory. Before, `Path.GetDirectoryName(LocalPath)` was empty for them | `RhetosProjectRootPathResolver.cs` | V (live check 2026-10-02) |
 | 16 | `test/CodeAnalysis.Test` references the full `Rhetos` 6.0.0 package without visible direct use | `test/CodeAnalysis.Test/CodeAnalysis.Test.csproj` | I |

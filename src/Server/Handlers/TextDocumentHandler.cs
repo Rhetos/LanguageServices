@@ -33,6 +33,7 @@ using OmniSharp.Extensions.LanguageServer.Protocol.Server.Capabilities;
 using OmniSharp.Extensions.LanguageServer.Protocol.Window;
 using Rhetos.LanguageServices.CodeAnalysis.Services;
 using Rhetos.LanguageServices.Server.Services;
+using Rhetos.LanguageServices.Server.Tools;
 
 namespace Rhetos.LanguageServices.Server.Handlers
 {
@@ -66,25 +67,26 @@ namespace Rhetos.LanguageServices.Server.Handlers
         public override Task<Unit> Handle(DidChangeTextDocumentParams request, CancellationToken cancellationToken)
         {
             var text = request.ContentChanges.First().Text;
-            rhetosWorkspace.Value.UpdateDocumentText(request.TextDocument.Uri.ToUri(), text);
+            rhetosWorkspace.Value.UpdateDocumentText(request.TextDocument.Uri.ToDocumentKey(log), text);
             return Unit.Task;
         }
 
         public override Task<Unit> Handle(DidOpenTextDocumentParams request, CancellationToken cancellationToken)
         {
             var text = request.TextDocument.Text;
-            var uri = request.TextDocument.Uri.ToUri();
+            var documentKey = request.TextDocument.Uri.ToDocumentKey(log);
 
-            log.LogTrace($"Document opened: {uri}.");
-            rhetosWorkspace.Value.UpdateDocumentText(uri, text);
+            log.LogTrace($"Document opened: {documentKey.Uri} (local path: '{documentKey.LocalPath}').");
+            rhetosWorkspace.Value.UpdateDocumentText(documentKey, text);
 
             return Unit.Task;
         }
 
         public override Task<Unit> Handle(DidCloseTextDocumentParams request, CancellationToken cancellationToken)
         {
-            log.LogDebug($"Document closed: {request.TextDocument.Uri.ToUri()}.");
-            rhetosWorkspace.Value.CloseDocument(request.TextDocument.Uri.ToUri());
+            var documentUri = request.TextDocument.Uri.ToString();
+            log.LogDebug($"Document closed: {documentUri}.");
+            rhetosWorkspace.Value.CloseDocument(documentUri);
             return Unit.Task;
         }
 

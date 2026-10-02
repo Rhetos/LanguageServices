@@ -26,15 +26,15 @@ namespace Rhetos.LanguageServices.CodeAnalysis.Parsing
     public class TextDocument : IDslScriptsProvider
     {
         public string Text { get; }
-        public Uri Uri { get; }
-        public IEnumerable<DslScript> DslScripts => new[] {new DslScript() { Script = Text, Path = Uri.LocalPath }};
+        public DocumentKey DocumentKey { get; }
+        public IEnumerable<DslScript> DslScripts => new[] {new DslScript() { Script = Text, Path = DocumentKey.DslScriptPath }};
 
         private readonly Lazy<List<int>> lineStarts;
 
-        public TextDocument(string text, Uri uri)
+        public TextDocument(string text, DocumentKey documentKey)
         {
             this.Text = text;
-            this.Uri = uri;
+            this.DocumentKey = documentKey ?? throw new ArgumentNullException(nameof(documentKey));
             lineStarts = new Lazy<List<int>>(GetLineStartPositions);
         }
 

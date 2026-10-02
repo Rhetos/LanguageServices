@@ -69,7 +69,7 @@ namespace Rhetos.LanguageServices.Server.Handlers
         {
             log.LogDebug($"Completion requested at {request.Position.ToLineChr()}.");
 
-            var document = rhetosWorkspace.Value.GetRhetosDocument(request.TextDocument.Uri.ToUri());
+            var document = rhetosWorkspace.Value.GetRhetosDocument(request.TextDocument.Uri.ToString());
             if (document == null)
                 return Task.FromResult<CompletionList>(null);
 

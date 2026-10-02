@@ -29,8 +29,16 @@ namespace Rhetos.LanguageServices.CodeAnalysis.Services
     // TODO: this class is maybe specific for LanguageServices
     public class RhetosWorkspace
     {
-        private readonly Dictionary<Uri, RhetosDocument> rhetosDocuments = new Dictionary<Uri, RhetosDocument>();
-        private readonly Dictionary<Uri, DateTime> documentChangeTimes = new Dictionary<Uri, DateTime>();
+        /// <summary>
+        /// Comparer for document URI strings, used as keys of the open documents.
+        /// It mirrors OmniSharp's DocumentUri equality: case-insensitive, except on Linux, where file paths are case-sensitive.
+        /// For file URIs this also matches the former System.Uri keys.
+        /// </summary>
+        public static StringComparer DocumentUriComparer { get; } = OperatingSystem.IsLinux() ? StringComparer.Ordinal : StringComparer.OrdinalIgnoreCase;
+
+        // The keys are the URI strings from the first didOpen of each document, so that diagnostics are published with the opened URI.
+        private readonly Dictionary<string, RhetosDocument> rhetosDocuments = new Dictionary<string, RhetosDocument>(DocumentUriComparer);
+        private readonly Dictionary<string, DateTime> documentChangeTimes = new Dictionary<string, DateTime>(DocumentUriComparer);
         private readonly ILogger<RhetosWorkspace> log;
         private readonly ILoggerFactory logFactory;
         private readonly RhetosDocumentFactory rhetosDocumentFactory;
@@ -44,7 +52,11 @@ namespace Rhetos.LanguageServices.CodeAnalysis.Services
             this.rhetosProjectContext = rhetosProjectContext;
         }
 
-        public List<Uri> GetUpdatedDocuments(DateTime sinceTime)
+        /// <summary>
+        /// Returns the URIs of open documents that were changed after <paramref name="sinceTime"/>.
+        /// Each URI is the one the document was opened with.
+        /// </summary>
+        public List<string> GetUpdatedDocuments(DateTime sinceTime)
         {
             lock (rhetosDocuments)
             {
@@ -59,7 +71,10 @@ namespace Rhetos.LanguageServices.CodeAnalysis.Services
             }
         }
 
-        public List<Uri> GetClosedDocuments(DateTime sinceTime)
+        /// <summary>
+        /// Returns the URIs of documents that were closed after <paramref name="sinceTime"/> and are not open again.
+        /// </summary>
+        public List<string> GetClosedDocuments(DateTime sinceTime)
         {
             lock (rhetosDocuments)
             {
@@ -71,38 +86,64 @@ namespace Rhetos.LanguageServices.CodeAnalysis.Services
             }
         }
 
-        public void UpdateDocumentText(Uri documentUri, string text)
+        /// <summary>
+        /// Opens the document if it is not open yet, and sets its text.
+        /// If the document is already open (compared by <see cref="DocumentUriComparer"/>), it keeps the <see cref="DocumentKey"/> it was opened with.
+        /// </summary>
+        public void UpdateDocumentText(DocumentKey documentKey, string text)
         {
+            ArgumentNullException.ThrowIfNull(documentKey);
+
             lock (rhetosDocuments)
             {
-                if (!rhetosDocuments.TryGetValue(documentUri, out var rhetosDocument))
+                if (!rhetosDocuments.TryGetValue(documentKey.Uri, out var rhetosDocument))
                 {
-                    rhetosDocument = rhetosDocumentFactory.CreateNew(documentUri);
-                    rhetosDocuments.Add(documentUri, rhetosDocument);
+                    rhetosDocument = rhetosDocumentFactory.CreateNew(documentKey);
+                    rhetosDocuments.Add(documentKey.Uri, rhetosDocument);
                 }
 
                 rhetosDocument.UpdateText(text);
-                documentChangeTimes[documentUri] = DateTime.Now;
+                SetDocumentChangeTime(rhetosDocument.DocumentKey.Uri);
             }
         }
 
-        public void CloseDocument(Uri documentUri)
+        /// <summary>
+        /// Closes the document. <see cref="GetClosedDocuments"/> reports it with the URI it was opened with.
+        /// </summary>
+        public void CloseDocument(string documentUri)
         {
             lock (rhetosDocuments)
             {
-                documentChangeTimes[documentUri] = DateTime.Now;
-
-                if (rhetosDocuments.ContainsKey(documentUri))
+                if (rhetosDocuments.TryGetValue(documentUri, out var rhetosDocument))
+                {
+                    documentUri = rhetosDocument.DocumentKey.Uri;
                     rhetosDocuments.Remove(documentUri);
+                }
+
+                SetDocumentChangeTime(documentUri);
             }
         }
 
-        public RhetosDocument GetRhetosDocument(Uri documentUri)
+        /// <summary>
+        /// Stores the change time with exactly this URI string as the key,
+        /// replacing an existing entry that is equal by <see cref="DocumentUriComparer"/> but may differ in case.
+        /// </summary>
+        private void SetDocumentChangeTime(string documentUri)
+        {
+            documentChangeTimes.Remove(documentUri);
+            documentChangeTimes.Add(documentUri, DateTime.Now);
+        }
+
+        /// <summary>
+        /// Returns the open document with the given URI (compared by <see cref="DocumentUriComparer"/>).
+        /// </summary>
+        /// <exception cref="InvalidOperationException">The document is not open.</exception>
+        public RhetosDocument GetRhetosDocument(string documentUri)
         {
             lock (rhetosDocuments)
             {
                 if (!rhetosDocuments.TryGetValue(documentUri, out var rhetosDocument))
-                    throw new InvalidOperationException($"No document with uri '{documentUri.AbsolutePath}' found in workspace.");
+                    throw new InvalidOperationException($"No document with uri '{documentUri}' found in workspace.");
 
                 return rhetosDocument;
             }
@@ -124,9 +165,9 @@ namespace Rhetos.LanguageServices.CodeAnalysis.Services
                 
                 foreach (var (uri, rhetosDocument) in rhetosDocuments)
                 {
-                    log.LogTrace($"Reset code analysis for {uri.AbsolutePath}.");
+                    log.LogTrace($"Reset code analysis for {uri}.");
                     rhetosDocument.InvalidateAnalysisCache();
-                    documentChangeTimes[uri] = DateTime.Now;
+                    SetDocumentChangeTime(uri);
                 }
             }
         }

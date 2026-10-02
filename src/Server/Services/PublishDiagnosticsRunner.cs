@@ -25,6 +25,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using OmniSharp.Extensions.LanguageServer.Protocol;
 using OmniSharp.Extensions.LanguageServer.Protocol.Models;
 using OmniSharp.Extensions.LanguageServer.Protocol.Server;
 using Rhetos.LanguageServices.CodeAnalysis.Parsing;
@@ -106,7 +107,7 @@ namespace Rhetos.LanguageServices.Server.Services
 
             
             var publishDiagnosticsRemoved = rhetosWorkspace.Value.GetClosedDocuments(lastPublishTime)
-                .Select(documentUri => new PublishDiagnosticsParams() {Uri = documentUri, Diagnostics = new Container<Diagnostic>()});
+                .Select(documentUri => new PublishDiagnosticsParams() {Uri = ToProtocolUri(documentUri), Diagnostics = new Container<Diagnostic>()});
             
             var allPublishDiagnostics = publishDiagnosticsChanged
                 .Concat(publishDiagnosticsRemoved)
@@ -127,7 +128,7 @@ namespace Rhetos.LanguageServices.Server.Services
             lastPublishTime = startPublishCheckTime;
         }
 
-        private PublishDiagnosticsParams DiagnosticParamsFromRhetosDocument(Uri documentUri)
+        private PublishDiagnosticsParams DiagnosticParamsFromRhetosDocument(string documentUri)
         {
             var rhetosDocument = rhetosWorkspace.Value.GetRhetosDocument(documentUri);
             var analysisResult = rhetosDocument.GetAnalysis();
@@ -138,9 +139,16 @@ namespace Rhetos.LanguageServices.Server.Services
             return new PublishDiagnosticsParams()
             {
                 Diagnostics = new Container<Diagnostic>(diagnostics),
-                Uri = documentUri
+                Uri = ToProtocolUri(documentUri)
             };
         }
+
+        /// <summary>
+        /// The workspace stores <see cref="DocumentUri.ToString()"/> of the opened document.
+        /// <see cref="DocumentUri.Parse"/> restores the same URI parts, so the published URI is rendered as the same string.
+        /// (<see cref="DocumentUri.From(string)"/> must not be used here, because it handles strings that look like paths as file paths.)
+        /// </summary>
+        private static DocumentUri ToProtocolUri(string documentUri) => DocumentUri.Parse(documentUri);
 
         private Diagnostic DiagnosticFromAnalysisError(CodeAnalysisResult analysisResult, CodeAnalysisError error)
         {

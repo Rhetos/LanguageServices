@@ -45,8 +45,20 @@ namespace Rhetos.LanguageServices.CodeAnalysis.Services
                 var fromDirective = GetRootPathFromText(rhetosDocument.TextDocument.Text);
                 if (fromDirective != null)
                 {
-                    var absolutePath = Path.GetFullPath(Path.Combine(Path.GetDirectoryName(rhetosDocument.DocumentUri.LocalPath), fromDirective));
-                    return new RootPathConfiguration(absolutePath, RootPathConfigurationType.SourceDirective, rhetosDocument.DocumentUri.LocalPath);
+                    var documentKey = rhetosDocument.DocumentKey;
+                    if (!documentKey.IsFile)
+                    {
+                        // A document that is not a file (for example 'untitled:Untitled-1') has no folder, so a relative path must not be
+                        // resolved (Path.GetFullPath would resolve it against the server's working directory). An absolute path needs no folder.
+                        if (Path.IsPathFullyQualified(fromDirective))
+                            return new RootPathConfiguration(Path.GetFullPath(fromDirective), RootPathConfigurationType.SourceDirective, documentKey.Uri);
+
+                        return new RootPathConfiguration(null, RootPathConfigurationType.None,
+                            $"the document '{documentKey.Uri}' is not a file, so the relative rhetosProjectRootPath directive '{fromDirective}' cannot be resolved; use an absolute path");
+                    }
+
+                    var absolutePath = Path.GetFullPath(Path.Combine(Path.GetDirectoryName(documentKey.LocalPath), fromDirective));
+                    return new RootPathConfiguration(absolutePath, RootPathConfigurationType.SourceDirective, documentKey.LocalPath);
                 }
 
                 return null;
@@ -65,11 +77,17 @@ namespace Rhetos.LanguageServices.CodeAnalysis.Services
                 if (fromDirective != null && !string.IsNullOrEmpty(fromDirective.RootPath))
                     return fromDirective;
 
-                var fromConfiguration = GetRootPathFromConfigurationInParentFolders(Path.GetDirectoryName(rhetosDocument.DocumentUri.LocalPath));
+                var documentKey = rhetosDocument.DocumentKey;
+                // A document that is not a file has no parent folders to search for the configuration file or the Rhetos application.
+                if (!documentKey.IsFile)
+                    return fromDirective ?? new RootPathConfiguration(null, RootPathConfigurationType.None,
+                        $"the document '{documentKey.Uri}' is not a file, so a Rhetos application cannot be detected from its folder");
+
+                var fromConfiguration = GetRootPathFromConfigurationInParentFolders(Path.GetDirectoryName(documentKey.LocalPath));
                 if (fromConfiguration.rootPath != null)
                     return new RootPathConfiguration(fromConfiguration.rootPath, RootPathConfigurationType.ConfigurationFile, fromConfiguration.configurationPath);
 
-                var fromDetected = GetRootPathInParentFolders(Path.GetDirectoryName(rhetosDocument.DocumentUri.LocalPath));
+                var fromDetected = GetRootPathInParentFolders(Path.GetDirectoryName(documentKey.LocalPath));
                 if (fromDetected != null)
                     return new RootPathConfiguration(fromDetected, RootPathConfigurationType.DetectedRhetosApp, fromDetected);
             }

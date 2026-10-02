@@ -563,7 +563,7 @@ Module module1
             var script = "FilterBy a.b.c <include.txt>;";
 
             Console.WriteLine(script);
-            var rhetosDocument = rhetosDocumentFactory.CreateNew(new Uri(Path.Combine(Environment.CurrentDirectory, @"RhetosAppFolder\EmptyFolder\inlinescript.rhe")));
+            var rhetosDocument = rhetosDocumentFactory.CreateNew(TestCommon.DocumentKeyFromPath(Path.Combine(Environment.CurrentDirectory, @"RhetosAppFolder\EmptyFolder\inlinescript.rhe")));
             rhetosDocument.UpdateText(script);
 
             var analysis = GetSuccessfulAnalysis(rhetosDocument);
@@ -585,7 +585,7 @@ Module module1
             var script = "FilterBy a.b.c <missinginclude.txt>;";
 
             Console.WriteLine(script);
-            var rhetosDocument = rhetosDocumentFactory.CreateNew(new Uri(Path.Combine(Environment.CurrentDirectory, @"RhetosAppFolder\EmptyFolder\inlinescript.rhe")));
+            var rhetosDocument = rhetosDocumentFactory.CreateNew(TestCommon.DocumentKeyFromPath(Path.Combine(Environment.CurrentDirectory, @"RhetosAppFolder\EmptyFolder\inlinescript.rhe")));
             rhetosDocument.UpdateText(script);
 
             var analysis = rhetosDocument.GetAnalysis();

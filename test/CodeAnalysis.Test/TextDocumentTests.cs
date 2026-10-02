@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Rhetos.LanguageServices.CodeAnalysis.Parsing;
 using Rhetos.LanguageServices.CommonTestTools;
@@ -36,7 +37,7 @@ namespace Rhetos.LanguageServices.CodeAnalysis.Test
                        "\n" +
                        "\n";
 
-            var doc = new TextDocument(text, TestCommon.UriMock);
+            var doc = new TextDocument(text, TestCommon.DocumentKeyMock);
 
             Assert.AreEqual(0, doc.GetPosition(0, 0));
             Assert.AreEqual(4, doc.GetPosition(0, 4));
@@ -67,7 +68,7 @@ namespace Rhetos.LanguageServices.CodeAnalysis.Test
                        "0\r\n" +
                        "\r\n" +
                        "\r\n";
-            var doc = new TextDocument(text, TestCommon.UriMock);
+            var doc = new TextDocument(text, TestCommon.DocumentKeyMock);
 
             Assert.AreEqual(0, doc.GetPosition(0, 0));
             Assert.AreEqual(4, doc.GetPosition(0, 4));
@@ -97,7 +98,7 @@ namespace Rhetos.LanguageServices.CodeAnalysis.Test
                 "0123\n" +
                 "0";
 
-            var doc = new TextDocument(text, TestCommon.UriMock);
+            var doc = new TextDocument(text, TestCommon.DocumentKeyMock);
 
             Assert.AreEqual(5, doc.GetPosition(1, 0));
             Assert.AreEqual(6, doc.GetPosition(2, 0));
@@ -113,7 +114,7 @@ namespace Rhetos.LanguageServices.CodeAnalysis.Test
                 "\n" +
                 "0";
 
-            var doc = new TextDocument(text, TestCommon.UriMock);
+            var doc = new TextDocument(text, TestCommon.DocumentKeyMock);
             Assert.AreEqual("0123\n", doc.ExtractLine(0));
             Assert.AreEqual("0123\n", doc.ExtractLine(1));
             Assert.AreEqual("0123\n", doc.ExtractLine(4));
@@ -149,7 +150,7 @@ namespace Rhetos.LanguageServices.CodeAnalysis.Test
         [TestMethod]
         public void EmptyDocumentShowPosition()
         {
-            var textDocument = new TextDocument("", TestCommon.UriMock);
+            var textDocument = new TextDocument("", TestCommon.DocumentKeyMock);
             
             string GetAndPrint(int line, int chr)
             {
@@ -167,7 +168,7 @@ namespace Rhetos.LanguageServices.CodeAnalysis.Test
         [TestMethod]
         public void ShowPositionPastEof()
         {
-            var textDocument = new TextDocument("en", TestCommon.UriMock);
+            var textDocument = new TextDocument("en", TestCommon.DocumentKeyMock);
 
             string GetAndPrint(int line, int chr)
             {
@@ -187,7 +188,7 @@ namespace Rhetos.LanguageServices.CodeAnalysis.Test
         [TestMethod]
         public void EmptyDocumentPositions()
         {
-            var doc = new TextDocument("", TestCommon.UriMock);
+            var doc = new TextDocument("", TestCommon.DocumentKeyMock);
 
             Assert.AreEqual(0, doc.GetPosition(0, 0));
             Assert.AreEqual(0, doc.GetPosition(0, 10));
@@ -205,7 +206,7 @@ namespace Rhetos.LanguageServices.CodeAnalysis.Test
         {
             var text = "\n";
             text = text.ToEndings(endingsStyle);
-            var doc = new TextDocument(text, TestCommon.UriMock);
+            var doc = new TextDocument(text, TestCommon.DocumentKeyMock);
 
             var eol = endingsStyle == EndingsStyle.Linux ? 1 : 2;
             Assert.AreEqual(0, doc.GetPosition(0, 1));
@@ -256,7 +257,7 @@ Module
             foreach (var variant in variants)
             {
                 var text = testText.ToEndings(variant.endingsStyle);
-                var textDocument = new TextDocument(text, TestCommon.UriMock);
+                var textDocument = new TextDocument(text, TestCommon.DocumentKeyMock);
                 var truncated = textDocument.GetTruncatedAtNextEndOfLine(new LineChr(line, chr));
                 StringAssert.EndsWith(truncated, expectedEndsWith.ToEndings(variant.endingsStyle), variant.name);
             }
@@ -265,10 +266,57 @@ Module
         [TestMethod]
         public void CorrectlyTruncatesEmptyString()
         {
-            var textDocument = new TextDocument("",TestCommon.UriMock);
+            var textDocument = new TextDocument("",TestCommon.DocumentKeyMock);
             Assert.AreEqual("", textDocument.GetTruncatedAtNextEndOfLine(new LineChr(0, 0)));
             Assert.AreEqual("", textDocument.GetTruncatedAtNextEndOfLine(new LineChr(0, 1)));
             Assert.AreEqual("", textDocument.GetTruncatedAtNextEndOfLine(new LineChr(1, 0)));
+        }
+
+        [TestMethod]
+        public void DslScriptPathIsLocalPathForFileDocument()
+        {
+            var textDocument = new TextDocument("Module M;", DocumentKey.ForFile("file:///c:/My%20Folder/doc.rhe", @"c:\My Folder\doc.rhe"));
+            var dslScript = textDocument.DslScripts.Single();
+            Assert.AreEqual(@"c:\My Folder\doc.rhe", dslScript.Path);
+            Assert.AreEqual("Module M;", dslScript.Script);
+        }
+
+        [TestMethod]
+        public void DslScriptPathIsUriForNonFileDocument()
+        {
+            // Rhetos creates DslSyntaxException.FilePosition only for a non-empty DslScript.Path.
+            var textDocument = new TextDocument("Module M;", DocumentKey.ForNonFile("untitled:Untitled-1"));
+            var dslScript = textDocument.DslScripts.Single();
+            Assert.AreEqual("untitled:Untitled-1", dslScript.Path);
+        }
+
+        [TestMethod]
+        [DataRow("")]
+        [DataRow(@"stub\a.rhe")]
+        [DataRow(@".\a.rhe")]
+        [DataRow(@"\stub\a.rhe")]
+        [DataRow(@"c:a.rhe")]
+        public void DocumentKeyRejectsLocalPathThatIsNotFullyQualified(string localPath)
+        {
+            Assert.ThrowsExactly<ArgumentException>(() => new DocumentKey("file:///c:/a.rhe", localPath));
+            Assert.ThrowsExactly<ArgumentException>(() => DocumentKey.ForFile("file:///c:/a.rhe", localPath));
+        }
+
+        [TestMethod]
+        public void DocumentKeyValidation()
+        {
+            Assert.ThrowsExactly<ArgumentException>(() => new DocumentKey("", null));
+            Assert.ThrowsExactly<ArgumentException>(() => new DocumentKey(null, null));
+            Assert.ThrowsExactly<ArgumentException>(() => new DocumentKey("file:///c:/a.rhe", ""));
+            Assert.ThrowsExactly<ArgumentException>(() => DocumentKey.ForFile("file:///c:/a.rhe", null));
+
+            var fileKey = DocumentKey.ForFile("file:///c:/a.rhe", @"c:\a.rhe");
+            Assert.IsTrue(fileKey.IsFile);
+            Assert.AreEqual("file:///c:/a.rhe", fileKey.ToString());
+
+            var nonFileKey = DocumentKey.ForNonFile("untitled:Untitled-1");
+            Assert.IsFalse(nonFileKey.IsFile);
+            Assert.IsNull(nonFileKey.LocalPath);
         }
     }
 }
