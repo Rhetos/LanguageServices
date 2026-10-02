@@ -122,3 +122,4 @@ Logs/
 *.local.settings.json
 
 !test/Rhetos.LanguageServices.Server.Test/RhetosAppFolder/**
+/temp/

@@ -12,10 +12,14 @@ Contents:
    1. [Changing Rhetos application after initialization](#changing-rhetos-application-after-initialization)
    2. [Syntax highlight keywords](#syntax-highlight-keywords)
    3. [Documents analyzed](#documents-analyzed)
-5. [How to contribute](#how-to-contribute)
+5. [Project structure](#project-structure)
+   1. [Source and test folders](#source-and-test-folders)
+   2. [Root files](#root-files)
+   3. [Runtime flow](#runtime-flow)
+6. [How to contribute](#how-to-contribute)
    1. [Building and testing the source code](#building-and-testing-the-source-code)
    2. [Releasing a new version](#releasing-a-new-version)
-6. [Troubleshooting](#troubleshooting)
+7. [Troubleshooting](#troubleshooting)
    1. [Rhetos application not detected after opening `.rhe` file](#rhetos-application-not-detected-after-opening-rhe-file)
    2. [Diagnostics and advanced troubleshooting](#diagnostics-and-advanced-troubleshooting)
 
@@ -54,7 +58,7 @@ If your `.rhe` document resides in the directory tree inside your Rhetos applica
 
 For a `.rhe` document, the following rules are applied in order to find the location of corresponding Rhetos application:
 
-1. Document is checked for explicit directive pointing to a folder which contains Rhetos application in the form of: `// <rhetosProjectRootPath="c:\some\path\to\rhetosproject" />`. It must be placed on the first line of the file.
+1. Document is checked for explicit directive pointing to a folder which contains Rhetos application in the form of: `// <rhetosProjectRootPath="c:\some\path\to\rhetosproject" />`. It must be placed on the first non-empty line of the file (only blank lines may precede it).
 
 2. Document folder and all parent folders are checked for `rhetos-language-services.settings.json` configuration file specifying the Rhetos application path. File format should be:
 
@@ -64,7 +68,7 @@ For a `.rhe` document, the following rules are applied in order to find the loca
     }
     ```
 
-3. Document folder and all parent folders are checked for a valid Rhetos application root path. This generally means that folders are checked for existence of the `obj/Rhetos/rhetos-project.assets.json` file which is produced by building the Rhetos application.
+3. Document folder and all parent folders are checked for a valid Rhetos application root path. This means that folders are checked for existence of the `obj/Rhetos/DslSyntax.json` file which is produced by building the Rhetos application (a Visual Studio design-time build does not produce it).
 
 Use rules (1) and (2) as means to override this default behavior.
 
@@ -72,9 +76,9 @@ Use rules (1) and (2) as means to override this default behavior.
 
 ### Changing Rhetos application after initialization
 
-Initializing language services server with specific Rhetos application causes `.dll` files of that application to be loaded (for DSL concept discovery). As a consequence, once initialized with a specific Rhetos application, services will only work for that application for the duration of the process runtime.
+Language services server works with one Rhetos application at a time. It reads the DSL syntax from that application's `obj/Rhetos/DslSyntax.json` file; it does not load the application's `.dll` files. While any open `.rhe` document belongs to the current Rhetos application, documents of other Rhetos applications show a warning and get no code analysis. When all documents of the current application are closed, the server automatically switches to the Rhetos application used by most of the open documents.
 
-To change the Rhetos application used in code analysis, restart Visual Studio.
+To change the Rhetos application used in code analysis, close all `.rhe` documents of the current application, or restart Visual Studio.
 
 ### Syntax highlight keywords
 
@@ -83,6 +87,51 @@ Syntax highlighting has a fixed set of keywords being recognized, independent of
 ### Documents analyzed
 
 Language services will analyze and report errors only on **currently opened documents** in the IDE.
+
+## Project structure
+
+The solution `Rhetos.LanguageServices.sln` contains the LSP server, the Visual Studio extensions, the installer, and the tests.
+See [docs/rhetos/README.md](docs/rhetos/README.md) for Rhetos framework background relevant to this project.
+
+### Source and test folders
+
+| Folder | Purpose |
+|---|---|
+| `src/CodeAnalysis` | Library `Rhetos.LanguageServices.CodeAnalysis` (net8.0) with the Rhetos-related logic: finds the Rhetos application for a document, loads `DslSyntax.json` and `DslDocumentation.json`, runs the Rhetos tokenizer and parser, and answers completion, hover and signature help queries. It is the only server project that references Rhetos (NuGet package `Rhetos.DslParser`). |
+| `src/Server` | LSP server executable `Rhetos.LanguageServices.Server.exe` (net8.0, OmniSharp LSP library): LSP handlers, background loops for diagnostics and Rhetos application monitoring, NLog logging. |
+| `src/VisualStudioExtension` | VSIX project for Visual Studio 2019. |
+| `src/VisualStudioExtension17` | VSIX project for Visual Studio 2022. |
+| `src/VisualStudioExtensionShared` | Source code shared by both VSIX projects: the LSP client that starts the server, the `.rhe` content type, and the refresh of Rhetos projects after a build. |
+| `src/VisualStudioExtensionSharedFiles` | TextMate grammars for syntax highlighting (`Grammars/Rhetos.json` contains the fixed keyword list). |
+| `src/InstallerCustomActions` | MSI custom actions: start the VSIX installation for each installed Visual Studio version (2019, 2022), and write the server location to the registry key `HKLM\SOFTWARE\Rhetos\RhetosLanguageServices`. |
+| `src/RhetosLanguageServicesInstaller` | Visual Studio Installer project that builds `RhetosLanguageServicesInstaller.msi`. |
+| `test/CodeAnalysis.Test` | Unit tests for `src/CodeAnalysis` (MSTest). |
+| `test/LspIntegration.Test` | Integration tests with an in-memory LSP client and server. |
+| `test/CommonTestTools` | Shared test helpers, for example a mock that loads `DslSyntax.json` from a folder. |
+| `test/RhetosMockAppContents` | Test data: `DslSyntax.json`, `DslDocumentation.json`, and `RhetosAppFolder` folder structures for the Rhetos application detection tests. |
+| `test/RhetosTestApp` | Rhetos application project that is not used by automated tests. Building it produces a real `obj/Rhetos/DslSyntax.json`. |
+| `test/RhetosTestAppConcepts` | Custom DSL concept `WithParent`, referenced by `RhetosTestApp`, for testing `[ConceptParent]` support. |
+
+### Root files
+
+| File or folder | Purpose |
+|---|---|
+| `Rhetos.LanguageServices.sln` | Solution with all projects listed above. |
+| `Directory.Build.props` | Common MSBuild properties for all projects: version numbers, XML documentation, code analysis mode. |
+| `build.bat`, `clean.bat`, `test.bat` | Command-line build (NuGet restore and MSBuild rebuild); deletion of `bin`, `obj`, `TestResults` and `dist` folders; clean, build and test run with `vstest.console.exe`. See the note about `Build.bat` in [Building and testing the source code](#building-and-testing-the-source-code). |
+| `tools/` | `ChangeVersion.ps1` (sets the version in `Directory.Build.props`, VSIX manifests and the installer project), `FindVisualStudio.bat` and `CheckLicenceInSourceFiles.bat` (used by `build.bat`), `git/gitclear.ps1` (deletes merged git branches). |
+| `CHANGELOG.md`, `License.txt` | Release notes and license. |
+| `docs/rhetos/` | Background documentation about the Rhetos framework, as it relates to this project. |
+| `dist/` | Folder that `clean.bat` deletes and recreates; ignored by git. |
+| `temp/` | Local drafts, scratch notes and other temporary files; ignored by git. |
+
+### Runtime flow
+
+1. When a `.rhe` file is opened, the Visual Studio extension starts `Rhetos.LanguageServices.Server.exe` and communicates with it over LSP through standard input and output.
+2. For each open document, the server finds the Rhetos application root folder by the rules described in [Usage](#usage).
+3. The server loads `obj/Rhetos/DslSyntax.json` (DSL concepts and their parameters) and `obj/Rhetos/DslDocumentation.json` (concept descriptions) from that folder, and reloads them when `DslSyntax.json` changes after a build.
+4. The server analyzes each open document with the Rhetos tokenizer and parser from the `Rhetos.DslParser` NuGet package.
+5. The LSP handlers use the analysis results to publish diagnostics, and to provide completion, hover and signature help.
 
 ## How to contribute
 
