@@ -1,6 +1,6 @@
 # VS Code support for Rhetos Language Services – implementation plan
 
-Status: plan (2026-10-02). Nothing in this folder is implemented yet. Plans live in the tracked `plans/` folder (see the root `README.md`, Project structure).
+Status: plan (2026-10-02). Nothing in this folder is implemented yet. Plans live in the tracked `plans/` folder; the root `AGENTS.md` lists the rules for plans.
 
 Decisions confirmed by the maintainer on 2026-10-02: server bundled in the VSIX with runtime acquisition, monorepo under `src/VSCodeExtension/`, language id `rhetos-dsl`, and **Visual Studio 2019 support is dropped** (prerequisite A0).
 

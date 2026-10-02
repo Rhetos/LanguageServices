@@ -94,7 +94,7 @@ namespace Rhetos.LanguageServices.LspIntegration.Test
                 // OmniSharp parses the incoming URI into DocumentUri parts (the original string is not kept), and writes outgoing URIs
                 // with DocumentUri.ToString(), which renders the drive colon unencoded ('file:///c:/...').
                 // A byte-exact echo of VS Code's 'c%3A' is therefore not possible with OmniSharp's typed messages.
-                // The A3 acceptance criterion is that the server publishes exactly this canonical form of the opened document's URI.
+                // The test therefore requires that the server publishes exactly this canonical form of the opened document's URI.
                 var expectedUris = sentUris.Select(sentUri => DocumentUri.Parse(sentUri).ToString()).ToList();
                 var publishedUris = new List<string>();
                 while (!expectedUris.All(publishedUris.Contains))

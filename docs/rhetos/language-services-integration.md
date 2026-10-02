@@ -249,5 +249,5 @@ The mock `test/RhetosMockAppContents/DslSyntax.json` has `"Version": "5.0"` and 
 | 12 | `// TODO: this class is maybe specific for LanguageServices` | `Services/RhetosWorkspace.cs` | TODO (V) |
 | 13 | `// HACK: Force the "design-time build", by updating timestamp on project.assets.json` | `SolutionRefreshService.cs` | Hack (V) |
 | 14 | OmniSharp workarounds: `RhetosJsonRpcReceiver` (issue #609), log-filter rules, disabling dynamic registration for VS 2022 | `src/Server/RhetosLanguageServer.cs` | V |
-| 15 | Fixed on branch vs-code (plan A3): the resolver returns None with a reason for non-file documents (for example `untitled:`) and no longer resolves a relative directive against the server's working directory. Before, `Path.GetDirectoryName(LocalPath)` was empty for them | `RhetosProjectRootPathResolver.cs` | V (live check 2026-10-02) |
+| 15 | Fixed in version 6.1.0 (unreleased): the resolver returns None with a reason for non-file documents (for example `untitled:`) and no longer resolves a relative directive against the server's working directory. Before, `Path.GetDirectoryName(LocalPath)` was empty for them | `RhetosProjectRootPathResolver.cs` | V (live check 2026-10-02) |
 | 16 | `test/CodeAnalysis.Test` references the full `Rhetos` 6.0.0 package without visible direct use | `test/CodeAnalysis.Test/CodeAnalysis.Test.csproj` | I |

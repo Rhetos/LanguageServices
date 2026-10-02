@@ -124,7 +124,7 @@ See [docs/rhetos/README.md](docs/rhetos/README.md) for Rhetos framework backgrou
 | `CHANGELOG.md`, `License.txt` | Release notes and license. |
 | `docs/rhetos/` | Background documentation about the Rhetos framework, as it relates to this project. |
 | `docs/lsp/` | Notes on the LSP library: `omnisharp-document-uri.md` records the measured OmniSharp `DocumentUri` behaviour (URI normalization, conversions, equality) that the server's URI handling relies on. |
-| `plans/` | Implementation plans that are not yet executed: `prerequisites-and-improvements.md` (repository changes before VS Code support, and other improvements) and `vs-code/` (the Visual Studio Code extension plan). |
+| `AGENTS.md` | Instructions for coding agents and contributors, including the rules for transient implementation plans. |
 | `dist/` | Folder that `clean.bat` deletes and recreates; ignored by git. |
 | `temp/` | Local drafts, scratch notes and other temporary files; ignored by git. |
 

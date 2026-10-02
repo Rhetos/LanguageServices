@@ -1,7 +1,7 @@
 # OmniSharp `DocumentUri` behaviour (LSP document URIs)
 
 Reference notes for `OmniSharp.Extensions.LanguageServer` 0.19.9, the LSP library used by `src/Server`.
-They record what was measured while implementing plan item A3 (URI round-trip) on 2026-10-02, because the NuGet package ships no XML documentation
+They record what was measured on 2026-10-02 while making the server publish diagnostics with the URI of the opened document (URI round-trip), because the NuGet package ships no XML documentation
 (`lib/` holds only the dll and pdb) and the behaviour is not derivable from this repository.
 Measured on Windows 11 with the .NET 10 runtime, by reflection probes and a console experiment against the 0.19.9 assemblies in the test output,
 and by raw JSON-RPC sessions against the built server. Where a statement comes from the OmniSharp source or from general knowledge instead, the text says so.
@@ -53,14 +53,14 @@ Consequence: a `DocumentUri` that went through `System.Uri` and back (`DocumentU
 
 `System.Uri` equality, for comparison: DOS-path file URIs compare case-insensitively on the whole URI including the path; `http` paths and `untitled:` compare case-sensitively.
 
-## 4. What the server does with this (after A3)
+## 4. What the server does with this (since version 6.1.0)
 
 | Step | Behaviour |
 | --- | --- |
 | Receiving | `DocumentKeyExtensions.ToDocumentKey` sets the key's URI to `documentUri.ToString()` and, for the `file` scheme only, `LocalPath = documentUri.ToUri().LocalPath`. If `ToUri()` throws or the path is not fully qualified, the document counts as a non-file document (Debug log). |
 | Keying | `RhetosWorkspace` keys documents by the URI string with `OrdinalIgnoreCase` (ordinal on Linux), mirroring `DocumentUri.Equals`. The key from the first `didOpen` is kept, so the published URI always equals the opened URI. |
 | Publishing | `DocumentUri.Parse(storedString)`; no `System.Uri` in between. |
-| Non-file documents | No root path, exactly one warning diagnostic, and no resolution of a relative `rhetosProjectRootPath` directive against the process working directory (an absolute directive is honoured). Before A3 a fake application in the server's working directory was detected for an `untitled:` document; this was confirmed live. |
+| Non-file documents | No root path, exactly one warning diagnostic, and no resolution of a relative `rhetosProjectRootPath` directive against the process working directory (an absolute directive is honoured). Before version 6.1.0 a fake application in the server's working directory was detected for an `untitled:` document; this was confirmed live. |
 | `DslScript.Path` | `LocalPath ?? Uri`, never empty (see §5). |
 
 ## 5. Rhetos facts that interact with URIs
@@ -70,14 +70,14 @@ Source: local Rhetos6 checkout (`src/Rhetos.Core.DslParser/DslSyntaxException.cs
 | Fact | Consequence |
 | --- | --- |
 | The six-argument `DslSyntaxException` constructor sets `FilePosition` only when `dslScript.Path` is not empty. | `DslScript.Path` must never be empty, otherwise `CodeAnalysisRun.CreateAnalysisError` dereferences a null `FilePosition`. |
-| The one-argument `DslSyntaxException(string)` never sets `FilePosition`. `DslParser` throws it for a warning promoted to an error when `ExcessDotInKey == Error`. | Pre-existing crash path independent of URIs: the `NullReferenceException` is thrown inside the `catch (DslSyntaxException)` block in `CodeAnalysisRun`, so the sibling `catch (Exception)` does not catch it; `PublishDiagnosticsRunner` logs a warning each 300 ms cycle and no document gets diagnostics. Candidate for plan item B6/B10. |
+| The one-argument `DslSyntaxException(string)` never sets `FilePosition`. `DslParser` throws it for a warning promoted to an error when `ExcessDotInKey == Error`. | Pre-existing crash path independent of URIs: the `NullReferenceException` is thrown inside the `catch (DslSyntaxException)` block in `CodeAnalysisRun`, so the sibling `catch (Exception)` does not catch it; `PublishDiagnosticsRunner` logs a warning each 300 ms cycle and no document gets diagnostics. Not fixed yet (2026-10-02). |
 | Rhetos does no file-system operations on `DslScript.Path`; `SimpleExternalResourceReader` in this project reads no files. | A URI string as the path for non-file documents is safe. |
 
 ## 6. Client behaviour (not measured here)
 
 | Client | Behaviour | Status |
 | --- | --- | --- |
-| VS Code | `vscode-uri` `URI.toString()` renders `file:///c%3A/...` with a lowercase drive letter, and the client compares URIs after `URI.parse`, under which `file:///c:/x` and `file:///c%3A/x` are the same resource. The VS Code extension plan restricts the `documentSelector` to `scheme: 'file'`. | General knowledge of `vscode-uri`; not tested in this repository. |
+| VS Code | `vscode-uri` `URI.toString()` renders `file:///c%3A/...` with a lowercase drive letter, and the client compares URIs after `URI.parse`, under which `file:///c:/x` and `file:///c%3A/x` are the same resource. A VS Code client for this server should restrict its `documentSelector` to `scheme: 'file'`, because non-file documents get only a warning diagnostic (§4). | General knowledge of `vscode-uri`; not tested in this repository. |
 | Visual Studio 2022 | Believed to send `file:///C:/...` (uppercase drive, unencoded colon). The repository cannot show it: `src/VisualStudioExtensionShared/LanguageClient.cs` has no URI code, the built-in VS LSP client builds the URI. The 2022 `path-case` commit message describes a casing difference between received and published URIs, which fits this form. | Inferred; unverified. |
 
 ## 7. Testing notes
@@ -86,8 +86,8 @@ Source: local Rhetos6 checkout (`src/Rhetos.Core.DslParser/DslSyntaxException.cs
 | --- | --- |
 | In-process test client | `LanguageProtocolTestBase` (package `OmniSharp.Extensions.LanguageProtocol.Testing`) serializes through `DocumentUri` too. It cannot send `file:///c%3A/...` on the wire, and the received `PublishDiagnosticsParams.Uri` is already normalized. Tests in `DocumentUriTests.cs` therefore assert `published.Uri.ToString() == opened.Uri.ToString()`. |
 | Wire-level test | `DocumentUriWireTests.cs` starts `dotnet Rhetos.LanguageServices.Server.dll` from the test output folder, speaks Content-Length-framed JSON-RPC over stdin/stdout, drains stderr, and asserts the raw published `uri` string. It is marked inconclusive when `dotnet` is not found. |
-| Minimal `initialize` | The server throws `NullReferenceException` in `RhetosLanguageServer.OnInitializedAsync` when the client sends no `textDocument.synchronization` capability (`TextDocumentSync.Options` is null). Raw clients must send at least `capabilities: { textDocument: { synchronization: { dynamicRegistration: false } } }`. Listed in plan B10. |
-| Server log during tests | The server reads `NLog.config` from its folder, so the wire test writes to `C:\ProgramData\Rhetos.LanguageServices\Rhetos.LanguageServices.Server.log`. Plan item A5 covers location-neutral logging. |
+| Minimal `initialize` | The server throws `NullReferenceException` in `RhetosLanguageServer.OnInitializedAsync` when the client sends no `textDocument.synchronization` capability (`TextDocumentSync.Options` is null). Raw clients must send at least `capabilities: { textDocument: { synchronization: { dynamicRegistration: false } } }`. Not fixed yet (2026-10-02). |
+| Server log during tests | The server reads `NLog.config` from its folder, so the wire test writes to `C:\ProgramData\Rhetos.LanguageServices\Rhetos.LanguageServices.Server.log`. The log path is fixed in `src/Server/NLog.config`; `C:\ProgramData` is not writable everywhere and does not exist on Linux or macOS. |
 
 ## 8. Sources
 
@@ -95,5 +95,5 @@ Source: local Rhetos6 checkout (`src/Rhetos.Core.DslParser/DslSyntaxException.cs
 | --- | --- |
 | OmniSharp `csharp-language-server-protocol`, tag `v0.19.2`, `src/Protocol/DocumentUri.cs` and `DocumentUri.Internal.cs` (GitHub, fetched 2026-10-02) | `From`, `File`, `ToUri`, `Parse` logic and the comparer rules. The 0.19.9 assemblies behaved the same in every probe. |
 | Reflection probes and a console experiment against the 0.19.9 assemblies in `test/LspIntegration.Test/bin` | The rendering and equality tables above. |
-| Raw JSON-RPC sessions against the built server | The published URI forms and the `untitled:` working-directory behaviour before A3. |
+| Raw JSON-RPC sessions against the built server | The published URI forms and the `untitled:` working-directory behaviour before version 6.1.0. |
 | Local Rhetos6 checkout (see `docs/rhetos/README.md`, Sources) | The `FilePosition` rule in §5. |

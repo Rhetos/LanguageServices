@@ -1,6 +1,6 @@
 # Repository changes before VS Code support, and other major improvements
 
-Status: plan (2026-10-02). Companion to [vs-code/README.md](vs-code/README.md). Plans live in the tracked `plans/` folder (see the root `README.md`, Project structure).
+Status: plan (2026-10-02). Companion to [vs-code/README.md](vs-code/README.md). Plans live in the tracked `plans/` folder; the root `AGENTS.md` lists the rules for plans.
 
 Decisions confirmed by the maintainer on 2026-10-02: the main recommendations of the VS Code plan (bundled server, monorepo, language id `rhetos-dsl`) and dropping Visual Studio 2019 support (former B2, now A0).
 
