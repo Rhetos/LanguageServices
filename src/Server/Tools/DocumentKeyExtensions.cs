@@ -27,6 +27,7 @@ namespace Rhetos.LanguageServices.Server.Tools
 {
     /// <summary>
     /// Converts OmniSharp's <see cref="DocumentUri"/> to the protocol-independent <see cref="DocumentKey"/> used by CodeAnalysis.
+    /// The measured OmniSharp behaviour that this conversion relies on is described in <c>docs/lsp/omnisharp-document-uri.md</c>.
     /// </summary>
     internal static class DocumentKeyExtensions
     {

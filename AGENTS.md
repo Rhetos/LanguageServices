@@ -23,4 +23,5 @@ Rules:
    | Code comment "The A3 acceptance criterion is ..." | "The server must ..." |
 
 3. When you implement a plan item, move the information that stays valid after the plan is deleted (behaviour, design decisions, measured facts, limitations) into `README.md`, `CHANGELOG.md`, `docs/` or code comments.
-4. Inside `plans/`, plan files can reference each other, their item codes, and any repository file.
+4. If a plan contains important information about a feature that is already implemented, and source code or other documents need to reference that information, write it into the adequate document in `docs/`, and reference that document instead of the plan. Examples: the measured behaviour of the LSP library goes to `docs/lsp/`, and how this repository uses Rhetos (classes, tests, fixtures) goes to `docs/rhetos/`. Extend an existing document when one fits; otherwise create a new document, or a new subfolder of `docs/` for a new topic.
+5. Inside `plans/`, plan files can reference each other, their item codes, and any repository file.
