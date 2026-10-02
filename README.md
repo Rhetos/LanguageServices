@@ -117,9 +117,10 @@ See [docs/rhetos/README.md](docs/rhetos/README.md) for Rhetos framework backgrou
 | File or folder | Purpose |
 |---|---|
 | `Rhetos.LanguageServices.sln` | Solution with all projects listed above. |
+| `Rhetos.LanguageServices.Server.slnf` | Solution filter with the six SDK-style projects (server, `CodeAnalysis` and the test projects), for building and testing with the .NET SDK alone. |
 | `Directory.Build.props` | Common MSBuild properties for all projects: version numbers, XML documentation, code analysis mode. |
-| `build.bat`, `clean.bat`, `test.bat` | Command-line build (NuGet restore and MSBuild rebuild); deletion of `bin`, `obj`, `TestResults` and `dist` folders; clean, build and test run with `vstest.console.exe`. See the note about `Build.bat` in [Building and testing the source code](#building-and-testing-the-source-code). |
-| `tools/` | `ChangeVersion.ps1` (sets the version in `Directory.Build.props`, VSIX manifests and the installer project), `FindVisualStudio.bat` and `CheckLicenceInSourceFiles.bat` (used by `build.bat`), `git/gitclear.ps1` (deletes merged git branches). |
+| `build.bat`, `clean.bat`, `test.bat` | Command-line build (NuGet restore and MSBuild rebuild); deletion of `bin`, `obj`, `TestResults` and `dist` folders; clean, build and test run with `vstest.console.exe`. They need Visual Studio and `NuGet.exe`; for the server and its tests without Visual Studio use `tools/build-server.ps1` (see [Building and testing the source code](#building-and-testing-the-source-code)). |
+| `tools/` | `build-server.ps1` (headless restore, build, test and publish of the server to `dist/server`), `ChangeVersion.ps1` (sets the version in `Directory.Build.props`, VSIX manifests and the installer project), `FindVisualStudio.bat` and `CheckLicenceInSourceFiles.bat` (used by `build.bat`), `git/gitclear.ps1` (deletes merged git branches). |
 | `CHANGELOG.md`, `License.txt` | Release notes and license. |
 | `docs/rhetos/` | Background documentation about the Rhetos framework, as it relates to this project. |
 | `plans/` | Implementation plans that are not yet executed: `prerequisites-and-improvements.md` (repository changes before VS Code support, and other improvements) and `vs-code/` (the Visual Studio Code extension plan). |
@@ -144,7 +145,28 @@ For more info see [How to Contribute](https://github.com/Rhetos/Rhetos/wiki/How-
 
 ### Building and testing the source code
 
+**Server and tests, without Visual Studio**
+
+The language server and its tests can be built and tested with the .NET SDK alone.
+Solution filter `Rhetos.LanguageServices.Server.slnf` contains the six SDK-style projects:
+`CodeAnalysis`, `Server`, `CommonTestTools`, `RhetosMockAppContents`, `CodeAnalysis.Test` and `LspIntegration.Test`.
+It does not contain the VSIX projects and the installer, which need Visual Studio 2022.
+It also leaves out `RhetosTestApp` and `RhetosTestAppConcepts`, because no test references them,
+and building `RhetosTestApp` runs `rhetos build` with the Rhetos 6.0.0 CLI, which needs the .NET 8 and ASP.NET Core 8 runtimes.
+
+* Build and test manually:
+  * `dotnet build Rhetos.LanguageServices.Server.slnf`
+  * `dotnet test Rhetos.LanguageServices.Server.slnf` (runs both test projects),
+    or a single project: `dotnet test test/CodeAnalysis.Test`, `dotnet test test/LspIntegration.Test`
+* Or run `powershell .\tools\build-server.ps1` (or `pwsh`). The script restores and builds the solution filter,
+  runs both test projects, and publishes the server (framework-dependent) to `dist/server`.
+  Parameters: `-Configuration` (default `Release`) and `-SkipTests`.
+* The server and test projects set `RollForward` to `LatestMajor`, so they run on .NET 8 or on any newer installed .NET runtime (for example 9 or 10).
+
+**Full solution, with Visual Studio 2022**
+
 Open Rhetos.LanguageServices.sln in Visual Studio 2022, **build the solution** and **run the unit tests**.
+This is required for the Visual Studio extensions and the installer.
 
 Prerequisites:
 
@@ -157,7 +179,8 @@ Build output:
   It contains the Visual Studio extension for DSL IntelliSense and LSP server.
   See the [Installation instructions](#installation) above.
 
-Automating the build with `Build.bat` has known issues, and is currently not available.
+`build.bat` and `test.bat` build the full solution with MSBuild, so they need Visual Studio and `NuGet.exe`.
+To build and test only the server, use `tools/build-server.ps1`.
 
 ### Releasing a new version
 
@@ -169,7 +192,7 @@ For example, for version `2.0.3`.
 2. `clean.bat`
 3. Open Rhetos.LanguageServices.sln in Visual Studio 2022
    1. Rebuild the solution.
-   2. Run unit tests.
+   2. Run unit tests (the server unit tests can also be run without Visual Studio with `powershell .\tools\build-server.ps1`).
 4. `powershell .\tools\ChangeVersion.ps1 2.0.3 dev`
 5. The installation package is created in `src\RhetosLanguageServicesInstaller\Debug\RhetosLanguageServicesInstaller.msi`
 6. If building a public release:

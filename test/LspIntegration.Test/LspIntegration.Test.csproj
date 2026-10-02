@@ -4,6 +4,7 @@
     <TargetFramework>net8.0</TargetFramework>
     <AssemblyName>Rhetos.LanguageServices.LspIntegration.Test</AssemblyName>
     <RootNamespace>Rhetos.LanguageServices.LspIntegration.Test</RootNamespace>
+    <RollForward>LatestMajor</RollForward>
   </PropertyGroup>
 
   <ItemGroup>

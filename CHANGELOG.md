@@ -1,5 +1,12 @@
 # Rhetos Language Service release notes
 
+## 6.1.0 (unreleased)
+
+* The server and its tests roll forward to the latest installed .NET major version (`RollForward` set to `LatestMajor`),
+  so the server runs on computers where only .NET 9 or 10 is installed.
+* Headless build: solution filter `Rhetos.LanguageServices.Server.slnf` and script `tools/build-server.ps1`
+  build, test and publish the server with the .NET SDK alone, without Visual Studio.
+
 ## 6.0.0 (2025-09-08)
 
 * Bugfix: LSP features not working in the latest Visual Studio 2022

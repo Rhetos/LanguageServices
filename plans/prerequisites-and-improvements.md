@@ -49,6 +49,8 @@ Verification: the solution builds in VS 2022, the VS 2022 VSIX still installs, a
 
 ### A1. Headless build and test (no Visual Studio required)
 
+Status: implemented 2026-10-02 on branch vs-code (RollForward set per project in Server.csproj and the two test projects; script is tools/build-server.ps1; `CommonTestTools` marked `IsTestProject=false` so that `dotnet test` on the solution filter runs only the two real test projects).
+
 Why: the VS Code extension is developed and packaged with `dotnet` + `npm`, and CI must build the server without Visual Studio. Today the only documented way to build is the full solution in VS 2022.
 
 | Change | Files | Notes |

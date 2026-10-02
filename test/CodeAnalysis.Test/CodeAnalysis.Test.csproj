@@ -4,6 +4,7 @@
     <TargetFramework>net8.0</TargetFramework>
     <AssemblyName>Rhetos.LanguageServices.CodeAnalysis.Test</AssemblyName>
     <RootNamespace>Rhetos.LanguageServices.CodeAnalysis.Test</RootNamespace>
+    <RollForward>LatestMajor</RollForward>
   </PropertyGroup>
 
   <ItemGroup>

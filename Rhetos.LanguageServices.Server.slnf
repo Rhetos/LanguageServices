@@ -1,0 +1,13 @@
+{
+  "solution": {
+    "path": "Rhetos.LanguageServices.sln",
+    "projects": [
+      "src\\CodeAnalysis\\CodeAnalysis.csproj",
+      "src\\Server\\Server.csproj",
+      "test\\CommonTestTools\\CommonTestTools.csproj",
+      "test\\RhetosMockAppContents\\RhetosMockAppContents.csproj",
+      "test\\CodeAnalysis.Test\\CodeAnalysis.Test.csproj",
+      "test\\LspIntegration.Test\\LspIntegration.Test.csproj"
+    ]
+  }
+}

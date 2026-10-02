@@ -228,8 +228,8 @@ The mock `test/RhetosMockAppContents/DslSyntax.json` has `"Version": "5.0"` and 
 | Method | Source | Status |
 |---|---|---|
 | Open `Rhetos.LanguageServices.sln` in VS 2022, build, run unit tests | `README.md` "Building and testing the source code" | Documented |
-| `test.bat` (runs `clean.bat`, `build.bat`, then `vstest.console.exe` on `*.Test.dll`) | `test.bat` | README: "Automating the build with `Build.bat` has known issues, and is currently not available" |
-| `dotnet test test/CodeAnalysis.Test` / `test/LspIntegration.Test` | Not documented | Should work, because both are SDK-style net8.0 MSTest projects with no VSIX dependency (I). Needs the .NET 8 runtime |
+| `test.bat` (runs `clean.bat`, `build.bat`, then `vstest.console.exe` on `*.Test.dll`) | `test.bat` | Needs Visual Studio and `NuGet.exe`; for the server and its tests without Visual Studio use `tools/build-server.ps1` |
+| `dotnet test test/CodeAnalysis.Test` / `test/LspIntegration.Test`, or `tools/build-server.ps1` (builds `Rhetos.LanguageServices.Server.slnf`, tests, publishes to `dist/server`) | `README.md` "Building and testing the source code" | Documented. Both are SDK-style net8.0 MSTest projects with no VSIX dependency; `RollForward` is `LatestMajor`, so a newer installed .NET runtime also works |
 
 ## 6. Known limitations and TODOs related to Rhetos integration
 
