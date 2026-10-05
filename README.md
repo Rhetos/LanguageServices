@@ -125,6 +125,7 @@ See [docs/rhetos/README.md](docs/rhetos/README.md) for Rhetos framework backgrou
 | `docs/rhetos/` | Background documentation about the Rhetos framework, as it relates to this project. |
 | `docs/lsp/` | Notes on the LSP library: `omnisharp-document-uri.md` records the measured OmniSharp `DocumentUri` behaviour (URI normalization, conversions, equality) that the server's URI handling relies on. |
 | `AGENTS.md`, `CLAUDE.md` | Instructions for coding agents and contributors, including the rules for transient implementation plans. `CLAUDE.md` imports `AGENTS.md` for Claude Code. |
+| `plans/` | Transient implementation plans, deleted when implemented. Do not reference them from code, docs or commit messages. |
 | `dist/` | Folder that `clean.bat` deletes and recreates; ignored by git. |
 | `temp/` | Local drafts, scratch notes and other temporary files; ignored by git. |
 
